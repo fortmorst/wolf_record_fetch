@@ -8,7 +8,7 @@ mb_regex_encoding('UTF-8');
 //autoloader読込
 require __DIR__.'/../lib/ClassLoader.php';
 $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs',__DIR__.'/../lib']);
-
+//test
 if(isset($argv[1]))
 {
   //引数に渡した国だけ取得
