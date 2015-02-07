@@ -260,6 +260,10 @@ class Data
   //吸血鬼陣営
   const SKL_VAMPIRE_SEA     =106; //吸血鬼 深海 2Dに二人を眷属に変える
   const SKL_SERVANT         =107; //眷属 眷属同士で会話可能
+  const SKL_SRV_SEER_ROLE   =204; //偽神官 眷属、賢者
+  const SKL_SRV_ASS         =205; //殺戮者 襲撃行使
+  const SKL_VMP_PURE        =206; //純血種 毎日一人を吸血鬼陣営の役職に変える
+  const SKL_VMP_HALF        =207; //覚醒種 特定役職が占を受けて吸血鬼陣営になった役職
   //深海団
   const SKL_SEE_WILD        =141; //コレクター 終了時狼+妖=1
   const SKL_SEA_NONE        =142; //ビブロフィリア 毎日一人を無能状態にする+終了時全員無能
