@@ -48,7 +48,9 @@ trait TRS_Sea
     ,"月族"=>Data::SKL_MOON
     ,"解呪師"=>Data::SKL_DISPEL
     ,"交信者"=>Data::SKL_CONTACT
-    ,"霊話師"=>Data::SKL_READ_G
+    ,"霊話師"=>Data::SKL_READ_G_C
+    ,"審問官"=>Data::SKL_SEER_SKILL
+    ,"血呪者"=>Data::SKL_HALF_VMP
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -83,6 +85,7 @@ trait TRS_Sea
     ,"大狼"=>Data::SKL_WWOLF_BLACK_G
     ,"群狼"=>Data::SKL_WOLF_PRINCE
     ,"月狼"=>Data::SKL_WOLF_MOON
+    ,"夢魔"=>Data::SKL_WOLF_TMP_WOLF
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -113,6 +116,10 @@ trait TRS_Sea
     //吸血鬼
     ,"吸血鬼"=>Data::SKL_VAMPIRE_SEA
     ,"眷属"=>Data::SKL_SERVANT
+    ,"偽神官"=>Data::SKL_SRV_SEER_ROLE
+    ,"殺戮者"=>Data::SKL_SRV_ASS
+    ,"純血種"=>Data::SKL_VMP_PURE
+    ,"覚醒種"=>Data::SKL_VMP_HALF
     //深海団
     ,"コレクター"=>Data::SKL_SEE_WILD
     ,"ビブロフィリア"=>Data::SKL_SEA_NONE

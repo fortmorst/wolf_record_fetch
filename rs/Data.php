@@ -92,6 +92,7 @@ class Data
     const SKL_SEER_BAND       =115; //運命読み 絆の有無と種類を占う
     const SKL_SEER_ID         = 85; //中身占い師(魂魄師)
     const SKL_SEER_ONCE       = 66; //夢占師 一度だけ占える
+    const SKL_SEER_SKILL      =209; //審問官 村人か否かを占う
     const SKL_SEER_FUZZ       = 96; //見習い占い師 たまに結果が見えない占師
     const SKL_SEER_ROLETM     =184; //天啓者 一日遅れで役職と陣営を占う
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
@@ -127,6 +128,7 @@ class Data
     const SKL_FM_WIS          =  8; //共鳴者 囁ける共有
     const SKL_STIGMA          =  9; //聖痕者 独自の聖痕を持つ
     const SKL_CONTACT         = 87; //交信者 初日に一人と交信ログで会話可能にする
+    const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
     //投票関係
     const SKL_FOLLOWER        = 19; //追従者 委任しか出来ない
     const SKL_LEONARD         =187; //決定者 二票持つ
@@ -139,6 +141,7 @@ class Data
     const SKL_SUSPECT         = 92; //容疑者 占判定は黒、霊判定は白、自覚あり
     const SKL_SUS_LINEAGE     =152; //狼気纏 霊判定では白が出る狼血族
     const SKL_MOON            =189; //月族 被占被護衛で行使者を裏切り陣営にする
+    const SKL_HALF_VMP        =210; //血呪者 被占で覚醒種になり、ランダムで一人を眷属にする
     //殺害or蘇生
     const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
     const SKL_WITCH           = 30; //魔女 任意の一人を殺害/蘇生できる
@@ -213,6 +216,7 @@ class Data
     const SKL_WOLF_HUNGRY     =123; //餓狼 二日連続襲撃できないと死ぬ
     const SKL_WOLF_ELDER      =151; //古狼 襲撃耐性を貫通するが、6割の確率で襲撃失敗する
     const SKL_WOLF_DELAY      =165; //蠱狼 襲撃した一日後に対象が死ぬ。襲撃返り討ち耐性を無効化
+    const SKL_WOLF_TMP_WOLF   =211; //夢魔(深海) 襲撃相手を人狼にする
     //被占で変化
     const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
     const SKL_WHITEWOLF       = 44; //白狼 占判定が白
