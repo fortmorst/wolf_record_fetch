@@ -40,7 +40,7 @@ trait TRS_Guta
     ,"魔封じの者"=>Data::SKL_SICK
     ,"魔術師殺し"=>Data::SKL_ALCHEMIST
     ,"呪薬師"=>Data::SKL_WITCH
-    ,"夢歩き"=>Data::SKL_READ_W
+    ,"夢歩き"=>Data::SKL_GIRL
     ,"怨霊憑き"=>Data::SKL_SG
     ,"強き魔封じの者"=>Data::SKL_IRON_ONCE_SICK
     ,"真名隠し"=>Data::SKL_JAMMER

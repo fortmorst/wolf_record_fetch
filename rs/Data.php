@@ -126,6 +126,7 @@ class Data
     //共有系
     const SKL_FM              =  5; //共有者 互いに共有者であることを知る
     const SKL_FM_WIS          =  8; //共鳴者 囁ける共有
+    const SKL_FM_WIS_LNG      =212; //黒鳴者 黒判定が出る共鳴
     const SKL_STIGMA          =  9; //聖痕者 独自の聖痕を持つ
     const SKL_CONTACT         = 87; //交信者 初日に一人と交信ログで会話可能にする
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
@@ -144,6 +145,7 @@ class Data
     const SKL_HALF_VMP        =210; //血呪者 被占で覚醒種になり、ランダムで一人を眷属にする
     //殺害or蘇生
     const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
+    const SKL_BAP_CRESCENT    =213; //反魂師 一人を蘇生出来る
     const SKL_WITCH           = 30; //魔女 任意の一人を殺害/蘇生できる
     const SKL_ONMYO           = 94; //陰陽師 妖魔系か暗殺者を呪殺
     const SKL_ASSASSIN        = 95; //暗殺者 襲撃行使、占われると溶ける
@@ -161,7 +163,7 @@ class Data
     //他
     const SKL_DYING           = 27; //預言者 生存狼+2日目に死ぬ
     const SKL_NOTARY          = 68; //公証人 死ぬと遅延メモが公開される
-    const SKL_READ_W          = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
+    const SKL_GIRL          = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
@@ -170,6 +172,7 @@ class Data
     const SKL_LUNA_WIS_FRY    =202; //深林之民 叫迷と蝙蝠発言可
     const SKL_LUNA_READ_W     = 62; //感応狂人 赤ログを覗けるが発言不可
     const SKL_LUNA_MIMIC_FM   = 63; //狂鳴者 共鳴ログに紛れ込む
+    const SKL_LUNA_GIRL     =214; //鼠人 赤ログ閲覧 襲撃対象になると死ぬ
     //把握系
     const SKL_FANATIC         = 11; //狂信者 狼を知る
     const SKL_REALIZED        = 99; //悟られ狂人 逆狂信者
@@ -217,6 +220,7 @@ class Data
     const SKL_WOLF_ELDER      =151; //古狼 襲撃耐性を貫通するが、6割の確率で襲撃失敗する
     const SKL_WOLF_DELAY      =165; //蠱狼 襲撃した一日後に対象が死ぬ。襲撃返り討ち耐性を無効化
     const SKL_WOLF_TMP_WOLF   =211; //夢魔(深海) 襲撃相手を人狼にする
+    const SKL_WOLF_ADD_MRT    =168; //外狼 襲撃した相手を殉教者にする
     //被占で変化
     const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
     const SKL_WHITEWOLF       = 44; //白狼 占判定が白
@@ -301,7 +305,6 @@ class Data
   const SKL_SEA_EXPECT_DEAD =158; //グリムリーパー 指定した二人死亡
   const SKL_SEA_EXPECT_ALIVE=143; //ギャンブラー 指定した二人が生存
   const SKL_SEA_EXPECT_WIN  =167; //ヴァルキュリア 村か狼陣営を指定、指定した陣営勝利
-  const SKL_SEA_ADD_FRY     =168; //パナギア 指定した二人に襲撃無効・被呪殺付与、二人呪詛死
   const SKL_SEA_WITCH       =172; //カロン 3Dと5Dに毒殺・蘇生できる。終了時四人で勝利
   //殉教者陣営
   const SKL_MRT_WOLF        =175; //盲信者 人狼が勝てば勝利、人狼全員が死ぬと後追死する

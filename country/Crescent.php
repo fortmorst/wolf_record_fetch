@@ -122,7 +122,7 @@ class Crescent extends Giji_Old
   }
   protected function fetch_dtid($dtid)
   {
-    if($dtid === '生存者')
+    if($dtid === '生存者' || $dtid === '健常者')
     {
       $this->user->end = $this->village->days;
       $this->user->dtid = Data::DES_ALIVE;
@@ -130,7 +130,14 @@ class Crescent extends Giji_Old
     else
     {
       $this->user->end = (int)mb_ereg_replace(".+\((\d+)d\)","\\1",$dtid,'m');
-      $this->user->dtid = $this->DESTINY[mb_substr($dtid,0,mb_strpos($dtid,"\n")-1)];
+      if($this->village->rp === 'HENTAI')
+      {
+        $this->user->dtid = $this->DES_HENTAI[mb_substr($dtid,0,mb_strpos($dtid,"\n")-1)];
+      }
+      else
+      {
+        $this->user->dtid = $this->DESTINY[mb_substr($dtid,0,mb_strpos($dtid,"\n")-1)];
+      }
     }
   }
 

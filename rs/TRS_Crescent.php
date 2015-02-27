@@ -34,7 +34,7 @@ trait TRS_Crescent
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"霊感少年"=>Data::SKL_READ_G
     ,"生贄"=>Data::SKL_SG
     ,"鉄人"=>Data::SKL_IRON
@@ -48,6 +48,8 @@ trait TRS_Crescent
     ,"妄想家"=>Data::SKL_MISTAKE_LOVE
     ,"転生者"=>Data::SKL_RANDOM_DEAD
     ,"狼気纏"=>Data::SKL_SUS_LINEAGE
+    ,"黒鳴者"=>Data::SKL_FM_WIS_LNG
+    ,"反魂師"=>Data::SKL_BAP_CRESCENT
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -68,6 +70,7 @@ trait TRS_Crescent
     ,"狂学者"=>Data::SKL_MAD
     ,"南瓜提灯"=>Data::SKL_LUNA_WITCH
     ,"祈祷師"=>Data::SKL_LUNA_SEER_ROLETM
+    ,"鼠人"=>Data::SKL_LUNA_GIRL
     //人狼
     ,"凶狼"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -86,6 +89,7 @@ trait TRS_Crescent
     ,"蠱狼"=>Data::SKL_WOLF_DELAY
     ,"愚狼"=>Data::SKL_WOLF_MMC_FM_WIS
     ,"鈍狼"=>Data::SKL_WOLF_NOBAND
+    ,"外狼"=>Data::SKL_WOLF_ADD_MRT
     //妖魔
     ,"妖狐"=>Data::SKL_FAIRY
     ,"化狐"=>Data::SKL_FRY_SNATCH
@@ -182,7 +186,7 @@ trait TRS_Crescent
     ,"監視員"=>Data::SKL_MEDIUM
     ,"巡察師"=>Data::SKL_MEDI_READ_G
     ,"星人"=>Data::SKL_ALCHEMIST
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"レイヤー"=>Data::SKL_SNATCH
     ,"ムッツリ"=>Data::SKL_LUNATIC
     ,"ドールオタ"=>Data::SKL_MUPPETER
@@ -218,6 +222,16 @@ trait TRS_Crescent
     ,"阿呆に　見る阿呆。　同じ阿"=>Data::TM_PIPER
     ,"はたった独りだけを選んだ。"=>Data::TM_EFB //未指定
     ];
+  public $DES_HENTAI = [
+     "生存者"=>Data::DES_ALIVE
+    ,"突然死"=>Data::DES_RETIRED
+    ,"入所"=>Data::DES_HANGED
+    ,"洗脳"=>Data::DES_EATEN
+    ,"呪詛死"=>Data::DES_CURSED
+    ,"衰退死"=>Data::DES_DROOP
+    ,"後追死"=>Data::DES_SUICIDE
+    ,"恐怖死"=>Data::DES_FEARED
+  ];
   public $SKL_CLOSED = [
      "市民"=>Data::SKL_VILLAGER
     ,"聖痕者"=>Data::SKL_STIGMA
@@ -243,7 +257,7 @@ trait TRS_Crescent
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"悪魔祓い"=>Data::SKL_COUNTER

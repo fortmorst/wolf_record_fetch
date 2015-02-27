@@ -34,7 +34,7 @@ trait TRS_Ivory
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"目隠し妖怪"=>Data::SKL_JAMMER
@@ -124,7 +124,7 @@ trait TRS_Ivory
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"協力者"=>Data::SKL_JAMMER

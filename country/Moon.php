@@ -19,7 +19,7 @@ class Moon extends SOW
   protected $WTM_MOON= [
      'は終わったのだ――！'=>Data::TM_VILLAGER
     ,'達の楽園なのだ――！'=>Data::TM_WOLF
-    //,'が残っていたのです。'=>Data::TM_FAIRY
+    ,'の始まりである――。'=>Data::TM_FAIRY
   ];
   protected $DT_MOON = [
      '儚く散った。'=>['.+(\(ランダム投票\)|置いた。)(.+) の命が儚く散った。',Data::DES_HANGED]

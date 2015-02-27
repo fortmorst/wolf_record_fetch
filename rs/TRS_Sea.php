@@ -29,7 +29,7 @@ trait TRS_Sea
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"容疑者"=>Data::SKL_REALIZED
@@ -126,7 +126,6 @@ trait TRS_Sea
     ,"ギャンブラー"=>Data::SKL_SEA_EXPECT_ALIVE
     ,"グリムリーパー"=>Data::SKL_SEA_EXPECT_DEAD
     ,"ヴァルキュリア"=>Data::SKL_SEA_EXPECT_WIN
-    //,"パナギア"=>Data::SKL_SEA_ADD_FRY
     ,"カロン"=>Data::SKL_SEA_WITCH
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU

@@ -42,7 +42,7 @@ trait TRS_Giji_Old
     ,"病人"=>Data::SKL_SICK
     ,"錬金術師"=>Data::SKL_ALCHEMIST
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"邪魔之民"=>Data::SKL_JAMMER
@@ -143,7 +143,7 @@ trait TRS_Giji_Old
     ,"守護者"=>Data::SKL_GUARD
     ,"狩人"=>Data::SKL_HUNTER
     ,"魔女"=>Data::SKL_WITCH
-    ,"少女"=>Data::SKL_READ_W
+    ,"少女"=>Data::SKL_GIRL
     ,"スケープゴート"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"人狼"=>Data::SKL_WISEWOLF

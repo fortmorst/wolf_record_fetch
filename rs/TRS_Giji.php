@@ -64,7 +64,7 @@ trait TRS_Giji
     ,23=>[Data::SKL_SICK,'病人']
     ,24=>[Data::SKL_ALCHEMIST,'錬金術師']
     ,25=>[Data::SKL_WITCH,'魔女']
-    ,26=>[Data::SKL_READ_W,'少女']
+    ,26=>[Data::SKL_GIRL,'少女']
     ,27=>[Data::SKL_SG,'生贄']
     ,28=>[Data::SKL_IRON_ONCE_SICK,'長老']
     ,31=>[Data::SKL_JAMMER,'邪魔之民']
