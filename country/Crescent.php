@@ -41,15 +41,16 @@ class Crescent extends Giji_Old
   {
     if($this->village->policy)
     {
+      $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
       $wtmid = trim($this->fetch->find('div.info',-1)->plaintext);
-      if(preg_match("/村の更新日が延長されました/",$wtmid))
+      if(preg_match($not_wtm,$wtmid))
       {
         $do_i = -2;
         do
         {
           $wtmid = trim($this->fetch->find('div.info',$do_i)->plaintext);
           $do_i--;
-        } while(preg_match("/村の更新日が延長されました/",$wtmid));
+        } while(preg_match($not_wtm,$wtmid));
       }
 
       //照・据え膳勝利メッセージがあったら削除

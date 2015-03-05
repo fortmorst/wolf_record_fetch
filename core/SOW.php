@@ -108,15 +108,16 @@ class SOW extends Country
   }
   protected function fetch_win_message()
   {
+    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
     $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-    if(preg_match("/延長されました|村の設定が変更/",$wtmid))
+    if(preg_match($not_wtm,$wtmid))
     {
       $do_i = -2;
       do
       {
         $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
         $do_i--;
-      } while(preg_match("/延長されました|村の設定が変更/",$wtmid));
+      } while(preg_match($not_wtm,$wtmid));
     }
     return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
   }

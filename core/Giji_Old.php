@@ -127,17 +127,18 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_wtmid()
   {
+    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。|が参加しました。/';
     if($this->policy || $this->village->policy)
     {
       $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-      if(preg_match("/村の更新日が延長されました|が参加しました。/",$wtmid))
+      if(preg_match($not_wtm,$wtmid))
       {
         $do_i = -2;
         do
         {
           $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
           $do_i--;
-        } while(preg_match("/村の更新日が延長されました|が参加しました。/",$wtmid));
+        } while(preg_match($not_wtm,$wtmid));
       }
       $wtmid = mb_substr(preg_replace("/\r\n/","",$wtmid),2,13);
       if($this->village->rp !== 'NORMAL')
