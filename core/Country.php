@@ -107,12 +107,12 @@ abstract class Country
     }
     sort($roles);
     $this->make_rgl_detail(implode(',',$roles));
-    echo ' nop=>'.$this->village->nop.' rglid=>'.$this->village->rglid.PHP_EOL;
+    //echo ' nop=>'.$this->village->nop.' rglid=>'.$this->village->rglid.PHP_EOL;
   }
   protected function make_rgl_detail($rgl)
   {
     $this->village->rgl_detail = $rgl.',';
-    echo '>'.$this->village->vno.': rgl=>'.$rgl;
+    //echo '>'.$this->village->vno.': rgl=>'.$rgl;
 
     //既に特殊ルールが挿入されている村はスキップ
     if($this->village->rglid === null)
