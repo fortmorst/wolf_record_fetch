@@ -10,6 +10,7 @@ class Moon extends SOW
   protected $RP_SP = [
      '月狼'=>'MOON'
     ,'人狼署'=>'POLICE'
+    ,'月狼学園'=>'SCHOOL'
   ];
   protected $WTM_POLICE= [
      '平和は守られたのだ！'=>Data::TM_VILLAGER
@@ -17,6 +18,11 @@ class Moon extends SOW
     //,'が残っていたのです。'=>Data::TM_FAIRY
   ];
   protected $WTM_MOON= [
+     'は終わったのだ――！'=>Data::TM_VILLAGER
+    ,'達の楽園なのだ――！'=>Data::TM_WOLF
+    ,'の始まりである――。'=>Data::TM_FAIRY
+  ];
+  protected $WTM_SCHOOL= [
      'は終わったのだ――！'=>Data::TM_VILLAGER
     ,'達の楽園なのだ――！'=>Data::TM_WOLF
     ,'の始まりである――。'=>Data::TM_FAIRY
