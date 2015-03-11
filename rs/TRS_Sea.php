@@ -51,6 +51,9 @@ trait TRS_Sea
     ,"霊話師"=>Data::SKL_READ_G_C
     ,"審問官"=>Data::SKL_SEER_SKILL
     ,"血呪者"=>Data::SKL_HALF_VMP
+    ,"妖血族"=>Data::SKL_IRON_FRY
+    ,"鑑定士"=>Data::SKL_SEER_GIFT
+    ,"交易商"=>Data::SKL_EXCHANGE_GIFT
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -71,6 +74,7 @@ trait TRS_Sea
     ,"狂科学者"=>Data::SKL_MAD
     ,"呪術師"=>Data::SKL_LUNA_ADD_FRY
     ,"月従者"=>Data::SKL_FANATIC_MOON
+    ,"邪教徒"=>Data::SKL_LUNA_WIS_TEMPT
     //狼
     ,"首無騎士"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -86,6 +90,7 @@ trait TRS_Sea
     ,"群狼"=>Data::SKL_WOLF_PRINCE
     ,"月狼"=>Data::SKL_WOLF_MOON
     ,"夢魔"=>Data::SKL_WOLF_TMP_WOLF
+    ,"怨狼"=>Data::SKL_WOLF_DELAY_2
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -103,6 +108,7 @@ trait TRS_Sea
     ,'犬神'=>Data::SKL_FRY_CAT
     ,"コウモリ人間"=>Data::SKL_FRY_WIS
     ,'鏡狐'=>Data::SKL_FRY_ADD_FRY
+    ,'月夜霊'=>Data::SKL_FRY_MOON
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き

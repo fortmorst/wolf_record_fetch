@@ -95,8 +95,10 @@ class Data
     const SKL_SEER_SKILL      =209; //審問官 村人か否かを占う
     const SKL_SEER_FUZZ       = 96; //見習い占い師 たまに結果が見えない占師
     const SKL_SEER_ROLETM     =184; //天啓者 一日遅れで役職と陣営を占う
+    const SKL_SEER_GIFT       =217; //鑑定士 所持恩恵を判定、呪殺/覚醒しない
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
     const SKL_DISPEL          =190; //解呪師 各種呪いと誘惑状態の解除
+    const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
@@ -139,6 +141,7 @@ class Data
     //被占で何かが起こる
     const SKL_LINEAGE         = 24; //狼血族 占われると黒判定が出る/占われるまで自覚がない
     const SKL_CURSED          = 26; //呪人 占われると逆呪殺する
+    const SKL_IRON_FRY        =215; //妖血族 襲撃耐性、呪殺される
     const SKL_SUSPECT         = 92; //容疑者 占判定は黒、霊判定は白、自覚あり
     const SKL_SUS_LINEAGE     =152; //狼気纏 霊判定では白が出る狼血族
     const SKL_MOON            =189; //月族 被占被護衛で行使者を裏切り陣営にする
@@ -172,7 +175,7 @@ class Data
     const SKL_LUNA_WIS_FRY    =202; //深林之民 叫迷と蝙蝠発言可
     const SKL_LUNA_READ_W     = 62; //感応狂人 赤ログを覗けるが発言不可
     const SKL_LUNA_MIMIC_FM   = 63; //狂鳴者 共鳴ログに紛れ込む
-    const SKL_LUNA_GIRL     =214; //鼠人 赤ログ閲覧 襲撃対象になると死ぬ
+    const SKL_LUNA_GIRL       =214; //鼠人 赤ログ閲覧 襲撃対象になると死ぬ
     //把握系
     const SKL_FANATIC         = 11; //狂信者 狼を知る
     const SKL_REALIZED        = 99; //悟られ狂人 逆狂信者
@@ -184,7 +187,7 @@ class Data
     const SKL_LUNA_SEER_ID    = 86; //呪魂者 中身占い師 占われると呪殺できる
     const SKL_LUNA_SEER_ROLETM=185; //祈祷師 一日遅れで役職と陣営を占う
     //誘惑・変質系
-    const SKL_LUNA_WIS_TEMPT  = 88; //誘惑者 囁き狂人+初日に一人を隷従者(恩恵)にする
+    const SKL_LUNA_WIS_TEMPT  = 88; //誘惑者 邪教徒(深海) 囁き狂人+初日に一人を隷従者(恩恵)にする
     const SKL_LUNA_TEMPT      = 81; //冒涜者 狂信者+初日に一人を背信者にする
     const SKL_LUNA_TEMPTED    = 82; //背信者 背信者、冒涜者同士で会話可能
     const SKL_LUNA_TEMPT_SEA  =156; //誘惑者 初日に一人を半端者にする
@@ -219,6 +222,7 @@ class Data
     const SKL_WOLF_HUNGRY     =123; //餓狼 二日連続襲撃できないと死ぬ
     const SKL_WOLF_ELDER      =151; //古狼 襲撃耐性を貫通するが、6割の確率で襲撃失敗する
     const SKL_WOLF_DELAY      =165; //蠱狼 襲撃した一日後に対象が死ぬ。襲撃返り討ち耐性を無効化
+    const SKL_WOLF_DELAY_2    =219; //怨狼 襲撃した二日後に対象が死ぬ
     const SKL_WOLF_TMP_WOLF   =211; //夢魔(深海) 襲撃相手を人狼にする
     const SKL_WOLF_ADD_MRT    =168; //外狼 襲撃した相手を殉教者にする
     //被占で変化
