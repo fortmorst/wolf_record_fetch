@@ -42,6 +42,9 @@ class Check_Village
     }
 
     $queue = $this->open_queue();
+    echo 'queue_del:';
+    var_dump($this->queue_del);
+    echo 'remove_queue/vno:'.$vno.', queue: '.$queue.PHP_EOL;
 
     //村番号の指定があるならそれだけを除外する
     if($vno !== false)
@@ -237,6 +240,9 @@ class Check_Village
   {
     $list_vno = $this->check_endlist();
     $db_vno = $this->check_db();
+    echo 'list_vno: '.$list_vno;
+    echo 'db_vno: ';
+    var_dump($db_vno);
 
     //廃村が連続している国は最新村番号をチェック
     if($db_vno['ruin'] !== 0)
@@ -259,6 +265,7 @@ class Check_Village
         $vno = 0;
         $vno = $db_vno['max'] + $i;
         $is_end = $this->check_end($vno);
+        echo '$vno: '.$vno.PHP_EOL;
 
         if($is_end && $this->check_not_ruined($vno))
         {
@@ -271,9 +278,10 @@ class Check_Village
         else
         {
           //終了していない村は一旦村番号をメモ
+          var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
           if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
           {
-            fwrite($this->fp,$this->cid.'_'.$vno.',');
+            echo 'fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
           }
         }
       }
