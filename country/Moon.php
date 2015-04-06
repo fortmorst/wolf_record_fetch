@@ -24,7 +24,7 @@ class Moon extends SOW
   ];
   protected $WTM_SCHOOL= [
      'は終わったのだ――！'=>Data::TM_VILLAGER
-    ,'達の楽園なのだ――！'=>Data::TM_WOLF
+    ,'う学舎ではない――。'=>Data::TM_WOLF
     ,'の始まりである――。'=>Data::TM_FAIRY
   ];
   protected $DT_MOON = [
