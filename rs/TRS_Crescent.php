@@ -162,6 +162,7 @@ trait TRS_Crescent
      "市民"=>[Data::TM_VILLAGER,false]
     ,"人狼"=>[Data::TM_WOLF,false]
     ,"妖狐"=>[Data::TM_FAIRY,true]
+    ,"恋人"=>[Data::TM_LOVERS,false]
     ,"一匹"=>[Data::TM_LWOLF,true]
     ,"裏切"=>[Data::TM_EVIL,false]
     ,"勝利"=>[Data::TM_NONE,false]
