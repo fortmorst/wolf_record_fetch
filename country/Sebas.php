@@ -78,15 +78,16 @@ class Sebas extends SOW
   }
   protected function fetch_win_message()
   {
+    $not_wtm = "/0に設定されました。|村の設定が変更|に変更します。/";
     $wtmid = trim($this->fetch->find('div.info',-1)->plaintext);
-    if(preg_match("/0に設定されました。|村の設定が変更/",$wtmid))
+    if(preg_match($not_wtm,$wtmid))
     {
       $do_i = -2;
       do
       {
         $wtmid = trim($this->fetch->find('div.info',$do_i)->plaintext);
         $do_i--;
-      } while(preg_match("/0に設定されました。|村の設定が変更/",$wtmid));
+      } while(preg_match($not_wtm,$wtmid));
     }
     return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
   }
