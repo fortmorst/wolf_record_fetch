@@ -119,7 +119,7 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_from_epi()
   {
-    $url = $this->url.$this->village->vno.'&turn='.$this->village->days.'&row=30&mode=all&move=page&pageno=1';
+    $url = $this->url.$this->village->vno.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
 
     $this->fetch_wtmid();
