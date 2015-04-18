@@ -99,6 +99,7 @@ class Data
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
     const SKL_DISPEL          =190; //解呪師 各種呪いと誘惑状態の解除
     const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
+    const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
@@ -107,7 +108,8 @@ class Data
     const SKL_MEDI_READ_G     = 18; //降霊者 墓ログを読める
     const SKL_MEDI_ID         =188; //霊媒師 中身霊能者
     const SKL_READ_G          =113; //霊感少年 墓ログ閲覧
-    const SKL_WILD            =109; //野生児 残狼人数が分かる
+    const SKL_REALIZE_WOLF    =109; //野生児 残狼人数が分かる
+    const SKL_REALIZE_FRY     =233; //陰陽生 残妖精人数が分かる
     //護衛系
     const SKL_GUARD           =  4; //狩人 一人を襲撃から守る
     const SKL_GRD_BLACK       = 54; //守護獣 判定で黒が出る+自分を守れる狩人
@@ -132,6 +134,8 @@ class Data
     const SKL_STIGMA          =  9; //聖痕者 独自の聖痕を持つ
     const SKL_CONTACT         = 87; //交信者 初日に一人と交信ログで会話可能にする
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
+    const SKL_PSY             =226; //巫女 神通会話に参加
+    const SKL_PSY_IRON_FRY    =225; //稲荷狐 襲撃耐性、呪殺される/自覚あり、神通会話に参加
     //投票関係
     const SKL_FOLLOWER        = 19; //追従者 委任しか出来ない
     const SKL_LEONARD         =187; //決定者 二票持つ
@@ -141,7 +145,7 @@ class Data
     //被占で何かが起こる
     const SKL_LINEAGE         = 24; //狼血族 占われると黒判定が出る/占われるまで自覚がない
     const SKL_CURSED          = 26; //呪人 占われると逆呪殺する
-    const SKL_IRON_FRY        =215; //妖血族 襲撃耐性、呪殺される
+    const SKL_IRON_FRY        =215; //妖血族 襲撃耐性、呪殺される/自覚なし
     const SKL_SUSPECT         = 92; //容疑者 占判定は黒、霊判定は白、自覚あり
     const SKL_SUS_LINEAGE     =152; //狼気纏 霊判定では白が出る狼血族
     const SKL_MOON            =189; //月族 被占被護衛で行使者を裏切り陣営にする
@@ -158,6 +162,7 @@ class Data
     const SKL_MISTAKE_FRY     =116; //狐好き 思い込み狐
     const SKL_MISTAKE_LOVE    =117; //妄想家 思い込み求愛者
     const SKL_MISTAKE_SEER    =138; //狼少年 でたらめな占結果が出る。呪殺は可能
+    const SKL_MISTAKE_SEER_NOCURSE=230; //猪突猛進 でたらめな占結果が出る(狼数は正確)。呪殺不可能
     const SKL_MISTAKE_MEDI    =179; //月酔 でたらめな霊結果が出る
     //ランダム変化
     const SKL_RANDOM_EATEN    = 97; //傾奇者 被襲撃でランダムに役職変化
@@ -166,7 +171,8 @@ class Data
     //他
     const SKL_DYING           = 27; //預言者 生存狼+2日目に死ぬ
     const SKL_NOTARY          = 68; //公証人 死ぬと遅延メモが公開される
-    const SKL_GIRL          = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
+    const SKL_GIRL            = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
+    const SKL_CHANGE_SAINT    =231; //御子 聖女が死んだ翌日に聖女になる
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
@@ -211,11 +217,13 @@ class Data
     const SKL_LUNA_EXE_G      =120; //騒霊 墓下で投票できる
     const SKL_LUNA_BLACK      = 98; //囮人形 占われると黒判定が出る
     const SKL_LUNA_SICK_EXE   =119; //怨嗟狂人 吊られると任意の一人を無能にする
+    const SKL_LUNA_CHANGE_ROLE=221; //四不象 初日に存在する役職に擬態して判定を変えられる
   //人狼陣営
   const SKL_WOLF            =  7; //人狼 毎日一人を襲撃できる
     //特殊襲撃
     const SKL_HEADLESS        = 41; //首無騎士 人狼も襲撃可能
     const SKL_WISEWOLF        = 42; //智狼 襲撃した人間の役職が分かる
+    const SKL_WISEWOLF_SENSE  =229; //悟狼 自分が襲撃した人間の役職が分かる/襲撃に失敗しても判明する
     const SKL_CHILDWOLF       = 45; //仔狼 死んだ翌日の襲撃が二回になる
     const SKL_RECKLESS        =127; //蛮狼 自分を犠牲に護衛貫通襲撃が可能
     const SKL_WOLF_SNATCH     = 70; //憑狼 襲撃者の身体を乗っ取る
@@ -225,6 +233,7 @@ class Data
     const SKL_WOLF_DELAY_2    =219; //怨狼 襲撃した二日後に対象が死ぬ
     const SKL_WOLF_TMP_WOLF   =211; //夢魔(深海) 襲撃相手を人狼にする
     const SKL_WOLF_ADD_MRT    =168; //外狼 襲撃した相手を殉教者にする
+    const SKL_WOLF_ELDER_DYING=223; //焔狼 襲撃耐性を貫通するが、生存狼+2日目に死ぬ 
     //被占で変化
     const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
     const SKL_WHITEWOLF       = 44; //白狼 占判定が白
@@ -255,6 +264,7 @@ class Data
     const SKL_FRY_READ_ALL_P  =130; //九尾 三日月 毒殺+全秘密ログ閲覧
     const SKL_FRY_POISON      =129; //野狐 毒薬行使
     const SKL_FRY_GRD         =131; //謀狐 護衛行使
+    const SKL_FRY_SEER_FUZZ   =228; //幼狐 50%の確率で失敗する占い師、妖精が誰かを知る、襲撃耐性なし呪殺されない
     //相手を変化
     const SKL_FRY_SNATCH      = 65; //宿借妖精 姿を入れ替える
     const SKL_FRY_TEMPT       =171; //惑狐 2Dに一人を妖精の子にする
@@ -262,13 +272,16 @@ class Data
     const SKL_FRY_ADD_MRT     =186; //妖花 2dに一人を殉教者陣営にする
     const SKL_VAMPIRE         = 74; //吸血鬼 瓜科 人間を血人に変化させる
     const SKL_FRY_SEAL        =132; //雪女 特殊能力封印
+    const SKL_FRY_SEAL_ONCE   =227; //妖鳥 一日だけ特殊能力封印
     const SKL_FRY_NONE        =157; //瘴狐 2Dに一人を無能状態にする
     const SKL_FRY_ADD_FRY     =166; //鏡狐 一人に襲撃無効・被呪殺能力を付与
     //囁き系
     const SKL_FRY_WIS         = 61; //蝙蝠人間 蝙蝠人間同士で囁ける
+    const SKL_FRY_WIS_LUNA    =220; //念波妖狐 裏切り陣営の窓で囁ける
     const SKL_FRY_MIMIC_W     = 48; //擬狼妖精 赤ログに紛れ込む
     const SKL_FRY_READ_W      = 75; //夜兎 赤窓閲覧
     const SKL_FRY_READ_A      =173; //妖兎 全秘密ログ閲覧
+    const SKL_FRY_MIMIC_PSY   =222; //欺狐 蝙蝠人間窓+神通力窓に参加
     //被能力行使で特殊能力
     const SKL_FRY_READ_A_DOG  =174; //月兎 妖兎+処刑突然死以外の死因を一度だけ防ぐ
     const SKL_FRY_DYING_HALF  =104; //半妖 風花妖精+襲撃を受けると仙狐になる
@@ -276,7 +289,8 @@ class Data
     const SKL_FRY_ASS_COUNTER =102; //九尾 呪殺されない、襲撃行使、被襲撃で相手を道連れ
     const SKL_FRY_CAT         =170; //祟狐 被呪殺・襲撃・処刑時に相手を道連れ
     const SKL_FRY_CURSED      =103; //呪狐 被呪殺時相手を道連れ
-    const SKL_FRY_COUNTER     =164; //木霊 被呪殺時任意の一人を道連れ
+    const SKL_FRY_CURSED_ALL  =218; //七歩蛇 被能力対象時に相手を殺害
+    //const SKL_FRY_COUNTER     =164; //木霊 被呪殺時任意の一人を道連れ COUNTER->HUNTERに変更したい
     //他
     const SKL_FRY_DYING       = 49; //風花妖精 生存狼+2日目に死ぬ 
   //一匹狼陣営
@@ -296,6 +310,7 @@ class Data
   const SKL_EFB             = 51; //邪気悪魔 二人に邪気絆を撃ち、どちらかだけが生き残れば勝ち
   const SKL_EFB_SELF        =136; //決闘者 自撃ち邪気悪魔
   const SKL_EFB_KILL_BAND   =137; //般若 恋陣営が誰かを知る。全恋絆死亡+自分生存で勝利
+  const SKL_EFB_TRIPLE      =232; //三つ巴 自分+二人に邪気絆を撃つ
   //吸血鬼陣営
   const SKL_VAMPIRE_SEA     =106; //吸血鬼 深海 2Dに二人を眷属に変える
   const SKL_SERVANT         =107; //眷属 眷属同士で会話可能

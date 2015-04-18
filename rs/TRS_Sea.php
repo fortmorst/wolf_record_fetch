@@ -39,7 +39,7 @@ trait TRS_Sea
     ,"見習い占い師"=>Data::SKL_SEER_FUZZ
     ,"傾奇者"=>Data::SKL_RANDOM_EATEN
     ,"中身占い師"=>Data::SKL_SEER_ID
-    ,"巫者"=>Data::SKL_WILD
+    ,"巫者"=>Data::SKL_REALIZE_WOLF
     ,"狼少年"=>Data::SKL_MISTAKE_SEER
     ,"猫又"=>Data::SKL_CAT
     ,"運命の子"=>Data::SKL_RANDOM_TOLD

@@ -40,7 +40,7 @@ trait TRS_Crescent
     ,"鉄人"=>Data::SKL_IRON
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"退魔師"=>Data::SKL_COUNTER
-    ,"野生児"=>Data::SKL_WILD
+    ,"野生児"=>Data::SKL_REALIZE_WOLF
     ,"陽動者"=>Data::SKL_DEMO
     ,"暗殺者"=>Data::SKL_ASS_CRESCENT
     ,"猫又"=>Data::SKL_CAT
@@ -50,6 +50,12 @@ trait TRS_Crescent
     ,"狼気纏"=>Data::SKL_SUS_LINEAGE
     ,"黒鳴者"=>Data::SKL_FM_WIS_LNG
     ,"反魂師"=>Data::SKL_BAP_CRESCENT
+    ,"妖血種"=>Data::SKL_IRON_FRY
+    ,"審神者"=>Data::SKL_SEER_CURSED
+    ,"稲荷狐"=>Data::SKL_PSY_IRON_FRY
+    ,"巫女"=>Data::SKL_PSY
+    ,"猪突猛進"=>Data::SKL_MISTAKE_SEER_NOCURSE
+    ,"陰陽生"=>Data::SKL_REALIZE_FRY
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -71,6 +77,7 @@ trait TRS_Crescent
     ,"南瓜提灯"=>Data::SKL_LUNA_WITCH
     ,"祈祷師"=>Data::SKL_LUNA_SEER_ROLETM
     ,"鼠人"=>Data::SKL_LUNA_GIRL
+    ,"四不象"=>Data::SKL_LUNA_CHANGE_ROLE
     //人狼
     ,"凶狼"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -90,6 +97,8 @@ trait TRS_Crescent
     ,"愚狼"=>Data::SKL_WOLF_MMC_FM_WIS
     ,"鈍狼"=>Data::SKL_WOLF_NOBAND
     ,"外狼"=>Data::SKL_WOLF_ADD_MRT
+    ,"焔狼"=>Data::SKL_WOLF_ELDER_DYING
+    ,"悟狼"=>Data::SKL_WISEWOLF_SENSE
     //妖魔
     ,"妖狐"=>Data::SKL_FAIRY
     ,"化狐"=>Data::SKL_FRY_SNATCH
@@ -107,6 +116,10 @@ trait TRS_Crescent
     ,"妖兎"=>Data::SKL_FRY_READ_A
     ,"月兎"=>Data::SKL_FRY_READ_A_DOG
     ,"妖花"=>Data::SKL_FRY_ADD_MRT
+    ,"七歩蛇"=>Data::SKL_FRY_CURSED_ALL
+    ,"欺狐"=>Data::SKL_FRY_MIMIC_PSY
+    ,"妖鳥"=>Data::SKL_FRY_SEAL_ONCE
+    ,"幼狐"=>Data::SKL_FRY_SEER_FUZZ
     //恋
     ,"恋愛天使"=>Data::SKL_QP
     ,"片想い"=>Data::SKL_PASSION
@@ -118,6 +131,7 @@ trait TRS_Crescent
     ,"邪気悪魔"=>Data::SKL_EFB
     ,"決闘者"=>Data::SKL_EFB_SELF
     ,"般若"=>Data::SKL_EFB_KILL_BAND
+    ,"三つ巴"=>Data::SKL_EFB_TRIPLE
     //笛吹き
     ,"笛吹き"=>Data::SKL_PIPER
     //一匹狼
