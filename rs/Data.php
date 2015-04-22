@@ -222,6 +222,7 @@ class Data
   const SKL_WOLF            =  7; //人狼 毎日一人を襲撃できる
     //特殊襲撃
     const SKL_HEADLESS        = 41; //首無騎士 人狼も襲撃可能
+    const SKL_HEADLESS_NOTALK =234; //碧狼 囁けない首無騎士
     const SKL_WISEWOLF        = 42; //智狼 襲撃した人間の役職が分かる
     const SKL_WISEWOLF_SENSE  =229; //悟狼 自分が襲撃した人間の役職が分かる/襲撃に失敗しても判明する
     const SKL_CHILDWOLF       = 45; //仔狼 死んだ翌日の襲撃が二回になる

@@ -6,6 +6,7 @@ class Moon extends SOW
   protected $SKL_SP = [
      '辻占狂人'=>[Data::SKL_LUNA_SEER_MELON,Data::TM_WOLF]
     ,'首無騎士'=>[Data::SKL_HEADLESS,Data::TM_WOLF]
+    ,'碧狼'=>[Data::SKL_HEADLESS_NOTALK,Data::TM_WOLF]
   ];
   protected $RP_SP = [
      '月狼'=>'MOON'
