@@ -162,7 +162,7 @@ class Data
     const SKL_MISTAKE_FRY     =116; //狐好き 思い込み狐
     const SKL_MISTAKE_LOVE    =117; //妄想家 思い込み求愛者
     const SKL_MISTAKE_SEER    =138; //狼少年 でたらめな占結果が出る。呪殺は可能
-    const SKL_MISTAKE_SEER_NOCURSE=230; //猪突猛進 でたらめな占結果が出る(狼数は正確)。呪殺不可能
+    const SKL_MISTAKE_SEER_NOCURSE=230; //猪突妄信 でたらめな占結果が出る(狼数は正確)。呪殺不可能
     const SKL_MISTAKE_MEDI    =179; //月酔 でたらめな霊結果が出る
     //ランダム変化
     const SKL_RANDOM_EATEN    = 97; //傾奇者 被襲撃でランダムに役職変化

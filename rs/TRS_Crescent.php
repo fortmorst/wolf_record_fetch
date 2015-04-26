@@ -54,7 +54,7 @@ trait TRS_Crescent
     ,"審神者"=>Data::SKL_SEER_CURSED
     ,"稲荷狐"=>Data::SKL_PSY_IRON_FRY
     ,"巫女"=>Data::SKL_PSY
-    ,"猪突猛進"=>Data::SKL_MISTAKE_SEER_NOCURSE
+    ,"猪突妄信"=>Data::SKL_MISTAKE_SEER_NOCURSE
     ,"陰陽生"=>Data::SKL_REALIZE_FRY
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
