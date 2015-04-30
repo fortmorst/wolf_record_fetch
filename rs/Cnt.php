@@ -17,7 +17,7 @@ class Cnt
   const Chitose= 32;
   const Chitose_RP=33;
   const Sea_Red= 45;
-  const Sea_Old= 58;
+  const Sea_Old= 34;
   const Sea_Blue=67;
   const Crescent=52;
   const Moon   = 56;
