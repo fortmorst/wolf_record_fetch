@@ -1096,6 +1096,18 @@ class simple_html_dom
     function load_file()
     {
         $args = func_get_args();
+    //追記コード部分
+    $opts = array(
+        'http'=>array(
+            'method'=>"GET",
+            'header'=>"Accept-language: ja\r\n" .
+                "User-Agent:wolf_records_librarian"
+        )
+    );
+    $context = stream_context_create($opts);
+    $args[1] = FALSE;
+    $args[2] = $context;
+    //ここまで
         $this->load(call_user_func_array('file_get_contents', $args), true);
         // Throw an error if we can't properly load the dom.
         // http://sourceforge.net/p/simplehtmldom/bugs/42/
