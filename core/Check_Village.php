@@ -281,7 +281,7 @@ class Check_Village
           var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
           if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
           {
-            echo 'fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
+            echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
           }
         }
       }

@@ -1097,6 +1097,7 @@ class simple_html_dom
     {
         $args = func_get_args();
     //追記コード部分
+    //http://qiita.com/ma_me/items/8ef8c041867961af4cc7
     $opts = array(
         'http'=>array(
             'method'=>"GET",
