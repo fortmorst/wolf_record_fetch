@@ -13,6 +13,7 @@ class Data
   const TM_EFB       =  8; //邪気陣営
   const TM_VAMPIRE   = 15; //吸血鬼陣営
   const TM_SEA       = 17; //深海団
+  const TM_DEVIL     = 12; //妖魔族
   const TM_BMOON     = 11; //蒼月教会
   //追加勝利
   const TM_EVIL      =  9; //裏切りの陣営
@@ -96,10 +97,12 @@ class Data
     const SKL_SEER_FUZZ       = 96; //見習い占い師 たまに結果が見えない占師
     const SKL_SEER_ROLETM     =184; //天啓者 一日遅れで役職と陣営を占う
     const SKL_SEER_GIFT       =217; //鑑定士 所持恩恵を判定、呪殺/覚醒しない
+    const SKL_SEER_TWICE      =249; //隠者 二人一度に占う。恋人を呪殺出来る
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
     const SKL_DISPEL          =190; //解呪師 各種呪いと誘惑状態の解除
     const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
+    const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
@@ -113,6 +116,7 @@ class Data
     //護衛系
     const SKL_GUARD           =  4; //狩人 一人を襲撃から守る
     const SKL_GRD_BLACK       = 54; //守護獣 判定で黒が出る+自分を守れる狩人
+    const SKL_GRD_READ_W      =239; //恋狼 判定出黒が出る+狼ログをひらがなで読める
     const SKL_GRD_ALCH        = 79; //狙撃手 護衛成功時狼を返り討ちに出来る可能性がある
     const SKL_GRD_G           =112; //守護霊 死んでから護衛できる
     const SKL_GRD_TWICE       =201; //二兎追 二人護衛できるが60%の確率で失敗
@@ -131,6 +135,8 @@ class Data
     const SKL_FM              =  5; //共有者 互いに共有者であることを知る
     const SKL_FM_WIS          =  8; //共鳴者 囁ける共有
     const SKL_FM_WIS_LNG      =212; //黒鳴者 黒判定が出る共鳴
+    const SKL_FM_REALIZE_WOLFRY=241;//修道者 共鳴+人狼と妖精合計の残り人数が分かる
+    const SKL_FM_BAP_5DAY     =251; //御子(深海) 共鳴ログ+5dに一人を蘇生出来る
     const SKL_STIGMA          =  9; //聖痕者 独自の聖痕を持つ
     const SKL_CONTACT         = 87; //交信者 初日に一人と交信ログで会話可能にする
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
@@ -240,13 +246,17 @@ class Data
     const SKL_WHITEWOLF       = 44; //白狼 占判定が白
     const SKL_WWOLF_BLACK_G   =126; //擬狼 大狼 死ぬと真判定になる白狼
     const SKL_SLEEPER_BLACK   =124; //忘狼 占いでも覚醒する睡狼
-    const SKL_WOLF_MOON       =192; //月狼 被占被護衛で行使者を裏切り陣営にする
+    const SKL_WOLF_MOON       =192; //月狼 被占被護衛で行使者に月狂病(恩恵/眷属ログ)を付与
+    const SKL_WOLF_CHERRY     =250; //桜狼 被占被護衛で行使者に狂鳴者(恩恵/囁きログ)を付与
+    //囁き系
+    const SKL_WOLF_READ_C     =238; //魂狼 交信ログを読める
+    const SKL_WOLF_MR_READ_G  =101; //霊狼 導師+墓下ログが読める
+    const SKL_WOLF_MMC_FM_WIS =199; //愚狼 共鳴ログに紛れ込む
+    const SKL_WOLF_READ_D     =242; //妖狼 妖魔族ログに紛れ込む
     //特殊能力系
     const SKL_WOLF_TEMPT      = 80; //瘴狼 初日に一人を隷従者(恩恵)にする
     const SKL_WOLF_MEDI_ROLE  =100; //賢狼 導師
-    const SKL_WOLF_MR_READ_G  =101; //霊狼 導師+墓下ログが読める
     const SKL_WOLF_FAN        =125; //嗅狼 半狼や狼血族が分かる
-    const SKL_WOLF_MMC_FM_WIS =199; //愚狼 共鳴ログに紛れ込む
     //特殊性質
     const SKL_WOLF_DEPEND     =160; //従狼 人カウントも狼カウントもしない
     const SKL_WOLF_PRINCE     =180; //群狼 LWにならない限り処刑されない
@@ -257,6 +267,7 @@ class Data
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
     //特殊能力
     const SKL_PIXY            = 50; //悪戯妖精 道連れ絆を撃つ
+    const SKL_FRY_PIXY_RANDOM =247; //天邪鬼 効果の分からない絆を撃つ
     const SKL_FRY_SEER_BAND   = 83; //夢魔 絆の有無を占う(呪殺不可)
     const SKL_FRY_JAMMER      = 64; //邪魔妖精 対象を占い能力から保護する
     const SKL_FRY_SEER_ROLE   =140; //サトリ 役職占いができる妖魔
@@ -266,6 +277,7 @@ class Data
     const SKL_FRY_POISON      =129; //野狐 毒薬行使
     const SKL_FRY_GRD         =131; //謀狐 護衛行使
     const SKL_FRY_SEER_FUZZ   =228; //幼狐 50%の確率で失敗する占い師、妖精が誰かを知る、襲撃耐性なし呪殺されない
+    const SKL_FRY_CHANGELING  =245; //夜夢 最多処刑者を予想出来た場合、指定の人物と被処刑者と入れ替える
     //相手を変化
     const SKL_FRY_SNATCH      = 65; //宿借妖精 姿を入れ替える
     const SKL_FRY_TEMPT       =171; //惑狐 2Dに一人を妖精の子にする
@@ -320,22 +332,24 @@ class Data
   const SKL_VMP_PURE        =206; //純血種 毎日一人を吸血鬼陣営の役職に変える
   const SKL_VMP_HALF        =207; //覚醒種 特定役職が占を受けて吸血鬼陣営になった役職
   //深海団
-  const SKL_SEE_WILD        =141; //コレクター 終了時狼+妖=1
+  const SKL_SEA_WILD        =141; //コレクター 終了時狼+妖=1
   const SKL_SEA_NONE        =142; //ビブロフィリア 毎日一人を無能状態にする+終了時全員無能
   const SKL_SEA_EXPECT_DEAD =158; //グリムリーパー 指定した二人死亡
   const SKL_SEA_EXPECT_ALIVE=143; //ギャンブラー 指定した二人が生存
   const SKL_SEA_EXPECT_WIN  =167; //ヴァルキュリア 村か狼陣営を指定、指定した陣営勝利
   const SKL_SEA_WITCH       =172; //カロン 3Dと5Dに毒殺・蘇生できる。終了時四人で勝利
-  //殉教者陣営
-  const SKL_MRT_WOLF        =175; //盲信者 人狼が勝てば勝利、人狼全員が死ぬと後追死する
-  const SKL_MRT_FRY         =176; //背徳者 妖精が勝てば勝利、妖精全員が死ぬと後追死する
-  const SKL_MRT_LOVE        =177; //月下氷人 恋人が勝てば勝利、恋人全員が死ぬと後追死する
-  const SKL_MRT_EFB         =178; //介在人 邪気が勝てば勝利、邪気全員が死ぬと後追死する
+  const SKL_SEA_SIBYL       =240; //シビュラ 2d以降ランダムに指定された事件を起こせる
+  const SKL_SEA_SIREN       =244; //セイレーン 2d以降処刑突然衰退死以外の死者を蘇らせる
   //蒼月教会
   const SKL_BMN_SAINT       =194; //聖女 毎日一人蒼月教会陣営に引き入れる
   const SKL_BMN_SEER        =195; //祭司 占い師
   const SKL_BMN_ASS         =197; //執行者 毎日一人殺害できる
   const SKL_BMN_SNATCH      =198; //影武者 役職聖女と自分を入れ替える
+  //殉教者陣営
+  const SKL_MRT_WOLF        =175; //盲信者 人狼が勝てば勝利、人狼全員が死ぬと後追死する
+  const SKL_MRT_FRY         =176; //背徳者 妖精が勝てば勝利、妖精全員が死ぬと後追死する
+  const SKL_MRT_LOVE        =177; //月下氷人 恋人が勝てば勝利、恋人全員が死ぬと後追死する
+  const SKL_MRT_EFB         =178; //介在人 邪気が勝てば勝利、邪気全員が死ぬと後追死する
   //据え膳
   const SKL_FISH            = 58; //鱗魚人 襲撃されたら勝ち
   const SKL_FISH_DOG        =181; //大魚人 襲撃されても一日だけ生き長らえる魚
@@ -345,6 +359,11 @@ class Data
   const SKL_SLAVE           = 91; //奴隷 貴族が死んでいれば勝ち
   //悪霊陣営
   const SKL_YANDERE         =135; //恋未練 指定先と自分が死ねば追加勝利、墓下投票可
+  //妖魔族
+  const SKL_DEVIL           =248; //古妖魔 妖魔族基本、独自窓を持つ
+  const SKL_DVL_MIMIC_FM    =236; //響鳴種 共鳴窓に潜り込む
+  const SKL_DVL_TEMPT       =237; //妖姫 一人を役職恩恵そのままに妖魔族にする
+  const SKL_DVL_READ_W      =246; //闇妖魔 囁きログに潜り込む
   //輪廻
   const SKL_R_VILLAGER      =144; //村人 村陣営 全体発言が使える
   const SKL_R_GUARD         =145; //狩人 村陣営 護衛できる

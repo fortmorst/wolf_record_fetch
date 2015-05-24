@@ -54,6 +54,10 @@ trait TRS_Sea
     ,"妖血族"=>Data::SKL_IRON_FRY
     ,"鑑定士"=>Data::SKL_SEER_GIFT
     ,"交易商"=>Data::SKL_EXCHANGE_GIFT
+    ,"修道者"=>Data::SKL_FM_REALIZE_WOLFRY
+    ,"黒薔薇"=>Data::SKL_TEMPT
+    ,"隠者"=>Data::SKL_SEER_TWICE
+    ,"御子"=>Data::SKL_FM_BAP_5DAY
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -91,6 +95,9 @@ trait TRS_Sea
     ,"月狼"=>Data::SKL_WOLF_MOON
     ,"夢魔"=>Data::SKL_WOLF_TMP_WOLF
     ,"怨狼"=>Data::SKL_WOLF_DELAY_2
+    ,"魂狼"=>Data::SKL_WOLF_READ_C
+    ,"妖狼"=>Data::SKL_WOLF_READ_D
+    ,"桜狼"=>Data::SKL_WOLF_CHERRY
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -109,6 +116,8 @@ trait TRS_Sea
     ,"コウモリ人間"=>Data::SKL_FRY_WIS
     ,'鏡狐'=>Data::SKL_FRY_ADD_FRY
     ,'月夜霊'=>Data::SKL_FRY_MOON
+    ,'夜夢'=>Data::SKL_FRY_CHANGELING
+    ,'天邪鬼'=>Data::SKL_FRY_PIXY_RANDOM
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -119,6 +128,7 @@ trait TRS_Sea
     ,"恋愛天使"=>Data::SKL_QP
     ,"片想い"=>Data::SKL_PASSION
     ,"遊び人"=>Data::SKL_BITCH
+    ,"純恋者"=>Data::SKL_QP_SELF
     //吸血鬼
     ,"吸血鬼"=>Data::SKL_VAMPIRE_SEA
     ,"眷属"=>Data::SKL_SERVANT
@@ -127,12 +137,19 @@ trait TRS_Sea
     ,"純血種"=>Data::SKL_VMP_PURE
     ,"覚醒種"=>Data::SKL_VMP_HALF
     //深海団
-    ,"コレクター"=>Data::SKL_SEE_WILD
+    ,"コレクター"=>Data::SKL_SEA_WILD
     ,"ビブロフィリア"=>Data::SKL_SEA_NONE
     ,"ギャンブラー"=>Data::SKL_SEA_EXPECT_ALIVE
     ,"グリムリーパー"=>Data::SKL_SEA_EXPECT_DEAD
     ,"ヴァルキュリア"=>Data::SKL_SEA_EXPECT_WIN
     ,"カロン"=>Data::SKL_SEA_WITCH
+    ,"シビュラ"=>Data::SKL_SEA_SIBYL
+    ,"セイレーン"=>Data::SKL_SEA_SIREN
+    //妖魔族
+    ,"古妖魔"=>Data::SKL_DEVIL
+    ,"響鳴種"=>Data::SKL_DVL_MIMIC_FM
+    ,"妖姫"=>Data::SKL_DVL_TEMPT
+    ,"闇妖魔"=>Data::SKL_DVL_READ_W
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳
@@ -153,6 +170,7 @@ trait TRS_Sea
     ,"贖罪"=>[Data::TM_TERU,false]
     ,"吸血"=>[Data::TM_VAMPIRE,true]
     ,"深海"=>[Data::TM_SEA,true]
+    ,"妖魔"=>[Data::TM_DEVIL,true]
     ];
   public $WTM_SEA = [
      "の人物が消え失せた時、其処"=>Data::TM_NONE
