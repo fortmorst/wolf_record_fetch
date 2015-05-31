@@ -56,6 +56,8 @@ trait TRS_Crescent
     ,"巫女"=>Data::SKL_PSY
     ,"猪突妄信"=>Data::SKL_MISTAKE_SEER_NOCURSE
     ,"陰陽生"=>Data::SKL_REALIZE_FRY
+    ,"パン屋"=>Data::SKL_BAKERY
+    ,"隠呪者"=>Data::SKL_CURSED_LINEAGE
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH

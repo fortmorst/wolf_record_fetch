@@ -151,6 +151,7 @@ class Data
     //被占で何かが起こる
     const SKL_LINEAGE         = 24; //狼血族 占われると黒判定が出る/占われるまで自覚がない
     const SKL_CURSED          = 26; //呪人 占われると逆呪殺する
+    const SKL_CURSED_LINEAGE  =252; //隠呪者 自覚なし呪人
     const SKL_IRON_FRY        =215; //妖血族 襲撃耐性、呪殺される/自覚なし
     const SKL_SUSPECT         = 92; //容疑者 占判定は黒、霊判定は白、自覚あり
     const SKL_SUS_LINEAGE     =152; //狼気纏 霊判定では白が出る狼血族
@@ -179,6 +180,7 @@ class Data
     const SKL_NOTARY          = 68; //公証人 死ぬと遅延メモが公開される
     const SKL_GIRL            = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
     const SKL_CHANGE_SAINT    =231; //御子 聖女が死んだ翌日に聖女になる
+    const SKL_BAKERY          =235; //パン屋 生存中はパンを焼くメッセージが出る
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
