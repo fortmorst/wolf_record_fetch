@@ -278,6 +278,8 @@ trait TRS_Crescent
     ,"生贄"=>Data::SKL_SG
     ,"長老"=>Data::SKL_IRON_ONCE_SICK
     ,"悪魔祓い"=>Data::SKL_COUNTER
+    ,"パン屋"=>Data::SKL_BAKERY
+    ,"狂八卦"=>Data::SKL_LUNA_SEER
     ,"狂人"=>Data::SKL_LUNATIC
     ,"狂信者"=>Data::SKL_FANATIC
     ,"囁き狂人"=>Data::SKL_WHISPER
@@ -298,7 +300,12 @@ trait TRS_Crescent
     ,"擬狼妖狐"=>Data::SKL_FRY_MIMIC_W
     ,"風花妖狐"=>Data::SKL_FRY_DYING
     ,"悪戯妖狐"=>Data::SKL_PIXY
+    ,"恋愛天使"=>Data::SKL_QP
+    ,"片想い"=>Data::SKL_PASSION
+    ,"遊び人"=>Data::SKL_BITCH
+    ,"求愛者"=>Data::SKL_QP_SELF
     ,"一匹狼"=>Data::SKL_LONEWOLF
+    ,"鱗魚人"=>Data::SKL_FISH
     ];
   public $WTM_CLOSED = [
      "斐ないねえ。"=>Data::TM_NONE
@@ -306,7 +313,7 @@ trait TRS_Crescent
     ,"、お疲れ様。"=>Data::TM_WOLF
     ,"え。ふふふ。"=>Data::TM_FAIRY
     ,"に・・・ね。"=>Data::TM_FAIRY
-    ,"も尊いのだ。"=>Data::TM_LOVERS //未指定
+    ,"を・・・ね。"=>Data::TM_LOVERS
     ,"除いて、ね。"=>Data::TM_LWOLF
     ,"が響き渡る…"=>Data::TM_PIPER //未指定
     ,"っていく……"=>Data::TM_EFB //未指定
