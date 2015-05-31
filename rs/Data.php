@@ -303,7 +303,7 @@ class Data
     const SKL_FRY_CAT         =170; //祟狐 被呪殺・襲撃・処刑時に相手を道連れ
     const SKL_FRY_CURSED      =103; //呪狐 被呪殺時相手を道連れ
     const SKL_FRY_CURSED_ALL  =218; //七歩蛇 被能力対象時に相手を殺害
-    //const SKL_FRY_COUNTER     =164; //木霊 被呪殺時任意の一人を道連れ COUNTER->HUNTERに変更したい
+    const SKL_FRY_MISTAKE     =164; //憑狐 村人思い込み妖魔
     //他
     const SKL_FRY_DYING       = 49; //風花妖精 生存狼+2日目に死ぬ 
   //一匹狼陣営

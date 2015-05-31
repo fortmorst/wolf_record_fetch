@@ -111,13 +111,13 @@ trait TRS_Sea
     ,"瘴狐"=>Data::SKL_FRY_SEAL
     ,"惑狐"=>Data::SKL_FRY_TEMPT
     ,"夜叉"=>Data::SKL_YASHA
-    //,'木霊'=>Data::SKL_FRY_COUNTER
     ,'犬神'=>Data::SKL_FRY_CAT
     ,"コウモリ人間"=>Data::SKL_FRY_WIS
     ,'鏡狐'=>Data::SKL_FRY_ADD_FRY
     ,'月夜霊'=>Data::SKL_FRY_MOON
     ,'夜夢'=>Data::SKL_FRY_CHANGELING
     ,'天邪鬼'=>Data::SKL_FRY_PIXY_RANDOM
+    ,'憑狐'=>Data::SKL_FRY_MISTAKE
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
