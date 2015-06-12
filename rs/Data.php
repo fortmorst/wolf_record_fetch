@@ -261,7 +261,7 @@ class Data
     const SKL_WOLF_FAN        =125; //嗅狼 半狼や狼血族が分かる
     //特殊性質
     const SKL_WOLF_DEPEND     =160; //従狼 人カウントも狼カウントもしない
-    const SKL_WOLF_PRINCE     =180; //群狼 LWにならない限り処刑されない
+    const SKL_WOLF_PRINCE_MANY=180; //群狼 LWにならない限り処刑されない
     const SKL_WOLF_NOBAND     =203; //鈍狼 あらゆる絆がつかない
     const SKL_WOLF_DYING      = 46; //衰狼 生存狼+2日目に死ぬ
     const SKL_WOLF_NOTALK     = 47; //黙狼 囁けない
