@@ -102,7 +102,6 @@ class Data
     const SKL_DISPEL          =190; //解呪師 各種呪いと誘惑状態の解除
     const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
-    const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
@@ -181,6 +180,7 @@ class Data
     const SKL_GIRL            = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
     const SKL_CHANGE_SAINT    =231; //御子 聖女が死んだ翌日に聖女になる
     const SKL_BAKERY          =235; //パン屋 生存中はパンを焼くメッセージが出る
+    const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系

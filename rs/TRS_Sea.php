@@ -91,7 +91,7 @@ trait TRS_Sea
     ,"賢狼"=>Data::SKL_WOLF_MEDI_ROLE
     ,"霊狼"=>Data::SKL_WOLF_MR_READ_G
     ,"大狼"=>Data::SKL_WWOLF_BLACK_G
-    ,"群狼"=>Data::SKL_WOLF_PRINCE
+    ,"群狼"=>Data::SKL_WOLF_PRINCE_MANY
     ,"月狼"=>Data::SKL_WOLF_MOON
     ,"夢魔"=>Data::SKL_WOLF_TMP_WOLF
     ,"怨狼"=>Data::SKL_WOLF_DELAY_2
@@ -177,6 +177,7 @@ trait TRS_Sea
     ,"の人物が消え失せた時、そこ"=>Data::TM_NONE
     ,"の人狼を退治した……。人狼"=>Data::TM_VILLAGER
     ,"らかな光が降り注ぐ。全ての"=>Data::TM_VILLAGER
+    ,"の勝利やわらかな光が降り注"=>Data::TM_VILLAGER //赤鯖
     ,"全ての希望を染めつくした。"=>Data::TM_WOLF
     ,"達は自らの過ちに気付いた。"=>Data::TM_WOLF
     ,"の人狼を退治した……。だが"=>Data::TM_FAIRY
