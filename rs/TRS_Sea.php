@@ -56,8 +56,15 @@ trait TRS_Sea
     ,"交易商"=>Data::SKL_EXCHANGE_GIFT
     ,"修道者"=>Data::SKL_FM_REALIZE_WOLFRY
     ,"黒薔薇"=>Data::SKL_TEMPT
+    ,"恋狼"=>Data::SKL_GRD_READ_W
     ,"隠者"=>Data::SKL_SEER_TWICE
     ,"御子"=>Data::SKL_FM_BAP_5DAY
+    ,"見習い騎士"=>Data::SKL_GRD_NOT_STRAIGHT
+    ,"パン屋"=>Data::SKL_BAKERY
+    ,"占い師の弟子"=>Data::SKL_CHANGE_SEER
+    ,"独裁者"=>Data::SKL_DICTATOR
+    ,"狐化呪者"=>Data::SKL_CHANGE_FRY
+    ,"狼化呪者"=>Data::SKL_CHANGE_WOLF
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -79,6 +86,8 @@ trait TRS_Sea
     ,"呪術師"=>Data::SKL_LUNA_ADD_FRY
     ,"月従者"=>Data::SKL_FANATIC_MOON
     ,"邪教徒"=>Data::SKL_LUNA_WIS_TEMPT
+    ,"狂化狂人"=>Data::SKL_LUNA_ASS_ONCE
+    ,"サイコパス"=>Data::SKL_PSYCHOPATH
     //狼
     ,"首無騎士"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -98,6 +107,7 @@ trait TRS_Sea
     ,"魂狼"=>Data::SKL_WOLF_READ_C
     ,"妖狼"=>Data::SKL_WOLF_READ_D
     ,"桜狼"=>Data::SKL_WOLF_CHERRY
+    ,"祟狼"=>Data::SKL_WOLF_PRINCE
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -118,6 +128,8 @@ trait TRS_Sea
     ,'夜夢'=>Data::SKL_FRY_CHANGELING
     ,'天邪鬼'=>Data::SKL_FRY_PIXY_RANDOM
     ,'憑狐'=>Data::SKL_FRY_MISTAKE
+    ,'天狐'=>Data::SKL_FRY_VOTE_TWICE
+    ,'夕霧'=>Data::SKL_FRY_FOG
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -145,15 +157,20 @@ trait TRS_Sea
     ,"カロン"=>Data::SKL_SEA_WITCH
     ,"シビュラ"=>Data::SKL_SEA_SIBYL
     ,"セイレーン"=>Data::SKL_SEA_SIREN
+    ,"工作員"=>Data::SKL_SEA
     //妖魔族
     ,"古妖魔"=>Data::SKL_DEVIL
     ,"響鳴種"=>Data::SKL_DVL_MIMIC_FM
     ,"妖姫"=>Data::SKL_DVL_TEMPT
     ,"闇妖魔"=>Data::SKL_DVL_READ_W
+    ,"悟心種"=>Data::SKL_DVL_FANATIC
+    ,"妖魔導師"=>Data::SKL_DVL_GRD_CURSE
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳
     ,"鱗魚人"=>Data::SKL_FISH
+    //陣営無し
+    ,"迷える子羊"=>Data::SKL_SHEEP
     ];
   protected $TM_SEA = [
      "村人"=>[Data::TM_VILLAGER,false]
