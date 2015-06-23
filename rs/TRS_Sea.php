@@ -171,6 +171,7 @@ trait TRS_Sea
     ,"鱗魚人"=>Data::SKL_FISH
     //陣営無し
     ,"迷える子羊"=>Data::SKL_SHEEP
+    ,"ジョーカー"=>Data::SKL_JOKER
     ];
   protected $TM_SEA = [
      "村人"=>[Data::TM_VILLAGER,false]

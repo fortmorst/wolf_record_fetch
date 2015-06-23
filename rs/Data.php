@@ -396,6 +396,7 @@ class Data
   const SKL_PUPIL           =128; //弟子 黒幕見物人によって2D前に死んでいる場合、能力発動しない
   const SKL_THIEF           =161; //盗賊 黒幕見物人によって2D前に死んでいる場合、能力発動しない
   const SKL_SHEEP           =255; //迷える子羊 4dに衰退死、それまでに占能力を受けると一定の役職に変化
+  const SKL_JOKER           =268; //ジョーカー ランダムに提示された役職に変われる
   //見物人
   const SKL_ONLOOKER        = 10; //見物人
   const SKL_OWNER           = 77; //支配人 進行中に全てのログが読める
