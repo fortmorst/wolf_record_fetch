@@ -195,16 +195,23 @@ trait TRS_Sea
     ,"の人物が消え失せた時、そこ"=>Data::TM_NONE
     ,"の人狼を退治した……。人狼"=>Data::TM_VILLAGER
     ,"らかな光が降り注ぐ。全ての"=>Data::TM_VILLAGER
-    ,"の勝利やわらかな光が降り注"=>Data::TM_VILLAGER //赤鯖
+    ,"の勝利やわらかな光が降り注"=>Data::TM_VILLAGER
     ,"全ての希望を染めつくした。"=>Data::TM_WOLF
+    ,"の勝利闇が全て全ての希望を"=>Data::TM_WOLF
     ,"達は自らの過ちに気付いた。"=>Data::TM_WOLF
     ,"の人狼を退治した……。だが"=>Data::TM_FAIRY
+    ,"の勝利全ての人狼を退治した"=>Data::TM_FAIRY
     ,"時、人狼は勝利を確信し、そ"=>Data::TM_FAIRY
+    ,"の勝利その時、人狼は勝利を"=>Data::TM_FAIRY
     ,"も、人狼も、妖孤でさえも、"=>Data::TM_LOVERS//誤字
+    ,"達の勝利村人も、人狼も、妖"=>Data::TM_LOVERS
     ,"も、人狼も、妖精でさえも、"=>Data::TM_LOVERS
     ,"達は、そして人狼達も自らの"=>Data::TM_LWOLF
+    ,"狼の勝利村人達は、そして人"=>Data::TM_LWOLF
     ,"達は気付いてしまった。もう"=>Data::TM_PIPER
+    ,"き勝利村人達は気付いてしま"=>Data::TM_PIPER
     ,"はたった独りだけを選んだ。"=>Data::TM_EFB
+    ,"の勝利運命はたった独りだけ"=>Data::TM_EFB
     ];
   protected   $WTM_RP = [
      "の人物が消え失せた時、其処"=>Data::TM_NONE
