@@ -15,6 +15,7 @@ class Village
           ,$rp
           ,$policy
           ,$add_winner
+          ,$is_card
           ;
 
   use Properties;
