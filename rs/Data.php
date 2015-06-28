@@ -116,6 +116,7 @@ class Data
     const SKL_GRD_G           =112; //守護霊 死んでから護衛できる
     const SKL_GRD_TWICE       =201; //二兎追 二人護衛できるが60%の確率で失敗
     const SKL_GRD_NOT_STRAIGHT=256; //見習い騎士 前日と同じ護衛先を護衛できない
+    const SKL_GRD_NOT_TWICE   =270; //風来狩人 GJが出た護衛先を二度と護衛できない
     //その他能動能力
     const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
     const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
@@ -140,6 +141,7 @@ class Data
     const SKL_FM_REALIZE_WOLFRY=241;//修道者 共鳴+人狼と妖精合計の残り人数が分かる
     const SKL_FM_BAP_5DAY     =251; //御子(深海) 共鳴ログ+5dに一人を蘇生出来る
     const SKL_STIGMA          =  9; //聖痕者 独自の聖痕を持つ
+    const SKL_BRAND           =269; //烙印者 独自の聖痕を持たない固有役職
     const SKL_CONTACT         = 87; //交信者 初日に一人と交信ログで会話可能にする
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
     const SKL_PSY             =226; //巫女 神通会話に参加
@@ -215,6 +217,7 @@ class Data
     //能動能力
     const SKL_LUNA_ADD_FRY    =163; //呪術師 一人に襲撃無効・被呪殺能力を付与
     const SKL_JAMMER          = 34; //邪魔之民 対象を占い能力から保護する
+    const SKL_JAMMER_TO_SKL   =271; //邪魔狂人 対象の占い能力を一日無効化する
     const SKL_DAZZLE          =121; //幻惑者 絆の内容を逆にする
     const SKL_PERVERT         =122; //倒錯者 生存中に占霊判定を逆にする
     const SKL_SEAL            = 71; //封印狂人 任意の相手の能力を一日だけ封じる
@@ -321,6 +324,7 @@ class Data
     //他
     const SKL_FRY_DYING       = 49; //風花妖精 生存狼+2日目に死ぬ 
     const SKL_FRY_VOTE_TWICE  =260; //天狐 追加票を入れられる
+    const SKL_FRY_FANATIC     =272; //背徳者(らある) 妖魔版狂信者 人間
   //一匹狼陣営
   const SKL_LONEWOLF        = 56; //一匹狼 人狼とは別に襲撃する
   const SKL_LONE_TWICE      =169; //人虎 襲撃を受けると、二回襲撃可能になる
