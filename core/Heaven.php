@@ -10,7 +10,6 @@ class Heaven extends Country
     $this->fetch_from_info();
     $this->fetch_from_pro();
     $this->fetch_from_epi();
-    //var_dump($this->village->get_vars());
   }
   protected function fetch_from_info()
   {
@@ -133,7 +132,13 @@ class Heaven extends Country
     foreach($this->cast as $key=>$person)
     {
       $this->user = new User();
-      $this->fetch_users($person,$key);
+
+      $this->fetch_users($person);
+      if($this->is_alive($key))
+      {
+        $this->insert_alive();
+      }
+
       $this->users[] = $this->user;
       //生存者を除く名前リストを作る
       $list[] = $this->user->persona;
@@ -147,14 +152,14 @@ class Heaven extends Country
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user');
       }
     }
   }
-  protected function fetch_users($person,$key)
+  protected function fetch_users($person)
   {
     $person = explode("\r\n",trim($person->plaintext));
 
@@ -164,23 +169,19 @@ class Heaven extends Country
 
     $this->fetch_sklid();
     $this->fetch_rltid();
-    if($this->is_alive($key))
-    {
-      $this->insert_alive();
-    }
   }
   protected function fetch_sklid()
   {
     $is_love = mb_strpos($this->user->role,'(');
     if($is_love === false)
     {
-      $this->user->sklid = $this->skill[$this->user->role][0];
-      $this->user->tmid = $this->skill[$this->user->role][1];
+      $this->user->sklid = $this->SKILL[$this->user->role][0];
+      $this->user->tmid = $this->SKILL[$this->user->role][1];
     }
     else
     {
       $role = mb_substr($this->user->role,0,$is_love-1);
-      $this->user->sklid = $this->skill[$role][0];
+      $this->user->sklid = $this->SKILL[$role][0];
       $this->user->tmid = Data::TM_LOVERS;
     }
   }

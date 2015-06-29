@@ -2,7 +2,7 @@
 
 class Raaru extends Heaven
 {
-  protected $SKILL = [
+  protected $SKL_SP = [
       "妖狐"  =>[Data::SKL_FAIRY,Data::TM_FAIRY]
      ,"背徳者"=>[Data::SKL_FRY_FANATIC,Data::TM_FAIRY]
      ,"契約者"=>[Data::SKL_QP,Data::TM_LOVERS]
