@@ -16,6 +16,7 @@ class Raaru extends Heaven
     $url_log = "http://ranukiwolf.sakura.ne.jp/sam_ten/index.cgi";
     parent::__construct($cid,$url_vil,$url_log);
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
+    $this->DESTINY['を追いました。'] = ['^(.+) は契約により、.+ の後を追いました。',Data::DES_SUICIDE];
   }
 
 }

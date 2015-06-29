@@ -168,7 +168,14 @@ class Heaven extends Country
     $this->user->role = $person[3];
 
     $this->fetch_sklid();
-    $this->fetch_rltid();
+    if($this->user->role === '観戦者')
+    {
+      $this->insert_onlooker();
+    }
+    else
+    {
+      $this->fetch_rltid();
+    }
   }
   protected function fetch_sklid()
   {
@@ -184,6 +191,13 @@ class Heaven extends Country
       $this->user->sklid = $this->SKILL[$role][0];
       $this->user->tmid = Data::TM_LOVERS;
     }
+  }
+  protected function insert_onlooker()
+  {
+    $this->user->dtid  = Data::DES_ONLOOKER;
+    $this->user->end   = 1;
+    $this->user->life  = 0.000;
+    $this->user->rltid = Data::RSL_ONLOOKER;
   }
   protected function fetch_rltid()
   {
@@ -248,14 +262,15 @@ class Heaven extends Country
     {
       $destiny = trim($item->plaintext);
       $key = mb_substr($destiny,-7,7);
-      if(!isset($this->destiny[$key]))
+      var_dump($destiny,$key);
+      if(!isset($this->DESTINY[$key]))
       {
         continue;
       }
       else
       {
-        $persona = trim(mb_ereg_replace($this->destiny[$key][0],'\1',$destiny));
-        $dtid = $this->destiny[$key][1];
+        $persona = trim(mb_ereg_replace($this->DESTINY[$key][0],'\1',$destiny));
+        $dtid = $this->DESTINY[$key][1];
       }
 
       $key_u = array_search($persona,$list);
