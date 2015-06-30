@@ -282,7 +282,8 @@ class Heaven extends Country
       }
       else
       {
-        $persona = trim(mb_ereg_replace($this->DESTINY[$key][0],'\1',$destiny));
+        $persona = mb_ereg_replace($this->DESTINY[$key][0],'\1',$destiny);
+        var_dump($destiny,$persona);
         $dtid = $this->DESTINY[$key][1];
       }
 
