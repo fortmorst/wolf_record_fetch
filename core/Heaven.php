@@ -33,7 +33,7 @@ class Heaven extends Country
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) -1;
     if($this->village->days < 2)
     {
-      echo 'NOTICE: '.$this->village->vno.' has just '.$this->village->days.' days.'.PHP_EOL;
+      echo '>NOTICE: '.$this->village->vno.' has just '.$this->village->days.' days.'.PHP_EOL;
     }
   }
   protected function fetch_type()
@@ -42,7 +42,7 @@ class Heaven extends Country
     if($type === 'カード人狼形式 ')
     {
       $this->village->is_card = true;
-      echo $this->village->vno.' is card'.PHP_EOL;
+      //echo $this->village->vno.' is card'.PHP_EOL;
       $this->village->days = $this->village->days +1;
     }
     else
@@ -79,11 +79,17 @@ class Heaven extends Country
   }
   protected function fetch_from_epi()
   {
-    if(!$this->village->is_card)
+    if($this->village->is_card)
+    {
+      $day = $this->village->days;
+      $log = 'log=all';
+    }
+    else
     {
       $day = $this->village->days+1;
+      $log = 'start=1';
     }
-    $url = $this->url.$this->village->vno.'&start=1&date='.$day;
+    $url = $this->url.$this->village->vno.'&'.$log.'&date='.$day;
     $this->fetch->load_file($url);
 
     $this->fetch_wtmid();
@@ -91,8 +97,15 @@ class Heaven extends Country
   }
   protected function fetch_wtmid()
   {
-    $wtmid = mb_substr($this->fetch->find('div.win',0)->plaintext,0,2);
-    $this->village->wtmid = $this->TEAM[$wtmid];
+    if($this->village->policy)
+    {
+      $wtmid = mb_substr($this->fetch->find('div.win',0)->plaintext,0,2);
+      $this->village->wtmid = $this->TEAM[$wtmid];
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
+    }
   }
   protected function make_cast()
   {
@@ -236,33 +249,33 @@ class Heaven extends Country
   {
     if($this->village->is_card)
     {
-      //$days = $this->village->days-1;
+      $days = $this->village->days;
       $start = 2;
+      $log = 'log=all';
     }
     else
     {
       $days = $this->village->days +1;
       $start = 3;
+      $log = 'start=1';
     }
 
     for($i=$start; $i<=$days; $i++)
     {
-      $url = $this->url.$this->village->vno.'&start=1&date='.$i;
+      $url = $this->url.$this->village->vno.'&'.$log.'&date='.$i;
       $this->fetch->load_file($url);
-      $this->check_destiny($i,'vote',$list); //突然死もvote
-      $this->check_destiny($i,'whisper',$list);
+      $this->check_destiny($i,$list); //突然死もvote
       $this->fetch->clear();
     }
   }
-  protected function check_destiny($i,$find,$list)
+  protected function check_destiny($i,$list)
   {
-    $announce = $this->fetch->find('div.'.$find);
+    $announce = $this->fetch->find('div.announce');
 
     foreach($announce as $item)
     {
       $destiny = trim($item->plaintext);
       $key = mb_substr($destiny,-7,7);
-      var_dump($destiny,$key);
       if(!isset($this->DESTINY[$key]))
       {
         continue;

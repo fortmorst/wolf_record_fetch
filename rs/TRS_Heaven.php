@@ -33,7 +33,7 @@ trait TRS_Heaven
     ]; 
   protected $DESTINY = [
      '刑されました。'=>['投票の結果、(.+) が処刑されました。',Data::DES_HANGED]
-    ,'然死しました。'=>['^(.+) は突然死しました。',Data::DES_RETIRED]
+    ,'然死しました。'=>['^(.+) が突然死しました。',Data::DES_RETIRED]
     ,'見されました。'=>['^(.+) が無残な姿で発見されました。',Data::DES_EATEN]
     ,'を追いました。'=>['^(.+) は悲しみに暮れて .+ の後を追いました。',Data::DES_SUICIDE]
   ];
