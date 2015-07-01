@@ -125,6 +125,7 @@ class Check_Village
 
   private function check_end($vno)
   {
+
     $this->html->load_file($this->url_vil.$vno);
     switch($this->cid)
     {
@@ -155,7 +156,9 @@ class Check_Village
   }
   private function check_not_ruined($vno)
   {
-    if($this->cid === Cnt::Ning || $this->cid === Cnt::Phantom || $this->cid === Cnt::Reason)
+    $not_ruin = [Cnt::Ning,Cnt::Phantom,Cnt::Reason];
+
+    if(array_search($vno,$not_ruin) !== false)
     {
       return true;
     }
@@ -167,7 +170,25 @@ class Check_Village
       {
         return false;
       }
+      else
+      {
+        return true;
+      }
       $this->html->clear();
+    }
+    else if($this->cid === Cnt::Raaru)
+    {
+      $this->html->load_file($this->url_vil.$vno.'&date=0');
+      $lock = $this->html->find('table',1)->find('tr td',16)->plaintext;
+      $time = $this->html->find('table',1)->find('tr td',20)->plaintext;
+      if(mb_strpos($lock,'なし') !== false && mb_strpos($time,'時間') !== false)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
     }
 
     $this->html->load_file($this->url_vil.$vno);
@@ -236,6 +257,29 @@ class Check_Village
     }
   }
 
+  private function check_end_from_vlist()
+  {
+    $this->html->load_file($this->url_log);
+    //終了した村リストの村番号を取得
+    $vno_end = $this->html->find('table.vil_index',-1)->find('tr td a.vid');
+    foreach($vno_end as $item)
+    {
+      $line = mb_substr($item->plaintext,0,-1);
+      $vno_list[] = (int)$line;
+    }
+    return $vno_list;
+  }
+  private function check_end_raaru($vno,$vno_list)
+  {
+    if(array_search($vno,$vno_list) !== false)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
   private function check_new_fetch()
   {
     $list_vno = $this->check_endlist();
@@ -260,11 +304,24 @@ class Check_Village
     if($list_vno > $db_vno['max'])
     {
       $fetch_n  = $list_vno - $db_vno['max'];
+
+      //らある国の場合
+      if($this->cid === Cnt::Raaru)
+      {
+        $raaru_endlist = $this->check_end_from_vlist();
+      }
       for ($i=1;$i<=$fetch_n;$i++)
       {
         $vno = 0;
         $vno = $db_vno['max'] + $i;
-        $is_end = $this->check_end($vno);
+        if($this->cid === Cnt::Raaru)
+        {
+          $is_end = $this->check_end_raaru($vno,$raaru_endlist);
+        }
+        else
+        {
+          $is_end = $this->check_end($vno);
+        }
         echo '$vno: '.$vno.PHP_EOL;
 
         if($is_end && $this->check_not_ruined($vno))
@@ -339,6 +396,10 @@ class Check_Village
       case Cnt::Reason:
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
+        break;
+      case Cnt::Raaru:
+        $list_vno = $this->html->find('table.vil_index',-1)->find('tr td a',0)->plaintext;
+        $list_vno = (int)mb_ereg_replace('(\d+)村','\\1',$list_vno);
         break;
     }
     $this->html->clear();

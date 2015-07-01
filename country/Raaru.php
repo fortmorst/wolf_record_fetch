@@ -17,5 +17,18 @@ class Raaru extends Heaven
     parent::__construct($cid,$url_vil,$url_log);
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
   }
+  protected function fetch_policy()
+  {
+    $policy = $this->fetch->find('table table table tr td',13)->plaintext;
+    if(mb_ereg_match('.*(ガチ推理|ゆるガチ)',$policy) === true || array_search($this->village->vno,$this->RP) !== false)
+    {
+      $this->village->policy = true;
+    }
+    else
+    {
+      $this->village->policy = false;
+      $this->output_comment('rp');
+    }
+  }
 
 }

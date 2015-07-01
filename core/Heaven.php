@@ -4,6 +4,7 @@ class Heaven extends Country
 {
   use TRS_Heaven;
   private $key_alive;
+  private $RP = [149,942, 616,614,590,582,542,546,538,511,509,485,479,472,462,414,444,411,383,376,374,358,355,350,318,312,305,291,279,254,240,237,217,225,206,203,204,195,200,193,191,162,172,153,155,152,150,151,144,148,137,133,119,117,126,129,116,109,104,98,99,94,82,78,63,61,57,53,45,36,34,30,16,27];
 
   function fetch_village()
   {
@@ -18,7 +19,10 @@ class Heaven extends Country
     $this->fetch_name();
     $this->fetch_days();
     $this->fetch_type();
-    $this->fetch_policy();
+    if(!isset($this->policy))
+    {
+      $this->fetch_policy();
+    }
 
     $this->fetch->clear();
   }
@@ -48,19 +52,6 @@ class Heaven extends Country
     else
     {
       $this->village->is_card = false;
-    }
-  }
-  protected function fetch_policy()
-  {
-    $policy = $this->fetch->find('table table table tr td',13)->plaintext;
-    if(mb_strpos($policy,"ガチ推理") !== false)
-    {
-      $this->village->policy = true;
-    }
-    else
-    {
-      $this->village->policy = false;
-      $this->output_comment('rp');
     }
   }
   protected function fetch_from_pro()
@@ -165,7 +156,7 @@ class Heaven extends Country
 
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user');
@@ -264,7 +255,7 @@ class Heaven extends Country
     {
       $url = $this->url.$this->village->vno.'&'.$log.'&date='.$i;
       $this->fetch->load_file($url);
-      $this->check_destiny($i,$list); //突然死もvote
+      $this->check_destiny($i,$list);
       $this->fetch->clear();
     }
   }
@@ -283,7 +274,6 @@ class Heaven extends Country
       else
       {
         $persona = mb_ereg_replace($this->DESTINY[$key][0],'\1',$destiny);
-        var_dump($destiny,$persona);
         $dtid = $this->DESTINY[$key][1];
       }
 
