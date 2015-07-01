@@ -20,7 +20,7 @@ class Raaru extends Heaven
   protected function fetch_policy()
   {
     $policy = $this->fetch->find('table table table tr td',13)->plaintext;
-    if(mb_ereg_match('.*(ガチ推理|ゆるガチ)',$policy) === true || array_search($this->village->vno,$this->RP) !== false)
+    if(mb_ereg_match('.*(ガチ推理|ゆるガチ)',$policy) === true)
     {
       $this->village->policy = true;
     }
