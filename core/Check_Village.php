@@ -176,20 +176,20 @@ class Check_Village
       }
       $this->html->clear();
     }
-    else if($this->cid === Cnt::Raaru)
-    {
-      $this->html->load_file($this->url_vil.$vno.'&date=0');
-      $lock = $this->html->find('table',1)->find('tr td',16)->plaintext;
-      $time = $this->html->find('table',1)->find('tr td',20)->plaintext;
-      if(mb_strpos($lock,'なし') !== false && mb_strpos($time,'時間') !== false)
-      {
-        return true;
-      }
-      else
-      {
-        return false;
-      }
-    }
+    //else if($this->cid === Cnt::Raaru)
+    //{
+      //$this->html->load_file($this->url_vil.$vno.'&date=0');
+      //$lock = $this->html->find('table',1)->find('tr td',16)->plaintext;
+      //$time = $this->html->find('table',1)->find('tr td',20)->plaintext;
+      //if(mb_strpos($lock,'なし') !== false && mb_strpos($time,'時間') !== false)
+      //{
+        //return true;
+      //}
+      //else
+      //{
+        //return false;
+      //}
+    //}
 
     $this->html->load_file($this->url_vil.$vno);
     switch($this->cid)
@@ -306,22 +306,22 @@ class Check_Village
       $fetch_n  = $list_vno - $db_vno['max'];
 
       //らある国の場合
-      if($this->cid === Cnt::Raaru)
-      {
-        $raaru_endlist = $this->check_end_from_vlist();
-      }
+      //if($this->cid === Cnt::Raaru)
+      //{
+        //$raaru_endlist = $this->check_end_from_vlist();
+      //}
       for ($i=1;$i<=$fetch_n;$i++)
       {
         $vno = 0;
         $vno = $db_vno['max'] + $i;
-        if($this->cid === Cnt::Raaru)
-        {
-          $is_end = $this->check_end_raaru($vno,$raaru_endlist);
-        }
-        else
-        {
+        //if($this->cid === Cnt::Raaru)
+        //{
+          //$is_end = $this->check_end_raaru($vno,$raaru_endlist);
+        //}
+        //else
+        //{
           $is_end = $this->check_end($vno);
-        }
+        //}
         echo '$vno: '.$vno.PHP_EOL;
 
         if($is_end && $this->check_not_ruined($vno))
@@ -397,10 +397,10 @@ class Check_Village
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
         break;
-      case Cnt::Raaru:
-        $list_vno = $this->html->find('table.vil_index',-1)->find('tr td a',0)->plaintext;
-        $list_vno = (int)mb_ereg_replace('(\d+)村','\\1',$list_vno);
-        break;
+      //case Cnt::Raaru:
+        //$list_vno = $this->html->find('table.vil_index',-1)->find('tr td a',0)->plaintext;
+        //$list_vno = (int)mb_ereg_replace('(\d+)村','\\1',$list_vno);
+        //break;
     }
     $this->html->clear();
     return $list_vno;

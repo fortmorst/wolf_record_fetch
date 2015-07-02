@@ -23,7 +23,7 @@ class Cnt
   const Moon   = 56;
   const Rinne  = 57;
   const Ivory  = 50;
-  const Raaru  = 69;
+  //const Raaru  = 69;
   const Sebas  = 31;
   const Phantom= 47;
   const BW     = 48;
@@ -33,4 +33,5 @@ class Cnt
   const Mikan  = 55;
   const Reason = 59;
   const Silence= 35;
+  //const Raaru_Old = 70;
 }
