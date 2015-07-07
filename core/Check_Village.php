@@ -158,7 +158,7 @@ class Check_Village
   {
     $not_ruin = [Cnt::Ning,Cnt::Phantom,Cnt::Reason];
 
-    if(array_search($vno,$not_ruin) !== false)
+    if(array_search($this->cid,$not_ruin) !== false)
     {
       return true;
     }
