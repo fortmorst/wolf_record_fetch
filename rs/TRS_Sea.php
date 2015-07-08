@@ -197,7 +197,7 @@ trait TRS_Sea
     ,"らかな光が降り注ぐ。全ての"=>Data::TM_VILLAGER
     ,"の勝利やわらかな光が降り注"=>Data::TM_VILLAGER
     ,"全ての希望を染めつくした。"=>Data::TM_WOLF
-    ,"の勝利闇が全て全ての希望を"=>Data::TM_WOLF
+    ,"の勝利闇が全ての希望を染め"=>Data::TM_WOLF
     ,"達は自らの過ちに気付いた。"=>Data::TM_WOLF
     ,"の人狼を退治した……。だが"=>Data::TM_FAIRY
     ,"の勝利全ての人狼を退治した"=>Data::TM_FAIRY
