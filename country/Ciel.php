@@ -9,5 +9,6 @@ class Ciel extends Giji
     $url_log = 'http://ciel.moo.jp/cheat/sow.cgi?cmd=oldlog';
     parent::__construct($cid,$url_vil,$url_log);
     $this->policy = false;
+    $this->is_evil = false;
   }
 }

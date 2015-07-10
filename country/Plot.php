@@ -1,6 +1,6 @@
 <?php
 
-class Plot extends Giji
+class Plot extends Giji_Old
 {
   function __construct()
   {
