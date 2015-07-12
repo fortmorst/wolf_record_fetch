@@ -65,6 +65,8 @@ trait TRS_Sea
     ,"独裁者"=>Data::SKL_DICTATOR
     ,"狐化呪者"=>Data::SKL_CHANGE_FRY
     ,"狼化呪者"=>Data::SKL_CHANGE_WOLF
+    ,"潜在意識"=>Data::SKL_ASS_MISTAKE
+    ,"空色"=>Data::SKL_AZURE
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -88,6 +90,8 @@ trait TRS_Sea
     ,"邪教徒"=>Data::SKL_LUNA_WIS_TEMPT
     ,"狂化狂人"=>Data::SKL_LUNA_ASS_ONCE
     ,"サイコパス"=>Data::SKL_PSYCHOPATH
+    ,"月下美人"=>Data::SKL_LUNA_BAND
+    ,"死操術師"=>Data::SKL_LUNA_WITCH_2DIE
     //狼
     ,"首無騎士"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -107,7 +111,8 @@ trait TRS_Sea
     ,"魂狼"=>Data::SKL_WOLF_READ_C
     ,"妖狼"=>Data::SKL_WOLF_READ_D
     ,"桜狼"=>Data::SKL_WOLF_CHERRY
-    ,"祟狼"=>Data::SKL_WOLF_PRINCE
+    ,"崇狼"=>Data::SKL_WOLF_PRINCE
+    ,"霧狼"=>Data::SKL_WOLF_FOG
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -130,6 +135,7 @@ trait TRS_Sea
     ,'憑狐'=>Data::SKL_FRY_MISTAKE
     ,'天狐'=>Data::SKL_FRY_VOTE_TWICE
     ,'夕霧'=>Data::SKL_FRY_FOG
+    ,'天眼'=>Data::SKL_FRY_FNT_READ_ALL
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -165,6 +171,8 @@ trait TRS_Sea
     ,"闇妖魔"=>Data::SKL_DVL_READ_W
     ,"悟心種"=>Data::SKL_DVL_FANATIC
     ,"妖魔導師"=>Data::SKL_DVL_GRD_CURSE
+    ,"変化種"=>Data::SKL_DVL_AZURE
+    ,"樹霊妖魔"=>Data::SKL_DVL_CURSED
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳

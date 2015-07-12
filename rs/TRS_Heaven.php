@@ -14,7 +14,6 @@ trait TRS_Heaven
      ,"烙印者"  =>[Data::SKL_BRAND,Data::TM_VILLAGER]
      ,"風来狩人"=>[Data::SKL_GRD_NOT_TWICE,Data::TM_VILLAGER]
      ,"共鳴者"  =>[Data::SKL_FM_WIS,Data::TM_VILLAGER]
-     ,"猫又"    =>[Data::SKL_CAT,Data::TM_VILLAGER]
      ,"人狼"    =>[Data::SKL_WOLF,Data::TM_WOLF]
      ,"狂人"    =>[Data::SKL_LUNATIC,Data::TM_WOLF]
      ,"Ｃ国狂人"=>[Data::SKL_WHISPER,Data::TM_WOLF]
@@ -28,15 +27,13 @@ trait TRS_Heaven
     [
         "村人"=>Data::TM_VILLAGER
        ,"人狼"=>Data::TM_WOLF
-       ,"妖狐"=>Data::TM_FAIRY
-       ,"裏切"=>Data::TM_LOVERS
+       ,"妖魔"=>Data::TM_FAIRY
+       ,"恋人"=>Data::TM_LOVERS
     ]; 
   protected $DESTINY = [
      '刑されました。'=>['投票の結果、(.+) が処刑されました。',Data::DES_HANGED]
     ,'然死しました。'=>['^(.+) が突然死しました。',Data::DES_RETIRED]
     ,'見されました。'=>['^(.+) が無残な姿で発見されました。',Data::DES_EATEN]
-    ,'にされました。'=>['^(.+) は猫又の呪いにより道連れにされました。',Data::DES_EATEN]
-    ,'を追いました。'=>['^(.+) は(悲しみにくれて|契約により)、.+ の後を追いました。',Data::DES_SUICIDE]
-    ,'を絶ちました。'=>['^(.+) は悲しみにくれて自らの命を絶ちました。',Data::DES_SUICIDE]
+    ,'を追いました。'=>['^(.+) は悲しみにくれて、.+ の後を追いました。',Data::DES_SUICIDE]
   ];
 }
