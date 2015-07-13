@@ -117,12 +117,14 @@ class Data
     const SKL_GRD_TWICE       =201; //二兎追 二人護衛できるが60%の確率で失敗
     const SKL_GRD_NOT_STRAIGHT=256; //見習い騎士 前日と同じ護衛先を護衛できない
     const SKL_GRD_NOT_TWICE   =270; //風来狩人 GJが出た護衛先を二度と護衛できない
+    const SKL_GRD_SELF_WOLF   =281; //神祓衆 自分護衛可能+襲撃死等を一度だけ防ぐが恩恵「悪鬼」を得る
     //その他能動能力
     const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
-    const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
     const SKL_DISPEL          =190; //解呪師 各種呪いと誘惑状態の解除
     const SKL_SEAL_READ       =262; //仙人 秘密会話を封じる
+    const SKL_SEAL            =282; //狛犬 一日だけ能力を封じる
+    const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     const SKL_AZURE           =276; //空色 毎日ランダムで提示される役職能力を行使できる
     //被襲撃防衛系
     const SKL_HUNTER          = 21; //賞金稼 死亡時指定した相手を道連れにする
@@ -147,6 +149,8 @@ class Data
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
     const SKL_PSY             =226; //巫女 神通会話に参加
     const SKL_PSY_IRON_FRY    =225; //稲荷狐 襲撃耐性、呪殺される/自覚あり、神通会話に参加
+    const SKL_FM_WIS_INFECT   =283; //共振者 共鳴+殺害者を共振者にする
+    const SKL_FM_WIS_ASS_DYING=284; //雷鳴者 共鳴+暗殺者(三日月)+預言者
     //投票関係
     const SKL_FOLLOWER        = 19; //追従者 委任しか出来ない
     const SKL_LEONARD         =187; //決定者 二票持つ
@@ -188,10 +192,12 @@ class Data
     const SKL_CHANGE_WOLF     =266; //狼化呪者 4-6dのいずれかに人狼になる
     //他
     const SKL_DYING           = 27; //預言者 生存狼+2日目に死ぬ
+    const SKL_DYING_MISTAKE   =286; //泡影 村人思い込み、預言者
     const SKL_NOTARY          = 68; //公証人 死ぬと遅延メモが公開される
     const SKL_GIRL            = 31; //少女 赤ログ閲覧 襲撃対象になると死ぬ
     const SKL_BAKERY          =235; //パン屋 生存中はパンを焼くメッセージが出る
     const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
+    const SKL_NO_BAND         =285; //偶人 一切の絆がつかない。両絆が付加された場合、一方的なものになる
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
@@ -223,13 +229,14 @@ class Data
     const SKL_JAMMER_TO_SKL   =271; //邪魔狂人 対象の占い能力を一日無効化する
     const SKL_DAZZLE          =121; //幻惑者 絆の内容を逆にする
     const SKL_PERVERT         =122; //倒錯者 生存中に占霊判定を逆にする
-    const SKL_SEAL            = 71; //封印狂人 任意の相手の能力を一日だけ封じる
+    const SKL_LUNA_SEAL       = 71; //封印狂人 任意の相手の能力を一日だけ封じる
     const SKL_SNATCH          = 60; //宿借之民 姿を入れ替える
     const SKL_LUNA_WITCH      =183; //南瓜提灯 毒殺+蘇生薬
     const SKL_LUNA_WITCH_2DIE =278; //死操術師 毒殺+二日間だけ蘇る蘇生薬
     const SKL_LUNA_ASS_ONCE   =258; //狂化狂人 一度だけ襲撃出来るが死ぬ
     const SKL_NONE            =139; //瘴気狂人 2Dに一人を無能状態にする
     const SKL_MAD             =153; //狂学者 2Dに一人を人狼にする
+    const SKL_LUNA_POISON_G   =289; //人魂 死後に毒薬が使えるようになる
     //霊能者系
     const SKL_LUNA_MEDI       = 39; //魔神官 導師
     //襲撃で変化
@@ -243,6 +250,7 @@ class Data
     const SKL_LUNA_BLACK      = 98; //囮人形 占われると黒判定が出る
     const SKL_LUNA_SICK_EXE   =119; //怨嗟狂人 吊られると任意の一人を無能にする
     const SKL_LUNA_CHANGE_ROLE=221; //四不象 初日に存在する役職に擬態して判定を変えられる
+    const SKL_LUNA_SUICIDE    =288; //崩れ星 自殺できる。自殺した日に能力行使してきた人物も巻き添えにできる
   //人狼陣営
   const SKL_WOLF            =  7; //人狼 毎日一人を襲撃できる
     //特殊襲撃
@@ -284,10 +292,12 @@ class Data
     const SKL_WOLF_DYING      = 46; //衰狼 生存狼+2日目に死ぬ
     const SKL_WOLF_NOTALK     = 47; //黙狼 囁けない
     const SKL_WOLF_PRINCE     =259; //崇狼 一度だけ処刑されない
+    const SKL_WOLF_INFECT     =290; //蝕狼 殺害されると、行使者を蝕狼にする
   //妖魔陣営
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
     //特殊能力
     const SKL_PIXY            = 50; //悪戯妖精 道連れ絆を撃つ
+    const SKL_FRY_PIXY_WIS    =287; //転業之民 囁ける悪戯妖精
     const SKL_FRY_PIXY_RANDOM =247; //天邪鬼 効果の分からない絆を撃つ
     const SKL_FRY_SEER_BAND   = 83; //夢魔 絆の有無を占う(呪殺不可)
     const SKL_FRY_JAMMER      = 64; //邪魔妖精 対象を占い能力から保護する
@@ -301,6 +311,7 @@ class Data
     const SKL_FRY_SEER_FUZZ   =228; //幼狐 50%の確率で失敗する占い師、妖精が誰かを知る、襲撃耐性なし呪殺されない
     const SKL_FRY_CHANGELING  =245; //夜夢 最多処刑者を予想出来た場合、指定の人物と被処刑者と入れ替える
     const SKL_FRY_FOG         =267; //夕霧 一度だけ事件「濃霧」を起こす
+    const SKL_FRY_VARIABLE    =291; //歪狐 毎晩呪殺されない+襲撃される/呪殺される+襲撃されない体質を入れ替えられる
     //相手を変化
     const SKL_FRY_SNATCH      = 65; //宿借妖精 姿を入れ替える
     const SKL_FRY_TEMPT       =171; //惑狐 2Dに一人を妖精の子にする
@@ -333,6 +344,7 @@ class Data
   //一匹狼陣営
   const SKL_LONEWOLF        = 56; //一匹狼 人狼とは別に襲撃する
   const SKL_LONE_TWICE      =169; //人虎 襲撃を受けると、二回襲撃可能になる
+  const SKL_LONE_TWICE_RANDOM=294;//悲嘆狼 二回襲撃できるが、各襲撃が60%の確率で失敗する
   //笛吹き陣営
   const SKL_PIPER           = 57; //笛吹き 毎日二人を踊らせる/自分を除く生存者全員が踊ったら勝利
   //恋陣営
@@ -370,11 +382,16 @@ class Data
   const SKL_BMN_SEER        =195; //祭司 占い師
   const SKL_BMN_ASS         =197; //執行者 毎日一人殺害できる
   const SKL_BMN_SNATCH      =198; //影武者 役職聖女と自分を入れ替える
+  const SKL_BMN_INFECT      =292; //伝道者 殺害されると、行使者を伝道者にする
+  const SKL_BMN_SAINT_DIE   =293; //聖母 殺害されると、相手を蒼月教会陣営にする
   //殉教者陣営
   const SKL_MRT_WOLF        =175; //盲信者 人狼が勝てば勝利、人狼全員が死ぬと後追死する
+  const SKL_MRT_WOLF_ADD_ODD=296; //詐欺師 盲信者+毎晩一人に恩恵「半端者」と人狼の囁き能力付加
   const SKL_MRT_FRY         =176; //背徳者 妖精が勝てば勝利、妖精全員が死ぬと後追死する
+  const SKL_MRT_FRY_ADD_ODD =297; //横惑師 背徳者+毎晩一人に恩恵「半端者」と妖魔の囁き能力付加
   const SKL_MRT_LOVE        =177; //月下氷人 恋人が勝てば勝利、恋人全員が死ぬと後追死する
   const SKL_MRT_EFB         =178; //介在人 邪気が勝てば勝利、邪気全員が死ぬと後追死する
+  const SKL_MRT_BMN         =295; //崇拝者 蒼月教会が勝てば勝利、聖女全員が死ぬと後追死する
   //据え膳
   const SKL_FISH            = 58; //鱗魚人 襲撃されたら勝ち
   const SKL_FISH_DOG        =181; //大魚人 襲撃されても一日だけ生き長らえる魚

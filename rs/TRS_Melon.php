@@ -164,7 +164,7 @@ trait TRS_Melon
     ,[Data::SKL_FANATIC,Data::TM_WOLF]
     ,[Data::SKL_WHISPER,Data::TM_WOLF]
     ,[Data::SKL_LUNA_WIS,Data::TM_WOLF]
-    ,[Data::SKL_SEAL,Data::TM_WOLF]
+    ,[Data::SKL_LUNA_SEAL,Data::TM_WOLF]
     ,[Data::SKL_LUNA_SEER_MELON,Data::TM_WOLF]
     ,[Data::SKL_FAIRY,Data::TM_FAIRY]
     ,[Data::SKL_FRY_WIS,Data::TM_FAIRY]

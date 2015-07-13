@@ -58,6 +58,13 @@ trait TRS_Crescent
     ,"陰陽生"=>Data::SKL_REALIZE_FRY
     ,"パン屋"=>Data::SKL_BAKERY
     ,"隠呪者"=>Data::SKL_CURSED_LINEAGE
+    ,"虚言者"=>Data::SKL_MISTAKE_MEDI
+    ,"神祓衆"=>Data::SKL_GRD_SELF_WOLF
+    ,"狛犬"=>Data::SKL_SEAL
+    ,"共振者"=>Data::SKL_FM_WIS_INFECT
+    ,"雷鳴者"=>Data::SKL_FM_WIS_ASS_DYING
+    ,"偶人"=>Data::SKL_NO_BAND
+    ,"抱影"=>Data::SKL_DYING_MISTAKE
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -80,6 +87,9 @@ trait TRS_Crescent
     ,"祈祷師"=>Data::SKL_LUNA_SEER_ROLETM
     ,"鼠人"=>Data::SKL_LUNA_GIRL
     ,"四不象"=>Data::SKL_LUNA_CHANGE_ROLE
+    ,"転業之民"=>Data::SKL_FRY_PIXY_WIS
+    ,"崩れ星"=>Data::SKL_LUNA_SUICIDE
+    ,"人魂"=>Data::SKL_LUNA_POISON_G
     //人狼
     ,"凶狼"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -101,6 +111,8 @@ trait TRS_Crescent
     ,"外狼"=>Data::SKL_WOLF_ADD_MRT
     ,"焔狼"=>Data::SKL_WOLF_ELDER_DYING
     ,"悟狼"=>Data::SKL_WISEWOLF_SENSE
+    ,"皇狼"=>Data::SKL_WOLF_PRINCE
+    ,"蝕狼"=>Data::SKL_WOLF_INFECT
     //妖魔
     ,"妖狐"=>Data::SKL_FAIRY
     ,"化狐"=>Data::SKL_FRY_SNATCH
@@ -122,6 +134,7 @@ trait TRS_Crescent
     ,"欺狐"=>Data::SKL_FRY_MIMIC_PSY
     ,"妖鳥"=>Data::SKL_FRY_SEAL_ONCE
     ,"幼狐"=>Data::SKL_FRY_SEER_FUZZ
+    ,"歪狐"=>Data::SKL_FRY_VARIABLE
     //恋
     ,"恋愛天使"=>Data::SKL_QP
     ,"片想い"=>Data::SKL_PASSION
@@ -139,11 +152,14 @@ trait TRS_Crescent
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     ,"人虎"=>Data::SKL_LONE_TWICE
+    ,"悲嘆狼"=>Data::SKL_LONE_TWICE_RANDOM
     //蒼月教会
     ,"聖女"=>Data::SKL_BMN_SAINT
     ,"祭司"=>Data::SKL_BMN_SEER
     ,"執行者"=>Data::SKL_BMN_ASS
     ,"影武者"=>Data::SKL_BMN_SNATCH
+    ,"伝道者"=>Data::SKL_BMN_INFECT
+    ,"聖母"=>Data::SKL_BMN_SAINT_DIE
     //据え膳
     ,"鱗魚人"=>Data::SKL_FISH
     ,"大魚人"=>Data::SKL_FISH_DOG
@@ -156,6 +172,9 @@ trait TRS_Crescent
     ,"背徳者"=>Data::SKL_MRT_FRY
     ,"月下氷人"=>Data::SKL_MRT_LOVE
     ,"介在人"=>Data::SKL_MRT_EFB
+    ,"崇拝者"=>Data::SKL_MRT_BMN
+    ,"詐欺師"=>Data::SKL_MRT_WOLF_ADD_ODD
+    ,"横惑師"=>Data::SKL_MRT_FRY_ADD_ODD
     ];
   public $TM_BM = [
      "村人"=>[Data::TM_VILLAGER,false]
