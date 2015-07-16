@@ -65,6 +65,7 @@ trait TRS_Crescent
     ,"雷鳴者"=>Data::SKL_FM_WIS_ASS_DYING
     ,"偶人"=>Data::SKL_NO_BAND
     ,"抱影"=>Data::SKL_DYING_MISTAKE
+    ,"深層潜士"=>Data::SKL_SEER_MISTAKE
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH

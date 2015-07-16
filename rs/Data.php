@@ -98,6 +98,7 @@ class Data
     const SKL_SEER_ROLETM     =184; //天啓者 一日遅れで役職と陣営を占う
     const SKL_SEER_GIFT       =217; //鑑定士 所持恩恵を判定、呪殺/覚醒しない
     const SKL_SEER_TWICE      =249; //隠者 二人一度に占う。恋人を呪殺出来る
+    const SKL_SEER_MISTAKE    =298; //深層潜士 思い込み役職か否かを占う
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
