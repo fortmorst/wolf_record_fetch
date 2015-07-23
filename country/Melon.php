@@ -41,6 +41,7 @@ class Melon extends SOW
   {
     $url = $this->url.$this->village->vno.'&t=0&r=10&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
+      sleep(1);
 
     $this->fetch_date();
     $this->fetch->clear();
@@ -49,6 +50,7 @@ class Melon extends SOW
   {
     $url = $this->url.$this->village->vno.'&t='.$this->village->days.'&row=40&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
+      sleep(1);
 
     $this->fetch_wtmid();
     $this->make_cast();

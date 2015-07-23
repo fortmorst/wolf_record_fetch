@@ -30,6 +30,7 @@ abstract class Giji_Old extends Country
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url.$this->village->vno."&cmd=vinfo");
+      sleep(1);
 
     $this->fetch_name();
     $this->fetch_days();
@@ -107,6 +108,7 @@ abstract class Giji_Old extends Country
   {
     $url = $this->url.$this->village->vno.'&turn=0&row=10&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
+      sleep(1);
 
     $this->fetch_date();
     $this->fetch->clear();
@@ -121,6 +123,7 @@ abstract class Giji_Old extends Country
   {
     $url = $this->url.$this->village->vno.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
+      sleep(1);
 
     $this->fetch_wtmid();
     $this->make_cast();

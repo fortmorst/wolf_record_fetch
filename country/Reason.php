@@ -32,6 +32,7 @@ class Reason extends Country
   protected function fetch_from_pro()
   {
     $this->fetch->load_file($this->url.$this->village->vno);
+      sleep(1);
 
     $this->fetch_name();
     $this->fetch_date();
@@ -58,6 +59,7 @@ class Reason extends Country
   protected function fetch_from_epi()
   {
     $this->fetch->load_file($this->url_epi);
+      sleep(1);
     $this->make_cast();
 
     //$this->fetch_nop();
@@ -151,6 +153,7 @@ class Reason extends Country
     for($i=2; $i<=$days; $i++)
     {
       $this->fetch->load_file($this->url.$this->village->vno.'/'.$i);
+      sleep(1);
       $announce = $this->fetch->find('div.systemmessage_white');
       foreach($announce as $item)
       {

@@ -127,6 +127,7 @@ class Check_Village
   {
 
     $this->html->load_file($this->url_vil.$vno);
+      sleep(1);
     switch($this->cid)
     {
       case Cnt::Ning:
@@ -165,6 +166,7 @@ class Check_Village
     else if($this->cid === Cnt::Rinne)
     {
       $this->html->load_file($this->url_vil.$vno.'&cmd=vinfo');
+      sleep(1);
       $day = $this->html->find('p.multicolumn_role',0)->plaintext;
       if($day === '短期')
       {
@@ -176,22 +178,9 @@ class Check_Village
       }
       $this->html->clear();
     }
-    //else if($this->cid === Cnt::Raaru)
-    //{
-      //$this->html->load_file($this->url_vil.$vno.'&date=0');
-      //$lock = $this->html->find('table',1)->find('tr td',16)->plaintext;
-      //$time = $this->html->find('table',1)->find('tr td',20)->plaintext;
-      //if(mb_strpos($lock,'なし') !== false && mb_strpos($time,'時間') !== false)
-      //{
-        //return true;
-      //}
-      //else
-      //{
-        //return false;
-      //}
-    //}
 
     $this->html->load_file($this->url_vil.$vno);
+      sleep(1);
     switch($this->cid)
     {
       case Cnt::Melon:
@@ -199,6 +188,7 @@ class Check_Village
         $epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
         $this->html->clear();
         $this->html->load_file($this->url_vil.$vno.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
+      sleep(1);
         if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
         {
           return false;
@@ -245,6 +235,7 @@ class Check_Village
         $epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
         $this->html->clear();
         $this->html->load_file($this->url_vil.$vno.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
+      sleep(1);
         if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
         {
           return false;
@@ -260,6 +251,7 @@ class Check_Village
   private function check_end_from_vlist()
   {
     $this->html->load_file($this->url_log);
+      sleep(1);
     //終了した村リストの村番号を取得
     $vno_end = $this->html->find('table.vil_index',-1)->find('tr td a.vid');
     foreach($vno_end as $item)
@@ -348,6 +340,7 @@ class Check_Village
   private function check_endlist()
   {
     $this->html->load_file($this->url_log);
+      sleep(1);
     switch($this->cid)
     {
       case Cnt::Ning:

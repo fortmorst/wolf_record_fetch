@@ -31,6 +31,7 @@ class Ning extends Country
   protected function fetch_from_pro()
   {
     $this->fetch->load_file($this->url.$this->village->vno."&meslog=000_ready");
+      sleep(1);
 
     $this->fetch_name();
     $this->fetch_date();
@@ -64,6 +65,7 @@ class Ning extends Country
       throw new Exception($this->village->vno.': Broken Epilogue.');
     }
     $this->fetch->load_file($this->url_epi);
+      sleep(1);
     $this->make_cast();
     $this->fetch_wtmid();
 
@@ -165,6 +167,7 @@ class Ning extends Country
     for($i=1; $i<=$days; $i++)
     {
       $this->fetch->load_file($this->make_daily_url($i));
+      sleep(1);
       $announce = $this->fetch->find('div.announce');
       foreach($announce as $item)
       {
