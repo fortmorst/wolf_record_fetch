@@ -261,17 +261,6 @@ class Check_Village
     }
     return $vno_list;
   }
-  private function check_end_raaru($vno,$vno_list)
-  {
-    if(array_search($vno,$vno_list) !== false)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
   private function check_new_fetch()
   {
     $list_vno = $this->check_endlist();
@@ -297,23 +286,11 @@ class Check_Village
     {
       $fetch_n  = $list_vno - $db_vno['max'];
 
-      //らある国の場合
-      //if($this->cid === Cnt::Raaru)
-      //{
-        //$raaru_endlist = $this->check_end_from_vlist();
-      //}
       for ($i=1;$i<=$fetch_n;$i++)
       {
         $vno = 0;
         $vno = $db_vno['max'] + $i;
-        //if($this->cid === Cnt::Raaru)
-        //{
-          //$is_end = $this->check_end_raaru($vno,$raaru_endlist);
-        //}
-        //else
-        //{
-          $is_end = $this->check_end($vno);
-        //}
+        $is_end = $this->check_end($vno);
         echo '$vno: '.$vno.PHP_EOL;
 
         if($is_end && $this->check_not_ruined($vno))
@@ -374,7 +351,6 @@ class Check_Village
       case Cnt::Chitose_RP:
       case Cnt::Rinne:
       case Cnt::Phantom:
-      case Cnt::Mikan:
       case Cnt::Dark:
       case Cnt::BW:
       case Cnt::Dance:
@@ -390,10 +366,6 @@ class Check_Village
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
         break;
-      //case Cnt::Raaru:
-        //$list_vno = $this->html->find('table.vil_index',-1)->find('tr td a',0)->plaintext;
-        //$list_vno = (int)mb_ereg_replace('(\d+)村','\\1',$list_vno);
-        //break;
     }
     $this->html->clear();
     return $list_vno;
