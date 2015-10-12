@@ -104,6 +104,7 @@ class Data
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
     const SKL_MEDI_ROLE       =133; //導師 処刑者の役職を判定
     const SKL_MEDI_ROLETM     =200; //骸糾問 役職と陣営の霊能判定
+    const SKL_MEDI_EATEN      =299; //神託者 処刑者と被襲撃者の判定が分かる
     const SKL_MEDI_READ_G     = 18; //降霊者 墓ログを読める
     const SKL_MEDI_ID         =188; //霊媒師 中身霊能者
     const SKL_READ_G          =113; //霊感少年 墓ログ閲覧

@@ -5,8 +5,12 @@ class Moon extends SOW
   use TRS_SOW;
   protected $SKL_SP = [
      '辻占狂人'=>[Data::SKL_LUNA_SEER_MELON,Data::TM_WOLF]
+    ,'叫迷狂人'=>[Data::SKL_LUNA_WIS,Data::TM_WOLF]
     ,'首無騎士'=>[Data::SKL_HEADLESS,Data::TM_WOLF]
     ,'碧狼'=>[Data::SKL_HEADLESS_NOTALK,Data::TM_WOLF]
+    ,'賢者'=>[Data::SKL_SEER_ROLE,Data::TM_VILLAGER]
+    ,'霊媒師'=>[Data::SKL_MEDI_ROLE,Data::TM_VILLAGER]
+    ,'神託者'=>[Data::SKL_MEDI_EATEN,Data::TM_VILLAGER]
   ];
   protected $RP_SP = [
      '月狼'=>'MOON'
