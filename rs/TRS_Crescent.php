@@ -66,6 +66,7 @@ trait TRS_Crescent
     ,"偶人"=>Data::SKL_NO_BAND
     ,"抱影"=>Data::SKL_DYING_MISTAKE
     ,"深層潜士"=>Data::SKL_SEER_MISTAKE
+    ,"連れ星"=>Data::SKL_LEO_2_COUNT
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH

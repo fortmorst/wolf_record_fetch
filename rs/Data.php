@@ -157,9 +157,10 @@ class Data
     const SKL_FOLLOWER        = 19; //追従者 委任しか出来ない
     const SKL_LEONARD         =187; //決定者 二票持つ
     const SKL_AGITATOR        = 20; //扇動者 死んだ翌日の処刑が二人になる
-    const SKL_PRINCE          = 23; //王子様 処刑を一度だけ取り消a
+    const SKL_PRINCE          = 23; //王子様 処刑を一度だけ取り消す
     const SKL_SG              = 32; //生贄 処刑票が同数になると死ぬが、翌日の処刑相手を指定できる
     const SKL_DICTATOR        =263; //独裁者 一度だけ99票行使できる。吊った相手が村陣営の場合、翌日追加で処刑される。
+    const SKL_LEO_2_COUNT     =300; //連れ星 二票持ち、かつ勝利判定時、二人分の人間としてカウントされる
     //被占で何かが起こる
     const SKL_LINEAGE         = 24; //狼血族 占われると黒判定が出る/占われるまで自覚がない
     const SKL_CURSED          = 26; //呪人 占われると逆呪殺する
