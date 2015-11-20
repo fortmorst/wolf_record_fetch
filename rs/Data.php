@@ -101,6 +101,7 @@ class Data
     const SKL_SEER_MISTAKE    =298; //深層潜士 思い込み役職か否かを占う
     //処刑判定系
     const SKL_MEDIUM          =  3; //霊能者 処刑者が人狼かそれ以外かを判定
+    const SKL_MEDIUM_MUPPETER =302; //憑霊者 霊能者+死後ダミーで喋れる
     const SKL_MEDI_TM         = 67; //信仰霊能者 処刑者の陣営を判定
     const SKL_MEDI_ROLE       =133; //導師 処刑者の役職を判定
     const SKL_MEDI_ROLETM     =200; //骸糾問 役職と陣営の霊能判定
@@ -151,6 +152,7 @@ class Data
     const SKL_READ_G_C        =208; //霊話師 墓ログと交信ログを読める
     const SKL_PSY             =226; //巫女 神通会話に参加
     const SKL_PSY_IRON_FRY    =225; //稲荷狐 襲撃耐性、呪殺される/自覚あり、神通会話に参加
+    const SKL_ADD_PSY         =301; //禰宜 任意の二人を神通会話に参加させる
     const SKL_FM_WIS_INFECT   =283; //共振者 共鳴+殺害者を共振者にする
     const SKL_FM_WIS_ASS_DYING=284; //雷鳴者 共鳴+暗殺者(三日月)+預言者
     //投票関係
@@ -178,12 +180,14 @@ class Data
     const SKL_ASSASSIN        = 95; //暗殺者 襲撃行使、占われると溶ける
     const SKL_ASS_CRESCENT    =114; //暗殺者(三日月) 襲撃行使、狼や妖魔も殺害可
     const SKL_ASS_MISTAKE     =273; //潜在意識 村人思い込み、ランダムに襲撃
+    const SKL_JAEGER          =303; //猟兵 指定した一人が能力行使した場合呪殺
     //思い込み
     const SKL_MISTAKE_GRD     = 69; //闇狩人 思い込み狩人
     const SKL_MISTAKE_FRY     =116; //狐好き 思い込み狐
     const SKL_MISTAKE_LOVE    =117; //妄想家 思い込み求愛者
     const SKL_MISTAKE_SEER    =138; //狼少年 でたらめな占結果が出る。呪殺は可能
     const SKL_MISTAKE_SEER_NOCURSE=230; //猪突妄信 でたらめな占結果が出る(狼数は正確)。呪殺不可能
+    const SKL_MISTAKE_NOCURSE=305;  //若輩占師 占結果は正確だが呪殺不可能
     const SKL_MISTAKE_MEDI    =179; //月酔 でたらめな霊結果が出る
     //変化系
     const SKL_RANDOM_EATEN    = 97; //傾奇者 被襲撃でランダムに役職変化
@@ -201,6 +205,7 @@ class Data
     const SKL_BAKERY          =235; //パン屋 生存中はパンを焼くメッセージが出る
     const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
     const SKL_NO_BAND         =285; //偶人 一切の絆がつかない。両絆が付加された場合、一方的なものになる
+    const SKL_TROUBLEMAKER    =304; //渦中者 生存中は特定の事件がランダムで起きる
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
@@ -274,6 +279,7 @@ class Data
     const SKL_WOLF_FOG        =279; //霧狼 襲撃時に事件「濃霧」を引き起こす
     //被占で変化
     const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
+    const SKL_WOLF_ADD_SICK   =306; //疫狼 被能力行使で無能恩恵を付与
     const SKL_WHITEWOLF       = 44; //白狼 占判定が白
     const SKL_WWOLF_BLACK_G   =126; //擬狼 大狼 死ぬと真判定になる白狼
     const SKL_SLEEPER_BLACK   =124; //忘狼 占いでも覚醒する睡狼
@@ -315,6 +321,7 @@ class Data
     const SKL_FRY_CHANGELING  =245; //夜夢 最多処刑者を予想出来た場合、指定の人物と被処刑者と入れ替える
     const SKL_FRY_FOG         =267; //夕霧 一度だけ事件「濃霧」を起こす
     const SKL_FRY_VARIABLE    =291; //歪狐 毎晩呪殺されない+襲撃される/呪殺される+襲撃されない体質を入れ替えられる
+    const SKL_FRY_JAEGER      =307; //樹木子 指定した一人が能力行使した場合呪殺する
     //相手を変化
     const SKL_FRY_SNATCH      = 65; //宿借妖精 姿を入れ替える
     const SKL_FRY_TEMPT       =171; //惑狐 2Dに一人を妖精の子にする
@@ -358,6 +365,7 @@ class Data
   const SKL_BITCH           = 59; //遊び人 自撃ち+偽の絆も撃つ
   const SKL_MISTAKE_QP      =134; //狂愛者 絆を結んだと思い込む。無自覚かつランダムに襲撃する
   const SKL_MISTAKE_PSS     =196; //天然誑 能力を受けると相手に片恋絆を付ける
+  const SKL_ADD_LOVE        =308; //水仙鏡 一人を凄い恋人にする
   //邪気陣営
   const SKL_EFB             = 51; //邪気悪魔 二人に邪気絆を撃ち、どちらかだけが生き残れば勝ち
   const SKL_EFB_SELF        =136; //決闘者 自撃ち邪気悪魔
@@ -387,17 +395,21 @@ class Data
   const SKL_BMN_SNATCH      =198; //影武者 役職聖女と自分を入れ替える
   const SKL_BMN_INFECT      =292; //伝道者 殺害されると、行使者を伝道者にする
   const SKL_BMN_SAINT_DIE   =293; //聖母 殺害されると、相手を蒼月教会陣営にする
+  const SKL_BMN_JAEGER      =309; //異端審問 指定した一人が能力行使した場合呪殺する 
   //殉教者陣営
   const SKL_MRT_WOLF        =175; //盲信者 人狼が勝てば勝利、人狼全員が死ぬと後追死する
   const SKL_MRT_WOLF_ADD_ODD=296; //詐欺師 盲信者+毎晩一人に恩恵「半端者」と人狼の囁き能力付加
   const SKL_MRT_FRY         =176; //背徳者 妖精が勝てば勝利、妖精全員が死ぬと後追死する
   const SKL_MRT_FRY_ADD_ODD =297; //横惑師 背徳者+毎晩一人に恩恵「半端者」と妖魔の囁き能力付加
   const SKL_MRT_LOVE        =177; //月下氷人 恋人が勝てば勝利、恋人全員が死ぬと後追死する
+  const SKL_MRT_LOVE_ADD_LOVE=309; //御節介 月下氷人+初日一人に恋陣営化恩恵と恋陣営囁き能力を付加
   const SKL_MRT_EFB         =178; //介在人 邪気が勝てば勝利、邪気全員が死ぬと後追死する
+  const SKL_MRT_EFB_ADD_ODD =309; //死之商人 介在人++初日一人に恩恵「半端者」と邪気の囁き能力付加
   const SKL_MRT_BMN         =295; //崇拝者 蒼月教会が勝てば勝利、聖女全員が死ぬと後追死する
   //据え膳
   const SKL_FISH            = 58; //鱗魚人 襲撃されたら勝ち
   const SKL_FISH_DOG        =181; //大魚人 襲撃されても一日だけ生き長らえる魚
+  const SKL_FISH_PIG        =310; //無豚着 襲撃か生存で勝利、50%の確率であいまいに占える
   //照坊主
   const SKL_TERU            = 76; //照坊主 処刑されたら勝ち
   //奴隷陣営

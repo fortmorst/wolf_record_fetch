@@ -67,6 +67,11 @@ trait TRS_Crescent
     ,"抱影"=>Data::SKL_DYING_MISTAKE
     ,"深層潜士"=>Data::SKL_SEER_MISTAKE
     ,"連れ星"=>Data::SKL_LEO_2_COUNT
+    ,"禰宜"=>Data::SKL_ADD_PSY
+    ,"憑霊者"=>Data::SKL_MEDIUM_MUPPETER
+    ,"猟兵"=>Data::SKL_JAEGER
+    ,"渦中者"=>Data::SKL_TROUBLEMAKER
+    ,"若輩占師"=>Data::SKL_MISTAKE_NOCURSE
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -115,6 +120,7 @@ trait TRS_Crescent
     ,"悟狼"=>Data::SKL_WISEWOLF_SENSE
     ,"皇狼"=>Data::SKL_WOLF_PRINCE
     ,"蝕狼"=>Data::SKL_WOLF_INFECT
+    ,"疫狼"=>Data::SKL_WOLF_ADD_SICK
     //妖魔
     ,"妖狐"=>Data::SKL_FAIRY
     ,"化狐"=>Data::SKL_FRY_SNATCH
@@ -137,6 +143,7 @@ trait TRS_Crescent
     ,"妖鳥"=>Data::SKL_FRY_SEAL_ONCE
     ,"幼狐"=>Data::SKL_FRY_SEER_FUZZ
     ,"歪狐"=>Data::SKL_FRY_VARIABLE
+    ,"樹木子"=>Data::SKL_FRY_JAEGER
     //恋
     ,"恋愛天使"=>Data::SKL_QP
     ,"片想い"=>Data::SKL_PASSION
@@ -144,6 +151,7 @@ trait TRS_Crescent
     ,"求愛者"=>Data::SKL_QP_SELF
     ,"狂愛者"=>Data::SKL_MISTAKE_QP
     ,"天然誑"=>Data::SKL_MISTAKE_PSS
+    ,"水仙鏡"=>Data::SKL_ADD_LOVE
     //邪気
     ,"邪気悪魔"=>Data::SKL_EFB
     ,"決闘者"=>Data::SKL_EFB_SELF
@@ -162,9 +170,11 @@ trait TRS_Crescent
     ,"影武者"=>Data::SKL_BMN_SNATCH
     ,"伝道者"=>Data::SKL_BMN_INFECT
     ,"聖母"=>Data::SKL_BMN_SAINT_DIE
+    ,"異端審問"=>Data::SKL_BMN_JAEGER
     //据え膳
     ,"鱗魚人"=>Data::SKL_FISH
     ,"大魚人"=>Data::SKL_FISH_DOG
+    ,"無豚着"=>Data::SKL_FISH_PIG
     //悪霊
     ,"恋未練"=>Data::SKL_YANDERE
     //物干し
@@ -177,6 +187,8 @@ trait TRS_Crescent
     ,"崇拝者"=>Data::SKL_MRT_BMN
     ,"詐欺師"=>Data::SKL_MRT_WOLF_ADD_ODD
     ,"横惑師"=>Data::SKL_MRT_FRY_ADD_ODD
+    ,"御節介"=>Data::SKL_MRT_LOVE_ADD_LOVE
+    ,"死之商人"=>Data::SKL_MRT_EFB_ADD_ODD
     ];
   public $TM_BM = [
      "村人"=>[Data::TM_VILLAGER,false]
