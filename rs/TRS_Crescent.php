@@ -54,6 +54,7 @@ trait TRS_Crescent
     ,"審神者"=>Data::SKL_SEER_CURSED
     ,"稲荷狐"=>Data::SKL_PSY_IRON_FRY
     ,"巫女"=>Data::SKL_PSY
+    ,"御子"=>Data::SKL_CHANGE_SAINT
     ,"猪突妄信"=>Data::SKL_MISTAKE_SEER_NOCURSE
     ,"陰陽生"=>Data::SKL_REALIZE_FRY
     ,"パン屋"=>Data::SKL_BAKERY
