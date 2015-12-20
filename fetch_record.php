@@ -28,18 +28,42 @@ else
   $countries = ' is not NULL';
 }
 
+//国詳細取得
 $sql = $sql.$countries;
 $stmt = $db->prepare_sql($sql);
 $stmt->execute();
 
-foreach($stmt as $item)
-{
-  var_dump($item);
-}
 
 //更新チェック
-//その国だけCheckVillageする
-//更新のある国だけ読み込む
-//村取得
+echo '---'.$ctry.'-------'.PHP_EOL;
+try
+{
+  $check_village = new CheckVillage($stmt);
+  $stmt = $check_village->check($stmt);
+  foreach($stmt as $item)
+  {
+    //村取得
+    $country = $item['class'];
+    ${$country} = new $country;
+    ${$country}->insert();
+    unset(${$country});
+  }
+}
+catch(Exception $e)
+{
 
+  echo '>ERROR '.$e->getMessage().PHP_EOL.'Caught Error->Skip'.PHP_EOL;
+  if(isset(${$country}))
+  {
+    unset(${$country});
+  }
+  continue;
+}
+
+echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;
+
+
+//
+//更新のある国だけ読み込む
+//DB切断
 $db->disconnect();
