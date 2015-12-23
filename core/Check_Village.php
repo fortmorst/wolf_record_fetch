@@ -29,20 +29,20 @@ class Check_Village
 
     foreach($this->stmt as $stmt_id=>$item)
     {
-      //変数の初期化
-      //$this->cid = $item['id'];
-      //$this->class = $item['class'];
-      //$this->url = $item['url'];
-      //$this->url_log = $item['url_log'];
-      //$this->ruin = $item['ruin'];
-
       //キューの確認
       $this->check_queue($item['id']);
       //新規村の確認
-      $this->check_new_fetch($item['id'],$item['class'],$item['url'],$item['url_log'],$item['ruin']);
+      $this->check_new_fetch($item['id'],$item['class'],$item['url_log'],$item['ruin']);
       //village_pendingリストから更新確認
-      //stmtに書き込む
-
+      if(!empty($this->village_pending) && $this->check_village_pending($item['class'],$item['url']))
+      {
+        //stmtに書き込む
+      }
+      else
+      {
+        //更新村がゼロの場合、stmtを削除
+        unset($this->stmt[$stmtid]);
+      }
     }
 
     $this->db->disconnect();
@@ -74,7 +74,7 @@ class Check_Village
 
     foreach($result as $item)
     {
-      $village_pending[] = $item['vno'];
+      $this->village_pending[] = $item['vno'];
     }
    //old
     //$line = $this->open_queue();
@@ -108,9 +108,9 @@ class Check_Village
       //return false;
     //}
   }
-  private function check_new_fetch($cid,$class,$url,$url_log,$ruin)
+  private function check_new_fetch($cid,$class,$url_log,$ruin)
   {
-    $vno_max = $this->check_vlist_latest($url_log,$class);
+    $vno_max_vlist = $this->check_vlist_latest($url_log,$class);
     $vno_max_db = $this->check_db_latest_vno($cid);
     //後で廃村してるか否かは国で確認するようにする
     $vno_ruin = $this->check_db_latest_ruin($cid);
@@ -130,34 +130,13 @@ class Check_Village
     }
 
     //dbの最大村番号よりも、村リストの最大村番号が大きければ差分を確認リストに入れる
-    if($list_vno > $db_vno['max'])
+    if($vno_max_vlist > $vno_max_db)
     {
-      $fetch_n  = $list_vno - $db_vno['max'];
+      $fetch_n  = $vno_max_vlist - $vno_max_db;
 
       for ($i=1;$i<=$fetch_n;$i++)
       {
-        $vno = 0;
-        $vno = $db_vno['max'] + $i;
-        $is_end = $this->check_end($vno);
-        echo '$vno: '.$vno.PHP_EOL;
-
-        if($is_end && $this->check_not_ruined($vno))
-        {
-          $this->village[] = (int)$vno;
-        }
-        else if($is_end)
-        {
-          echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        }
-        else
-        {
-          //終了していない村は一旦村番号をメモ
-          var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
-          if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
-          {
-            echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
-          }
-        }
+        $this->village_pending[] = $vno_max_db + $i;
       }
     }
     //old
@@ -168,48 +147,48 @@ class Check_Village
     //var_dump($db_vno);
 
     //廃村が連続している国は最新村番号をチェック
-    if($db_vno['ruin'] !== 0)
-    {
-      if($db_vno['ruin'] === $list_vno)
-      {
-        return;
-      }
-      else
-      {
-        echo '▼ruin clear.'.PHP_EOL;
-      }
-    }
+    //if($db_vno['ruin'] !== 0)
+    //{
+      //if($db_vno['ruin'] === $list_vno)
+      //{
+        //return;
+      //}
+      //else
+      //{
+        //echo '▼ruin clear.'.PHP_EOL;
+      //}
+    //}
 
-    if($list_vno > $db_vno['max'])
-    {
-      $fetch_n  = $list_vno - $db_vno['max'];
+    //if($list_vno > $db_vno['max'])
+    //{
+      //$fetch_n  = $list_vno - $db_vno['max'];
 
-      for ($i=1;$i<=$fetch_n;$i++)
-      {
-        $vno = 0;
-        $vno = $db_vno['max'] + $i;
-        $is_end = $this->check_end($vno);
-        echo '$vno: '.$vno.PHP_EOL;
+      //for ($i=1;$i<=$fetch_n;$i++)
+      //{
+        //$vno = 0;
+        //$vno = $db_vno['max'] + $i;
+        //$is_end = $this->check_end($vno);
+        //echo '$vno: '.$vno.PHP_EOL;
 
-        if($is_end && $this->check_not_ruined($vno))
-        {
-          $this->village[] = (int)$vno;
-        }
-        else if($is_end)
-        {
-          echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        }
-        else
-        {
-          //終了していない村は一旦村番号をメモ
-          var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
-          if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
-          {
-            echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
-          }
-        }
-      }
-    }
+        //if($is_end && $this->check_not_ruined($vno))
+        //{
+          //$this->village[] = (int)$vno;
+        //}
+        //else if($is_end)
+        //{
+          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
+        //}
+        //else
+        //{
+          ////終了していない村は一旦村番号をメモ
+          //var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
+          //if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
+          //{
+            //echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
+          //}
+        //}
+      //}
+    //}
   }
   private function check_db_latest_vno($cid)
   {
@@ -289,6 +268,69 @@ class Check_Village
     return $list_vno;
   }
 
+  private function check_village_pending($class,$url)
+  {
+    foreach($this->village_pending as $key=>$vno)
+    {
+      $url_vil = mb_ereg_replace($url,'%n',$vno);
+      $is_end = $this->check_end($class,$url_vil);
+      echo '$vno: '.$vno.PHP_EOL;
+    }
+    //old
+        $is_end = $this->check_end($vno);
+        echo '$vno: '.$vno.PHP_EOL;
+
+        if($is_end && $this->check_not_ruined($vno))
+        {
+          $this->village[] = (int)$vno;
+        }
+        else if($is_end)
+        {
+          echo '※'.$vno.'>> ruined.'.PHP_EOL;
+        }
+        else
+        {
+          //終了していない村は一旦村番号をメモ
+          var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
+          if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
+          {
+            echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
+          }
+        }
+  }
+  private function check_end($class,$url)
+  {
+
+    $this->html->load_file($url);
+    sleep(1);
+    switch($class)
+    {
+      case 'Ning':
+        $last_page = trim($this->html->find('span.time',0)->plaintext);
+        break;
+      case 'Reason':
+        $last_page = $this->html->find('a',0)->plaintext;
+        if($last_page === '')
+        {
+          $last_page = '終了';
+        }
+        break;
+      default:
+        $last_page = mb_substr($this->html->find('title',0)->plaintext,0,2);
+        break;
+    }
+    $this->html->clear();
+
+    if($last_page === "終了")
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
   function remove_queue($vno=false)
   {
     //空なら操作しない
@@ -346,38 +388,6 @@ class Check_Village
   }
 
 
-  private function check_end($vno)
-  {
-
-    $this->html->load_file($this->url_vil.$vno);
-      sleep(1);
-    switch($this->cid)
-    {
-      case Cnt::Ning:
-        $last_page = trim($this->html->find('span.time',0)->plaintext);
-        break;
-      case Cnt::Reason:
-        $last_page = $this->html->find('a',0)->plaintext;
-        if($last_page === '')
-        {
-          $last_page = '終了';
-        }
-        break;
-      default:
-        $last_page = mb_substr($this->html->find('title',0)->plaintext,0,2);
-        break;
-    }
-    $this->html->clear();
-
-    if($last_page === "終了")
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
   private function check_not_ruined($vno)
   {
     $not_ruin = [Cnt::Ning,Cnt::Phantom,Cnt::Reason];
