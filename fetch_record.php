@@ -33,12 +33,14 @@ $sql = $sql.$countries;
 $stmt = $db->prepare_sql($sql);
 $stmt->execute();
 
+//DB切断
+$db->disconnect();
 
 //更新チェック
 echo '---'.$ctry.'-------'.PHP_EOL;
 try
 {
-  $check_village = new CheckVillage($stmt);
+  $check_village = new Check_Village($stmt);
   $stmt = $check_village->check($stmt);
   foreach($stmt as $item)
   {
@@ -65,5 +67,3 @@ echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;
 
 //
 //更新のある国だけ読み込む
-//DB切断
-$db->disconnect();
