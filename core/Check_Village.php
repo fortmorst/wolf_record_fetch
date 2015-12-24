@@ -27,16 +27,17 @@ class Check_Village
   {
     $this->db->connect();
 
-    foreach($this->stmt as $stmt_id=>$item)
+    foreach($this->stmt as $stmt_key=>$item)
     {
       //キューの確認
       $this->check_queue($item['id']);
       //新規村の確認
-      $this->check_new_fetch($item['id'],$item['class'],$item['url_log'],$item['ruin']);
+      $vno_max_db = $this->check_new_fetch($item['id'],$item['class'],$item['url_log'],$item['ruin']);
       //village_pendingリストから更新確認
-      if(!empty($this->village_pending) && $this->check_village_pending($item['class'],$item['url']))
+      if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$vno_max_db))
       {
         //stmtに書き込む
+        $this->stmt[$stmt_key]['queue'] = $this->village_pending;
       }
       else
       {
@@ -44,8 +45,9 @@ class Check_Village
         unset($this->stmt[$stmtid]);
       }
     }
-
     $this->db->disconnect();
+    var_dump($this->stmt);
+    return $this->stmt;
   }
 
   //function get_village()
@@ -121,7 +123,7 @@ class Check_Village
     {
       if($vno_ruin === $vno_max)
       {
-        return;
+        return $vno_max_db;
       }
       else
       {
@@ -139,6 +141,9 @@ class Check_Village
         $this->village_pending[] = $vno_max_db + $i;
       }
     }
+
+    return $vno_max_db;
+
     //old
     //$list_vno = $this->check_endlist();
     //$db_vno = $this->check_db();
@@ -268,35 +273,73 @@ class Check_Village
     return $list_vno;
   }
 
-  private function check_village_pending($class,$url)
+  private function check_village_pending($id,$class,$url,$vno_max_db)
   {
     foreach($this->village_pending as $key=>$vno)
     {
-      $url_vil = mb_ereg_replace($url,'%n',$vno);
+      $url_vil = mb_ereg_replace('%n',$vno,$url);
       $is_end = $this->check_end($class,$url_vil);
-      echo '$vno: '.$vno.PHP_EOL;
-    }
-    //old
-        $is_end = $this->check_end($vno);
-        echo '$vno: '.$vno.PHP_EOL;
-
-        if($is_end && $this->check_not_ruined($vno))
+      echo 'vno: '.$vno.PHP_EOL;
+      //廃村判定は後で消す
+      if($is_end)
+      {
+        //queueに入っている(DBの最大村番号よりも小さい)なら削除
+        if($vno < $vno_max_db)
         {
-          $this->village[] = (int)$vno;
+          $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
+          $stmt = $db->prepare_sql($sql);
+          $stmt->execute();
+          echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
-        else if($is_end)
+
+        //廃村か否か
+        if($this->check_not_ruined($class,$url_vil))
         {
-          echo '※'.$vno.'>> ruined.'.PHP_EOL;
+          //両方trueならcontinue;
+          continue;
         }
         else
         {
-          //終了していない村は一旦村番号をメモ
-          var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
-          if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
-          {
-            echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
-          }
+          //is_endがtrue&ruinedがfalse(=ruinである)ならruinedコメント
+          //後で削除
+          unset($this->village_pending[$key]);
+          echo '※'.$vno.'>> ruined.'.PHP_EOL;
         }
+      }
+      else
+      {
+        //is_endがfalseでruinedもfalseならキューに書く
+        unset($this->village_pending[$key]);
+        //終了していない村は一旦村番号をメモ
+        $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
+        $stmt = $db->prepare_sql($sql);
+        $stmt->execute();
+
+        echo '●'.$vno.'was written into DB.'.PHP_EOL;
+      }
+    }
+    return (!empty($this->village_pending))? true:false;
+    //old
+        //$is_end = $this->check_end($vno);
+        //echo '$vno: '.$vno.PHP_EOL;
+
+        //if($is_end && $this->check_not_ruined($vno))
+        //{
+          //$this->village[] = (int)$vno;
+        //}
+        //else if($is_end)
+        //{
+          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
+        //}
+        //else
+        //{
+          ////終了していない村は一旦村番号をメモ
+          //var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
+          //if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
+          //{
+            //echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
+          //}
+        //}
   }
   private function check_end($class,$url)
   {
@@ -331,74 +374,74 @@ class Check_Village
     }
   }
 
-  function remove_queue($vno=false)
+  //function remove_queue($vno=false)
+  //{
+    ////空なら操作しない
+    //if(empty($this->queue_del))
+    //{
+      //return;
+    //}
+
+    //$queue = $this->open_queue();
+    //echo 'queue_del:';
+    //var_dump($this->queue_del);
+    //echo 'remove_queue/vno:'.$vno.', queue: '.$queue.PHP_EOL;
+
+    ////村番号の指定があるならそれだけを除外する
+    //if($vno !== false)
+    //{
+      //$queue = mb_ereg_replace($this->cid.'_'.$vno.',',"",$queue);
+    //}
+    //else
+    //{
+      //foreach($this->queue_del as $vno)
+      //{
+        //$queue = preg_replace('/'.$this->cid.'_'.$vno.',/',"",$queue); 
+      //}
+    //}
+    //ftruncate($this->fp,0);
+    //fseek($this->fp, 0);
+    //fwrite($this->fp,$queue);
+    //$this->close_queue();
+  //}
+
+  //private function open_queue()
+  //{
+    //$fname = __DIR__.'/../rs/queue.txt';
+    //if(is_writable($fname))
+    //{
+      //$this->fp = fopen($fname,'a+');
+      //flock($this->fp,LOCK_EX);
+      //$line = fgets($this->fp);
+      //return $line;
+    //}
+    //else
+    //{
+      //return false;
+    //}
+  //}
+  //private function close_queue()
+  //{
+    //if($this->fp)
+    //{
+      //fflush($this->fp);
+      //flock($this->fp,LOCK_UN);
+      //fclose($this->fp);
+    //}
+  //}
+
+
+  private function check_not_ruined($class,$url)
   {
-    //空なら操作しない
-    if(empty($this->queue_del))
-    {
-      return;
-    }
+    $not_ruin = ['Ning','Phantom','Reason'];
 
-    $queue = $this->open_queue();
-    echo 'queue_del:';
-    var_dump($this->queue_del);
-    echo 'remove_queue/vno:'.$vno.', queue: '.$queue.PHP_EOL;
-
-    //村番号の指定があるならそれだけを除外する
-    if($vno !== false)
-    {
-      $queue = mb_ereg_replace($this->cid.'_'.$vno.',',"",$queue);
-    }
-    else
-    {
-      foreach($this->queue_del as $vno)
-      {
-        $queue = preg_replace('/'.$this->cid.'_'.$vno.',/',"",$queue); 
-      }
-    }
-    ftruncate($this->fp,0);
-    fseek($this->fp, 0);
-    fwrite($this->fp,$queue);
-    $this->close_queue();
-  }
-
-  private function open_queue()
-  {
-    $fname = __DIR__.'/../rs/queue.txt';
-    if(is_writable($fname))
-    {
-      $this->fp = fopen($fname,'a+');
-      flock($this->fp,LOCK_EX);
-      $line = fgets($this->fp);
-      return $line;
-    }
-    else
-    {
-      return false;
-    }
-  }
-  private function close_queue()
-  {
-    if($this->fp)
-    {
-      fflush($this->fp);
-      flock($this->fp,LOCK_UN);
-      fclose($this->fp);
-    }
-  }
-
-
-  private function check_not_ruined($vno)
-  {
-    $not_ruin = [Cnt::Ning,Cnt::Phantom,Cnt::Reason];
-
-    if(array_search($this->cid,$not_ruin) !== false)
+    if(array_search($class,$not_ruin) !== false)
     {
       return true;
     }
-    else if($this->cid === Cnt::Rinne)
+    else if($class === 'Rinne')
     {
-      $this->html->load_file($this->url_vil.$vno.'&cmd=vinfo');
+      $this->html->load_file($url.'&cmd=vinfo');
       sleep(1);
       $day = $this->html->find('p.multicolumn_role',0)->plaintext;
       if($day === '短期')
@@ -412,15 +455,15 @@ class Check_Village
       $this->html->clear();
     }
 
-    $this->html->load_file($this->url_vil.$vno);
+    $this->html->load_file($url);
       sleep(1);
-    switch($this->cid)
+    switch($class)
     {
-      case Cnt::Melon:
+      case 'Melon':
         $epi = $this->html->find('link[rel=Prev]',0)->href;
         $epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
         $this->html->clear();
-        $this->html->load_file($this->url_vil.$vno.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
+        $this->html->load_file($url.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
       sleep(1);
         if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
         {
@@ -432,9 +475,9 @@ class Check_Village
         }
         break;
         break;
-      case Cnt::Plot:
-      case Cnt::Ciel:
-      case Cnt::Perjury:
+      case 'Plot':
+      case 'Ciel':
+      case 'Perjury':
         $scrap = $this->html->find('script',-2)->innertext;
         $scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$scrap,'m');
         $this->html->clear();
@@ -448,14 +491,14 @@ class Check_Village
         }
         break;
       default:
-        switch($this->cid)
+        switch($class)
         {
-          case Cnt::Sebas:
-          case Cnt::Crescent:
+          case 'Sebas':
+          case 'Crescent':
             $info = 'div.info';
             $infosp = 'div.infosp';
             break;
-          case Cnt::Silence:
+          case 'Silence':
             $info = 'div.announce';
             $infosp = 'div.extra';
             break;
@@ -467,7 +510,7 @@ class Check_Village
         $epi = $this->html->find('link[rel=Prev]',0)->href;
         $epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
         $this->html->clear();
-        $this->html->load_file($this->url_vil.$vno.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
+        $this->html->load_file($url.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
       sleep(1);
         if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
         {
