@@ -2,14 +2,7 @@
 
 class Check_Village
 {
-  private  $cid
-          ,$url_log
-          ,$url_vil
-          ,$queue
-          ,$queue_del = []
-          ,$village = []
-          ,$html
-          ,$fp
+  private  $html
           ,$stmt
           ,$db
           ,$village_pending

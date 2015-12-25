@@ -44,15 +44,15 @@ try
   $stmt = $check_village->check($stmt);
   if(!empty($stmt))
   {
-    echo 'ここから村取得'.PHP_EOL;
-    exit;
+    //echo 'ここから村取得'.PHP_EOL;
+    //exit;
     //とりあえずここまで
     foreach($stmt as $item)
     {
       //村取得
       $country = $item['class'];
       echo '---'.$country.'-------'.PHP_EOL;
-      ${$country} = new $country;
+      ${$country} = new $country($item['id'],$item['url'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }
