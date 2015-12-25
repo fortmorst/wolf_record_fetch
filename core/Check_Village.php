@@ -48,8 +48,7 @@ class Check_Village
   private function check_queue($cid)
   {
     $sql = "select vno from village_queue where cid=".$cid;
-    $stmt = $this->db->prepare_sql($sql);
-    $stmt->execute();
+    $stmt = $this->db->query($sql);
     $result = $stmt->fetchAll();
 
     //キューに村番号がない場合
@@ -102,8 +101,7 @@ class Check_Village
   {
     //DBから一番最後に取得した村番号を取得
     $sql = "SELECT MAX(vno) FROM village where cid=".$cid;
-    $stmt = $this->db->prepare_sql($sql);
-    $stmt->execute();
+    $stmt = $this->db->query($sql);
     $vno_max= $stmt->fetch(PDO::FETCH_NUM);
 
     return (int)$vno_max[0];
@@ -112,8 +110,7 @@ class Check_Village
   {
     //廃村が連続している国はDBに村番号がある 
     $sql = "SELECT ruin FROM country WHERE id=".$cid;
-    $stmt = $this->db->prepare_sql($sql);
-    $stmt->execute();
+    $stmt = $this->db->query($sql);
     $vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
 
     return (int)$vno_ruin[0];
@@ -190,8 +187,7 @@ class Check_Village
         if($vno < $vno_max_db)
         {
           $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
-          $stmt = $this->db->prepare_sql($sql);
-          $stmt->execute();
+          $stmt = $this->db->query($sql);
           echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
 
@@ -215,8 +211,7 @@ class Check_Village
         unset($this->village_pending[$key]);
         //終了していない村は一旦村番号をメモ
         $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-        $stmt = $this->db->prepare_sql($sql);
-        $stmt->execute();
+        $stmt = $this->db->query($sql);
 
         echo '●'.$vno.'was written into DB.'.PHP_EOL;
       }

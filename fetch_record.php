@@ -14,7 +14,7 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 $db = new Connect_DB();
 $db->connect();
 
-$sql = "select id,class,url,url_log,ruin from country where class";
+$sql = "select id,class,url,url_log,policy,is_evil,ruin from country where class";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
@@ -30,8 +30,7 @@ else
 
 //国詳細取得
 $sql = $sql.$countries;
-$stmt = $db->prepare_sql($sql);
-$stmt->execute();
+$stmt = $db->query($sql);
 $stmt = $stmt->fetchAll();
 
 //DB切断
@@ -44,15 +43,15 @@ try
   $stmt = $check_village->check($stmt);
   if(!empty($stmt))
   {
-    //echo 'ここから村取得'.PHP_EOL;
-    //exit;
+    echo 'ここから村取得'.PHP_EOL;
+    exit;
     //とりあえずここまで
     foreach($stmt as $item)
     {
       //村取得
       $country = $item['class'];
       echo '---'.$country.'-------'.PHP_EOL;
-      ${$country} = new $country($item['id'],$item['url'],$item['policy'],$item['is_evil'],$item['queue']);
+      ${$country} = new $country($item['id'],$item['url'],(int)$item['policy'],(bool)$item['is_evil'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }

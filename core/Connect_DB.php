@@ -24,9 +24,13 @@ class Connect_DB
     $this->pdo = null;
   }
 
-  function prepare_sql($sql)
+  function prepare($sql)
   {
     return $this->pdo->prepare($sql);
+  }
+  function query($sql)
+  {
+    return $this->pdo->query($sql);
   }
 
   function insert_db($cid,$village,$cast)
