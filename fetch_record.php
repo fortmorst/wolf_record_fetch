@@ -32,23 +32,30 @@ else
 $sql = $sql.$countries;
 $stmt = $db->prepare_sql($sql);
 $stmt->execute();
+$stmt = $stmt->fetchAll();
 
 //DB切断
 $db->disconnect();
 
 //更新チェック
-echo '---'.$ctry.'-------'.PHP_EOL;
 try
 {
   $check_village = new Check_Village($stmt);
   $stmt = $check_village->check($stmt);
-  foreach($stmt as $item)
+  if(!empty($stmt))
   {
-    //村取得
-    $country = $item['class'];
-    ${$country} = new $country;
-    ${$country}->insert();
-    unset(${$country});
+    echo 'ここから村取得'.PHP_EOL;
+    exit;
+    //とりあえずここまで
+    foreach($stmt as $item)
+    {
+      //村取得
+      $country = $item['class'];
+      echo '---'.$country.'-------'.PHP_EOL;
+      ${$country} = new $country;
+      ${$country}->insert();
+      unset(${$country});
+    }
   }
 }
 catch(Exception $e)
@@ -59,7 +66,6 @@ catch(Exception $e)
   {
     unset(${$country});
   }
-  continue;
 }
 
 echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;

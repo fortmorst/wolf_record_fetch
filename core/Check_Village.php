@@ -12,7 +12,7 @@ class Check_Village
           ,$fp
           ,$stmt
           ,$db
-          ,$village_pending = []
+          ,$village_pending
           ;
 
   function __construct($stmt)
@@ -29,6 +29,8 @@ class Check_Village
 
     foreach($this->stmt as $stmt_key=>$item)
     {
+      echo '☆'.$item['class'].'->'.PHP_EOL;
+      $this->village_pending = [];
       //キューの確認
       $this->check_queue($item['id']);
       //新規村の確認
@@ -42,7 +44,7 @@ class Check_Village
       else
       {
         //更新村がゼロの場合、stmtを削除
-        unset($this->stmt[$stmtid]);
+        unset($this->stmt[$stmt_key]);
       }
     }
     $this->db->disconnect();
@@ -64,7 +66,7 @@ class Check_Village
   private function check_queue($cid)
   {
     $sql = "select vno from village_queue where cid=".$cid;
-    $stmt = $db->prepare_sql($sql);
+    $stmt = $this->db->prepare_sql($sql);
     $stmt->execute();
     $result = $stmt->fetchAll();
 
@@ -76,7 +78,7 @@ class Check_Village
 
     foreach($result as $item)
     {
-      $this->village_pending[] = $item['vno'];
+      $this->village_pending[] = (int)$item['vno'];
     }
    //old
     //$line = $this->open_queue();
@@ -117,11 +119,13 @@ class Check_Village
     //後で廃村してるか否かは国で確認するようにする
     $vno_ruin = $this->check_db_latest_ruin($cid);
 
+    var_dump($vno_max_vlist,$vno_max_db,$vno_ruin);
+
     //廃村が連続している国は最新村番号をチェック
     //将来的に削除
     if($vno_ruin !== 0)
     {
-      if($vno_ruin === $vno_max)
+      if($vno_ruin === $vno_max_vlist)
       {
         return $vno_max_db;
       }
@@ -203,7 +207,7 @@ class Check_Village
     $stmt->execute();
     $vno_max= $stmt->fetch(PDO::FETCH_NUM);
 
-    return $vno_max;
+    return (int)$vno_max[0];
   }
   private function check_db_latest_ruin($cid)
   {
@@ -213,7 +217,7 @@ class Check_Village
     $stmt->execute();
     $vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
 
-    return $vno_ruin;
+    return (int)$vno_ruin[0];
   }
 
   private function check_vlist_latest($url_log,$class)
@@ -275,6 +279,8 @@ class Check_Village
 
   private function check_village_pending($id,$class,$url,$vno_max_db)
   {
+    echo 'village_pending is ';
+    var_dump($this->village_pending);
     foreach($this->village_pending as $key=>$vno)
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
@@ -287,7 +293,7 @@ class Check_Village
         if($vno < $vno_max_db)
         {
           $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
-          $stmt = $db->prepare_sql($sql);
+          $stmt = $this->db->prepare_sql($sql);
           $stmt->execute();
           echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
@@ -312,7 +318,7 @@ class Check_Village
         unset($this->village_pending[$key]);
         //終了していない村は一旦村番号をメモ
         $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-        $stmt = $db->prepare_sql($sql);
+        $stmt = $this->db->prepare_sql($sql);
         $stmt->execute();
 
         echo '●'.$vno.'was written into DB.'.PHP_EOL;
