@@ -52,17 +52,6 @@ class Check_Village
     return $this->stmt;
   }
 
-  //function get_village()
-  //{
-    //$this->check_queue();
-    //$this->check_new_fetch();
-    //$this->close_queue();
-    //if($this->village)
-    //{
-      //sort($this->village);
-    //}
-    //return $this->village;
-  //}
   private function check_queue($cid)
   {
     $sql = "select vno from village_queue where cid=".$cid;
@@ -80,37 +69,6 @@ class Check_Village
     {
       $this->village_pending[] = (int)$item['vno'];
     }
-   //old
-    //$line = $this->open_queue();
-    //if($line && mb_strstr($line,$this->cid.'_'))
-    //{
-      //$this->queue = $line;
-      //$queue_array = explode(',',$line);
-      //array_pop($queue_array);
-      //foreach($queue_array as $item)
-      //{
-        //if(!mb_strstr($item,$this->cid.'_'))
-        //{
-          //continue;
-        //}
-        //$vno = preg_replace('/'.$this->cid.'_/','',$item);
-        //$is_end = $this->check_end($vno);
-        //if($is_end && $this->check_not_ruined($vno))
-        //{
-          //$this->village[] = (int)$vno;
-          //$this->queue_del[] = (int)$vno;
-        //}
-        //else if($is_end)
-        //{
-          //$this->queue_del[] = (int)$vno;
-          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        //}
-      //}
-    //}
-    //else
-    //{
-      //return false;
-    //}
   }
   private function check_new_fetch($cid,$class,$url_log,$ruin)
   {
@@ -118,8 +76,6 @@ class Check_Village
     $vno_max_db = $this->check_db_latest_vno($cid);
     //後で廃村してるか否かは国で確認するようにする
     $vno_ruin = $this->check_db_latest_ruin($cid);
-
-    var_dump($vno_max_vlist,$vno_max_db,$vno_ruin);
 
     //廃村が連続している国は最新村番号をチェック
     //将来的に削除
@@ -148,56 +104,6 @@ class Check_Village
 
     return $vno_max_db;
 
-    //old
-    //$list_vno = $this->check_endlist();
-    //$db_vno = $this->check_db();
-    //echo 'list_vno: '.$list_vno;
-    //echo 'db_vno: ';
-    //var_dump($db_vno);
-
-    //廃村が連続している国は最新村番号をチェック
-    //if($db_vno['ruin'] !== 0)
-    //{
-      //if($db_vno['ruin'] === $list_vno)
-      //{
-        //return;
-      //}
-      //else
-      //{
-        //echo '▼ruin clear.'.PHP_EOL;
-      //}
-    //}
-
-    //if($list_vno > $db_vno['max'])
-    //{
-      //$fetch_n  = $list_vno - $db_vno['max'];
-
-      //for ($i=1;$i<=$fetch_n;$i++)
-      //{
-        //$vno = 0;
-        //$vno = $db_vno['max'] + $i;
-        //$is_end = $this->check_end($vno);
-        //echo '$vno: '.$vno.PHP_EOL;
-
-        //if($is_end && $this->check_not_ruined($vno))
-        //{
-          //$this->village[] = (int)$vno;
-        //}
-        //else if($is_end)
-        //{
-          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        //}
-        //else
-        //{
-          ////終了していない村は一旦村番号をメモ
-          //var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
-          //if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
-          //{
-            //echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
-          //}
-        //}
-      //}
-    //}
   }
   private function check_db_latest_vno($cid)
   {
@@ -279,8 +185,6 @@ class Check_Village
 
   private function check_village_pending($id,$class,$url,$vno_max_db)
   {
-    echo 'village_pending is ';
-    var_dump($this->village_pending);
     foreach($this->village_pending as $key=>$vno)
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
@@ -325,27 +229,6 @@ class Check_Village
       }
     }
     return (!empty($this->village_pending))? true:false;
-    //old
-        //$is_end = $this->check_end($vno);
-        //echo '$vno: '.$vno.PHP_EOL;
-
-        //if($is_end && $this->check_not_ruined($vno))
-        //{
-          //$this->village[] = (int)$vno;
-        //}
-        //else if($is_end)
-        //{
-          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        //}
-        //else
-        //{
-          ////終了していない村は一旦村番号をメモ
-          //var_dump(mb_strstr($this->queue,$this->cid.'_'.$vno));
-          //if(!mb_strstr($this->queue,$this->cid.'_'.$vno))
-          //{
-            //echo '●fwrite:'.fwrite($this->fp,$this->cid.'_'.$vno.',').PHP_EOL;
-          //}
-        //}
   }
   private function check_end($class,$url)
   {
@@ -379,63 +262,6 @@ class Check_Village
       return false;
     }
   }
-
-  //function remove_queue($vno=false)
-  //{
-    ////空なら操作しない
-    //if(empty($this->queue_del))
-    //{
-      //return;
-    //}
-
-    //$queue = $this->open_queue();
-    //echo 'queue_del:';
-    //var_dump($this->queue_del);
-    //echo 'remove_queue/vno:'.$vno.', queue: '.$queue.PHP_EOL;
-
-    ////村番号の指定があるならそれだけを除外する
-    //if($vno !== false)
-    //{
-      //$queue = mb_ereg_replace($this->cid.'_'.$vno.',',"",$queue);
-    //}
-    //else
-    //{
-      //foreach($this->queue_del as $vno)
-      //{
-        //$queue = preg_replace('/'.$this->cid.'_'.$vno.',/',"",$queue); 
-      //}
-    //}
-    //ftruncate($this->fp,0);
-    //fseek($this->fp, 0);
-    //fwrite($this->fp,$queue);
-    //$this->close_queue();
-  //}
-
-  //private function open_queue()
-  //{
-    //$fname = __DIR__.'/../rs/queue.txt';
-    //if(is_writable($fname))
-    //{
-      //$this->fp = fopen($fname,'a+');
-      //flock($this->fp,LOCK_EX);
-      //$line = fgets($this->fp);
-      //return $line;
-    //}
-    //else
-    //{
-      //return false;
-    //}
-  //}
-  //private function close_queue()
-  //{
-    //if($this->fp)
-    //{
-      //fflush($this->fp);
-      //flock($this->fp,LOCK_UN);
-      //fclose($this->fp);
-    //}
-  //}
-
 
   private function check_not_ruined($class,$url)
   {
@@ -529,26 +355,4 @@ class Check_Village
         break;
     }
   }
-
-  //private function check_end_from_vlist()
-  //{
-    //$this->html->load_file($this->url_log);
-      //sleep(1);
-    ////終了した村リストの村番号を取得
-    //$vno_end = $this->html->find('table.vil_index',-1)->find('tr td a.vid');
-    //foreach($vno_end as $item)
-    //{
-      //$line = mb_substr($item->plaintext,0,-1);
-      //$vno_list[] = (int)$line;
-    //}
-    //return $vno_list;
-  //}
-  //private function check_latest_db($cid)
-  //{
-
-    //$this->check_db_latest_vno($cid);
-
-    ////DB切断
-    //return ['max'=>(int)$vno_max[0],'ruin'=>(int)$vno_ruin[0]];
-  //}
 }
