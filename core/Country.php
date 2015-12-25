@@ -3,10 +3,12 @@
 abstract class Country
 {
   protected  $cid
+            ,$url_org
             ,$url
             ,$queue
             ,$db
             ,$policy
+            ,$is_evil
             ,$village
             ,$fetch
             ,$cast
@@ -15,12 +17,19 @@ abstract class Country
             ,$doppel = []
             ;
             
-  protected function __construct($id,$url,$queue)
+  protected function __construct($id,$url,$policy,$is_evil,$queue)
   {
     $this->cid = $id;
-    $this->url = $url; //%nの置換が必要
+    $this->url_org = mb_ereg_replace('%n','',$url); //%nの置換が必要
     $this->queue = $queue;
+    $this->policy = $policy;
+    $this->is_evil = $is_evil;
     $this->db = new Connect_DB();
+    $this->set_village_data();
+  }
+  function set_village_data()
+  {
+    return;
   }
 
   function insert()
@@ -36,6 +45,7 @@ abstract class Country
         //echo '※: '.$vno.' is kicked by $kick list.'.PHP_EOL;
         //continue;
       //}
+      $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
         echo 'ERROR: '.$vno.'could not fetched.'.PHP_EOL;

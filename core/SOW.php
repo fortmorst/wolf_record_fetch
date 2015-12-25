@@ -14,7 +14,7 @@ class SOW extends Country
   }
   protected function fetch_from_info()
   {
-    $this->fetch->load_file($this->url.$this->village->vno."&cmd=vinfo");
+    $this->fetch->load_file($this->url."&cmd=vinfo");
       sleep(1);
 
     $this->fetch_name();
@@ -23,7 +23,7 @@ class SOW extends Country
     {
       $this->fetch_rp();
     }
-    if(!isset($this->policy))
+    if($this->policy === null)
     {
       $this->fetch_policy();
     }
@@ -63,7 +63,7 @@ class SOW extends Country
   }
   protected function fetch_from_pro()
   {
-    $url = $this->url.$this->village->vno.'&turn=0&row=10&mode=all&move=page&pageno=1';
+    $url = $this->url.'&turn=0&row=10&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
       sleep(1);
 
@@ -82,7 +82,7 @@ class SOW extends Country
   }
   protected function fetch_from_epi()
   {
-    $url = $this->url.$this->village->vno.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
+    $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
       sleep(1);
 
@@ -263,7 +263,7 @@ class SOW extends Country
   protected function fetch_daily_url($i,$find)
   {
     $row = 40;
-    $url = $this->url.$this->village->vno.'&turn='.$i.'&mode=all&move=page&pageno=1&row='.$row;
+    $url = $this->url.'&turn='.$i.'&mode=all&move=page&pageno=1&row='.$row;
     $this->fetch->load_file($url);
       sleep(1);
     $announce = $this->fetch->find($find);
@@ -273,7 +273,7 @@ class SOW extends Country
       do
       {
         $row += 10;
-        $url = $this->url.$this->village->vno.'&turn='.$i.'&mode=all&move=page&pageno=1&row='.$row;
+        $url = $this->url.'&turn='.$i.'&mode=all&move=page&pageno=1&row='.$row;
         $this->fetch->load_file($url);
       sleep(1);
         $announce = $this->fetch->find($find);

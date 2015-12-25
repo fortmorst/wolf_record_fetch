@@ -52,7 +52,7 @@ try
       //村取得
       $country = $item['class'];
       echo '---'.$country.'-------'.PHP_EOL;
-      ${$country} = new $country($item['id'],$item['url'],$item['queue']);
+      ${$country} = new $country($item['id'],$item['url'],$item['policy'],$item['is_evil'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }

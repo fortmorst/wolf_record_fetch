@@ -25,19 +25,9 @@ class Chitose extends SOW
     ,'後を追った。'=>['^( ?)(.+) は(絆に引きずられるように|哀しみに暮れて) .+ の後を追った。',Data::DES_SUICIDE]
   ];
 
-  function __construct()
-  {
-    $data = $this->set_village_data();
-    parent::__construct($data['cid'],$data['url_vil'],$data['url_log']);
-    $this->RP_LIST = array_merge($this->RP_LIST,$this->RP_SP);
-  }
   function set_village_data()
   {
-    $this->policy = true;
-    $cid = 32;
-    $url_vil = "http://chitose-azure.sakura.ne.jp/alf-laylah/sow/sow.cgi?vid=";
-    $url_log = "http://chitose-azure.sakura.ne.jp/alf-laylah/sow/sow.cgi?cmd=oldlog";
-    return ['cid'=>$cid,'url_vil'=>$url_vil,'url_log'=>$url_log];
+    $this->RP_LIST = array_merge($this->RP_LIST,$this->RP_SP);
   }
   protected function fetch_key_u($list,$rp,$item)
   {
