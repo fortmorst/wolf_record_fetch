@@ -2,9 +2,10 @@
 
 abstract class Country
 {
-  protected  $check
-            ,$cid
+  protected  $cid
             ,$url
+            ,$queue
+            ,$db
             ,$policy
             ,$village
             ,$fetch
@@ -14,26 +15,21 @@ abstract class Country
             ,$doppel = []
             ;
             
-  protected function __construct($cid,$url_vil,$url_log)
+  protected function __construct($id,$url,$queue)
   {
-    $this->check = new Check_Village($cid,$url_vil,$url_log); 
-    $this->cid = $cid;
-    $this->url = $url_vil;
+    $this->cid = $id;
+    $this->url = $url; //%nの置換が必要
+    $this->queue = $queue;
+    $this->db = new Connect_DB();
   }
 
   function insert()
   {
-    $list = $this->check->get_village();
-    //$list = [110,106,103,95,88,71,63,62,18];
-    if(!$list)
-    {
-      $this->check->remove_queue();
-      return;
-    }
+    //$this->list = [110,106,103,95,88,71,63,62,18];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //$kick = [15,16,26,35,40,43];
-    foreach($list as $vno)
+    foreach($this->queue as $vno)
     {
       //if(array_search($vno,$kick)  !== false)
       //{
@@ -48,18 +44,13 @@ abstract class Country
       }
       $this->fetch->clear();
       //continue;
-      $db = new Insert_DB($this->cid);
-      if(!$db->connect())
-      {
-        return;
-      }
-      if($db->insert_db($this->village,$this->users))
+      //$db = new Insert_DB($this->cid);
+      if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
         echo '★'.$this->village->vno.'. '.$this->village->name.' is all inserted.'.PHP_EOL;
       }
-      $db->disconnect();
     }
-    $this->check->remove_queue();
+    $this->db->disconnect();
   }
 
   protected function insert_village($vno)
@@ -326,22 +317,16 @@ abstract class Country
   }
   protected function make_doppel_array()
   {
-    try{
-      $pdo = new DBAdapter();
-    } catch (pdoexception $e){
-      var_dump($e->getMessage());
-      exit;
-    }
     //country_doppelからその国のdoppelリストを持ってくる
     $sql = "select d.player,d.country from doppel d join country_doppel cd on d.id=cd.dpid where cd.cid=".$this->cid;
-    $stmt = $pdo->query($sql);
+    $stmt = $this->db->prepare_sql($sql);
+    $stmt->execute();
 
     //配列化
     foreach($stmt as $item)
     {
       $this->doppel[$item['player']] = $item['country'];
     }
-    $pdo = null;
   }
   protected function modify_player($player)
   {
