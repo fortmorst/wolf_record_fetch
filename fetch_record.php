@@ -44,7 +44,7 @@ try
   if(!empty($stmt))
   {
     echo 'ここから村取得'.PHP_EOL;
-    exit;
+    //exit;
     //とりあえずここまで
     foreach($stmt as $item)
     {

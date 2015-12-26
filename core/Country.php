@@ -34,10 +34,11 @@ abstract class Country
 
   function insert()
   {
-    //$this->list = [110,106,103,95,88,71,63,62,18];
+    //指定取得用
+    //$this->queue = [110,106,103,95,88,71,63,62,18];
+    //$kick = [15,16,26,35,40,43];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
-    //$kick = [15,16,26,35,40,43];
     foreach($this->queue as $vno)
     {
       //if(array_search($vno,$kick)  !== false)
@@ -53,7 +54,7 @@ abstract class Country
         //continue;
       }
       $this->fetch->clear();
-      //continue;
+      continue;
       //$db = new Insert_DB($this->cid);
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
@@ -329,8 +330,7 @@ abstract class Country
   {
     //country_doppelからその国のdoppelリストを持ってくる
     $sql = "select d.player,d.country from doppel d join country_doppel cd on d.id=cd.dpid where cd.cid=".$this->cid;
-    $stmt = $this->db->prepare_sql($sql);
-    $stmt->execute();
+    $stmt = $this->db->query($sql);
 
     //配列化
     foreach($stmt as $item)
