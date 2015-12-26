@@ -17,7 +17,7 @@ abstract class Country
             ,$doppel = []
             ;
             
-  protected function __construct($id,$url,$policy,$is_evil,$queue)
+  function __construct($id,$url,$policy,$is_evil,$queue)
   {
     $this->cid = $id;
     $this->url_org = mb_ereg_replace('%n','',$url); //%nの置換が必要
@@ -34,11 +34,13 @@ abstract class Country
 
   function insert()
   {
+    $this->db->connect();
     //指定取得用
     //$this->queue = [110,106,103,95,88,71,63,62,18];
     //$kick = [15,16,26,35,40,43];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
+    //村番号順に挿入
     foreach($this->queue as $vno)
     {
       //if(array_search($vno,$kick)  !== false)
@@ -54,7 +56,7 @@ abstract class Country
         //continue;
       }
       $this->fetch->clear();
-      continue;
+      //continue;
       //$db = new Insert_DB($this->cid);
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
@@ -72,7 +74,7 @@ abstract class Country
     $this->insert_users();
     $this->check_role();
 
-    //var_dump($this->village->get_vars());
+    var_dump($this->village->get_vars());
     if($this->village->is_valid())
     {
       return true;

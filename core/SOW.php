@@ -10,7 +10,6 @@ class SOW extends Country
     $this->fetch_from_info();
     $this->fetch_from_pro();
     $this->fetch_from_epi();
-    var_dump($this->village->get_vars());
   }
   protected function fetch_from_info()
   {
