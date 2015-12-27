@@ -2,8 +2,7 @@
 
 class Village
 {
-  private  $cid
-          ,$vno
+  private  $vno
           ,$name
           ,$date
           ,$nop
@@ -20,9 +19,8 @@ class Village
 
   use Properties;
 
-  function __construct($cid,$vno)
+  function __construct($vno)
   {
-    $this->cid = $cid;
     $this->vno = $vno;
   }
   function get_vars()
@@ -39,7 +37,6 @@ class Village
     {
       switch($key)
       {
-      case 'cid':
       case 'vno':
       case 'nop':
       case 'rglid':

@@ -68,7 +68,7 @@ abstract class Country
 
   protected function insert_village($vno)
   {
-    $this->village = new Village($this->cid,$vno);
+    $this->village = new Village($vno);
 
     $this->fetch_village();
     $this->insert_users();

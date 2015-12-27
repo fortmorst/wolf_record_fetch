@@ -2,8 +2,7 @@
 
 class Connect_DB
 {
-  private  $pdo
-          ,$cid;
+  private  $pdo;
 
   function __construct()
   {
@@ -54,9 +53,8 @@ class Connect_DB
   }
   private function check_not_duplicate($vno,$cid)
   {
-    $sql = "SELECT vno FROM village where cid=:cid AND vno=:vno";
+    $sql = "SELECT vno FROM village where cid=".$cid." AND vno=:vno";
     $stmt = $this->pdo->prepare($sql);
-    $stmt->bindValue(':cid',$cid,PDO::PARAM_INT);
     $stmt->bindValue(':vno',$vno,PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetch();
@@ -67,13 +65,12 @@ class Connect_DB
     $is_duplicate = $this->check_not_duplicate($village['vno'],$cid);
     if(!$is_duplicate['vno'])
     {
-      $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES (:cid,:vno,:name,:date,:nop,:rglid,:days,:wtmid,:rgl_detail)";
+      $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES (".$cid.",:vno,:name,:date,:nop,:rglid,:days,:wtmid,:rgl_detail)";
       $stmt = $this->pdo->prepare($sql);
       foreach($village as $key=>$value)
       {
         switch($key)
         {
-          case 'cid':
           case 'vno':
           case 'nop':
           case 'rglid':
@@ -110,9 +107,8 @@ class Connect_DB
 
   private function check_vid($vno,$cid)
   {
-    $sql = "SELECT id FROM village WHERE cid=:cid AND vno=:vno";
+    $sql = "SELECT id FROM village WHERE cid=".$cid." AND vno=:vno";
     $stmt = $this->pdo->prepare($sql);
-    $stmt->bindValue(':cid',$cid,PDO::PARAM_INT);
     $stmt->bindValue(':vno',$vno,PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetch();
