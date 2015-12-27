@@ -22,7 +22,10 @@ abstract class Country
     $this->cid = $id;
     $this->url_org = mb_ereg_replace('%n','',$url); //%nの置換が必要
     $this->queue = $queue;
-    $this->policy = $policy;
+    if($policy !== null)
+    {
+      $this->policy = (int)$policy;
+    }
     $this->is_evil = $is_evil;
     $this->db = new Connect_DB();
     $this->set_village_data();
@@ -57,7 +60,6 @@ abstract class Country
       }
       $this->fetch->clear();
       //continue;
-      //$db = new Insert_DB($this->cid);
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
         echo '★'.$this->village->vno.'. '.$this->village->name.' is all inserted.'.PHP_EOL;
@@ -74,7 +76,7 @@ abstract class Country
     $this->insert_users();
     $this->check_role();
 
-    var_dump($this->village->get_vars());
+    //var_dump($this->village->get_vars());
     if($this->village->is_valid())
     {
       return true;

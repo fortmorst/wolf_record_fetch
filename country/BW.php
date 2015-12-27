@@ -48,24 +48,13 @@ class BW extends SOW
     ,"逆呪"=>Data::DES_CURSED
     ,"連死"=>Data::DES_SUICIDE
     ];
-  function __construct()
-  {
-    $cid = 48;
-    $url_vil = "http://wolf.nacht.jp/sw/?vid=";
-    $url_log = "http://wolf.nacht.jp/sw/?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-  }
   protected function fetch_policy()
   {
     parent::fetch_policy();
     if($this->village->policy === true)
     {
       $policy = $this->fetch->find('p.multicolumn_left',8)->plaintext;
-      if(!preg_match('/物語/',$policy))
-      {
-        $this->village->policy = true;
-      }
-      else
+      if(preg_match('/物語/',$policy))
       {
         $this->village->policy = false;
         $this->output_comment('rp');

@@ -14,7 +14,7 @@ class SOW extends Country
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url."&cmd=vinfo");
-      sleep(1);
+    sleep(1);
 
     $this->fetch_name();
     $this->fetch_days();
