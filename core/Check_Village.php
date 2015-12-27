@@ -41,7 +41,6 @@ class Check_Village
       }
     }
     $this->db->disconnect();
-    var_dump($this->stmt);
     return $this->stmt;
   }
 
