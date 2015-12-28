@@ -4,10 +4,6 @@ class Connect_DB
 {
   private  $pdo;
 
-  function __construct()
-  {
-  }
-
   function connect()
   {
     try{

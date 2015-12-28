@@ -43,9 +43,6 @@ try
   $stmt = $check_village->check($stmt);
   if(!empty($stmt))
   {
-    echo 'ここから村取得'.PHP_EOL;
-    //exit;
-    //とりあえずここまで
     foreach($stmt as $item)
     {
       //村取得
