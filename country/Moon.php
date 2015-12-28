@@ -45,12 +45,8 @@ class Moon extends SOW
     ,"呪殺"=>Data::DES_CURSED
     ,"後追死"=>Data::DES_SUICIDE
     ];
-  function __construct()
+  function set_village_data()
   {
-    $cid = 56;
-    $url_vil = "http://managarmr.sakura.ne.jp/sow.cgi?vid=";
-    $url_log = "http://managarmr.sakura.ne.jp/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
     $this->RP_LIST = array_merge($this->RP_LIST,$this->RP_SP);
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
   }

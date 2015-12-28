@@ -3,12 +3,11 @@
 abstract class Giji extends Country
 {
   use TRS_Giji;
-  protected $is_evil;
   protected $base;
 
   function fetch_village()
   {
-    $this->fetch->load_file($this->url.$this->village->vno."#mode=info_open_player");
+    $this->fetch->load_file($this->url."#mode=info_open_player");
       sleep(1);
     $this->base = $this->fetch->find('script',-2)->innertext;
 
@@ -19,7 +18,7 @@ abstract class Giji extends Country
     $this->make_cast();
     $this->check_sprule();
     
-    if(!isset($this->policy))
+    if($this->policy === null)
     {
       $this->fetch_policy();
     }

@@ -33,14 +33,6 @@ class Silence extends SOW
     ,'ち亡くすね。'=>['(.+)朝、(.+) の首がぽぽぽ.+',Data::DES_EATEN]
     ,'後を追った。'=>['\A( ?)(.+) は(民間の広告ネットワークに引きずられるように|感謝の気持ちを込めて) .+ の後を追った。',Data::DES_SUICIDE]
   ];
-  function __construct()
-  {
-    $cid = 35;
-    $url_vil = "http://silence.hotcom-web.com/cgi-bin/sow/sow.cgi?vid=";
-    $url_log = "http://silence.hotcom-web.com/cgi-bin/sow/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-    $this->policy = true;
-  }
   protected function fetch_name()
   {
     $this->village->name = $this->fetch->find('table.list tr td',1)->plaintext;

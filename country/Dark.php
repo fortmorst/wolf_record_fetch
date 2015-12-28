@@ -111,12 +111,8 @@ class Dark extends SOW
     ,'発見された。'=>['(.+)朝、 ?(.+) が名状.+',Data::DES_EATEN]
     ,'後を追った。'=>['^( ?)(.+) は(絆に引きずられるように|哀しみに暮れて) .+ の後を追った。',Data::DES_SUICIDE]
   ];
-  function __construct()
+  function set_village_data()
   {
-    $cid = 51;
-    $url_vil = "http://o8o8.o0o0.jp/wolf/sow.cgi?vid=";
-    $url_log = "http://o8o8.o0o0.jp/wolf/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
     $this->DT_NORMAL = array_merge($this->DT_NORMAL,$this->DT_SP);
   }

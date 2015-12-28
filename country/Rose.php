@@ -2,13 +2,6 @@
 class Rose extends SOW
 {
   use TRS_Rose;
-  function __construct()
-  {
-    $cid = 28;
-    $url_vil = "http://lup.lunare.org/sow/sow.cgi?vid=";
-    $url_log = "http://lup.lunare.org/sow/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-  }
 
   protected function fetch_policy()
   {

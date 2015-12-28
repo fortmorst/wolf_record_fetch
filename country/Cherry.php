@@ -3,13 +3,6 @@
 class Cherry extends SOW
 {
   use TRS_SOW;
-  function __construct()
-  {
-    $cid = 30;
-    $url_vil = "http://mirage.sakuratan.com/sow.cgi?vid=";
-    $url_log = "http://mirage.sakuratan.com/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-  }
   protected function fetch_rp()
   {
     $this->village->rp = 'SOW';

@@ -32,14 +32,9 @@ class Phantom extends SOW
     ,'されました。'=>['(.+)朝、 ?(.+) が無残.+',Data::DES_EATEN]
     ,'後を追った。'=>['^( ?)(.+) は(絆に引きずられるように) .+ の後を追った。',Data::DES_SUICIDE]
   ];
-  function __construct()
+  function set_village_data()
   {
-    $cid = 47;
-    $url_vil = "http://schicksal.sakura.ne.jp/sow/sow.cgi?vid=";
-    $url_log = "http://schicksal.sakura.ne.jp/sow/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
-    $this->policy = false;
     $this->is_ruined = false;
   }
   protected function fetch_wtmid()
