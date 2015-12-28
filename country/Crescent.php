@@ -9,14 +9,6 @@ class Crescent extends Giji_Old
     ,"変態BBS"=>'HENTAI'
     ,"ＧＭイラットのクロサー"=>'CLOSED'
   ];
-  function __construct()
-  {
-    $cid = 52;
-    $url_vil = "http://www.moonpupa.jp/wolf/sow/sow.cgi?vid=";
-    $url_log = "http://www.moonpupa.jp/wolf/sow/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-    $this->is_evil = true;
-  }
 
   protected function fetch_date()
   {

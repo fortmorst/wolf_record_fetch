@@ -208,11 +208,14 @@ class Check_Village
       {
         //is_endがfalseでruinedもfalseならキューに書く
         unset($this->village_pending[$key]);
-        //終了していない村は一旦村番号をメモ
-        $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-        $stmt = $this->db->query($sql);
+        if($vno > $vno_max_db)
+        {
+          //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
+          $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
+          $stmt = $this->db->query($sql);
 
-        echo '●'.$vno.'was written into DB.'.PHP_EOL;
+          echo '●'.$vno.'was written into DB.'.PHP_EOL;
+        }
       }
     }
     return (!empty($this->village_pending))? true:false;

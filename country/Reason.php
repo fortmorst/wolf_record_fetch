@@ -14,24 +14,16 @@ class Reason extends Country
        ,"狂人"  =>Data::SKL_LUNATIC
     ]; 
 
-  function __construct()
-  {
-    $cid = 59;
-    $url_vil = "http://sui.sib.jp/pc/view_kako/";
-    $url_log = "http://sui.sib.jp/pc/index_kako/";
-    parent::__construct($cid,$url_vil,$url_log);
-  }
 
   protected function fetch_village()
   {
     $this->fetch_from_pro();
     $this->fetch_from_epi();
-    //var_dump($this->village->get_vars());
   }
 
   protected function fetch_from_pro()
   {
-    $this->fetch->load_file($this->url.$this->village->vno);
+    $this->fetch->load_file($this->url);
       sleep(1);
 
     $this->fetch_name();
@@ -53,17 +45,15 @@ class Reason extends Country
   {
     $url = $this->fetch->find('div#NaviDay a',-1)->href;
     $this->village->days = (int)mb_ereg_replace(".+view_kako/\d+/(\d+)/.+", "\\1", $url);
-    $this->url_epi = $this->url.$this->village->vno.'/'.$this->village->days;
+    $this->url_epi = $this->url.'/'.$this->village->days;
   }
 
   protected function fetch_from_epi()
   {
     $this->fetch->load_file($this->url_epi);
-      sleep(1);
+    sleep(1);
     $this->make_cast();
 
-    //$this->fetch_nop();
-    //$this->fetch_rglid();
     $this->fetch_wtmid();
 
     $this->fetch->clear();
@@ -152,7 +142,7 @@ class Reason extends Country
     $days = $this->village->days;
     for($i=2; $i<=$days; $i++)
     {
-      $this->fetch->load_file($this->url.$this->village->vno.'/'.$i);
+      $this->fetch->load_file($this->url.'/'.$i);
       sleep(1);
       $announce = $this->fetch->find('div.systemmessage_white');
       foreach($announce as $item)

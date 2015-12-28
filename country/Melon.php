@@ -3,13 +3,6 @@
 class Melon extends SOW
 {
   use TRS_Melon;
-  function __construct()
-  {
-    $cid = 26;
-    $url_vil = 'http://melon-cirrus.sakura.ne.jp/sow/sow.cgi?m=a&v=';
-    $url_log = 'http://melon-cirrus.sakura.ne.jp/sow/sow.cgi?cmd=oldlog';
-    parent::__construct($cid,$url_vil,$url_log);
-  }
 
   protected function fetch_rp()
   {
@@ -39,7 +32,7 @@ class Melon extends SOW
   }
   protected function fetch_from_pro()
   {
-    $url = $this->url.$this->village->vno.'&t=0&r=10&o=a&mv=p&n=1';
+    $url = $this->url.'&t=0&r=10&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
       sleep(1);
 
@@ -48,7 +41,7 @@ class Melon extends SOW
   }
   protected function fetch_from_epi()
   {
-    $url = $this->url.$this->village->vno.'&t='.$this->village->days.'&row=40&o=a&mv=p&n=1';
+    $url = $this->url.'&t='.$this->village->days.'&row=40&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
       sleep(1);
 

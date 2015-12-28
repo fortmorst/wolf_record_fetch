@@ -7,15 +7,6 @@ class Guta extends Giji_Old
      "ミラーズホロウ"=>'MILLERS'
     ,"昏き宵闇の琥珀"=>'AMBER'
   ];
-  function __construct()
-  {
-    $cid = 11;
-    $url_vil = "http://www3.marimo.or.jp/~fgmaster/cabala/sow.cgi?vid=";
-    //村一覧が重いので取得数を減らす
-    $url_log = "http://www3.marimo.or.jp/~fgmaster/cabala/sow.cgi?cmd=oldlog&row=10";
-    parent::__construct($cid,$url_vil,$url_log);
-    $this->is_evil = true;
-  }
 
   protected function fetch_policy()
   {

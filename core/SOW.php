@@ -64,7 +64,7 @@ class SOW extends Country
   {
     $url = $this->url.'&turn=0&row=10&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_date();
     if(!empty($this->RP_PRO))
@@ -83,7 +83,7 @@ class SOW extends Country
   {
     $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_wtmid();
     $this->make_cast();
@@ -264,7 +264,7 @@ class SOW extends Country
     $row = 40;
     $url = $this->url.'&turn='.$i.'&mode=all&move=page&pageno=1&row='.$row;
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
     $announce = $this->fetch->find($find);
     //処刑以降が取れてなさそうな場合はログ件数を増やす
     if(count($announce) <= 1 && $find !== 'p.infosp')

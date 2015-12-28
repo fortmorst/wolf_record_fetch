@@ -13,25 +13,16 @@ class Ning extends Country
        ,"狂人"  =>Data::SKL_LUNATIC
     ]; 
 
-  function __construct()
-  {
-    $cid = 9;
-    $url_vil = "http://www.wolfg.x0.com/index.rb?vid=";
-    $url_log = "http://www.wolfg.x0.com/index.rb?cmd=log";
-    parent::__construct($cid,$url_vil,$url_log);
-  }
-
   protected function fetch_village()
   {
     $this->fetch_from_pro();
     $this->fetch_from_epi();
-    //var_dump(get_object_vars($this->village));
   }
 
   protected function fetch_from_pro()
   {
-    $this->fetch->load_file($this->url.$this->village->vno."&meslog=000_ready");
-      sleep(1);
+    $this->fetch->load_file($this->url."&meslog=000_ready");
+    sleep(1);
 
     $this->fetch_name();
     $this->fetch_date();
@@ -51,7 +42,7 @@ class Ning extends Country
   }
   protected function fetch_days()
   {
-    $url = preg_replace("/index\.rb\?vid=/","",$this->url);
+    $url = preg_replace("/index\.rb\?vid=/","",$this->url_org);
     $this->url_epi = $url.$this->fetch->find('p a',-2)->href;
     $this->village->days = preg_replace("/.+=0(\d{2})_party/", "$1", $this->url_epi) + 1;
   }
@@ -65,7 +56,7 @@ class Ning extends Country
       throw new Exception($this->village->vno.': Broken Epilogue.');
     }
     $this->fetch->load_file($this->url_epi);
-      sleep(1);
+    sleep(1);
     $this->make_cast();
     $this->fetch_wtmid();
 
@@ -211,7 +202,7 @@ class Ning extends Country
     }
     $day = str_pad($day,3,"0",STR_PAD_LEFT);
 
-    return $this->url.$this->village->vno.'&meslog='.$day.$suffix;
+    return $this->url.'&meslog='.$day.$suffix;
   }
   protected function fetch_sklid()
   {

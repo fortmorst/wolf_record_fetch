@@ -6,17 +6,13 @@ abstract class Sea extends Giji_Old
   protected $RP_SP = [
     "RolePlay"=>'RP'
   ];
-  abstract function set_village_data();
-  function __construct()
+
+  function set_village_data()
   {
-    $data = $this->set_village_data();
-    parent::__construct($data['cid'],$data['url_vil'],$data['url_log']);
-    $this->is_evil = true;
     $this->SKILL = $this->SKL_SEA;
     $this->TEAM = $this->TM_SEA;
     $this->WTM = $this->WTM_SEA;
   }
-
   protected function fetch_policy_detail()
   {
     $policy = $this->fetch->find('p.multicolumn_left',1)->plaintext;

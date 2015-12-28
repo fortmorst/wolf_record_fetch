@@ -8,16 +8,6 @@ class Ivory extends Giji_Old
     ,"ミラーズホロウ"=>'MILLERS'
     ,"マフィア"=>'MAFIA'
   ];
-  function __construct()
-  {
-    $cid = 50;
-    $url_vil = "http://kids.sphere.sc/tabula/lupus/sow.cgi?vid=";
-    $url_log = "http://kids.sphere.sc/tabula/lupus/sow.cgi?cmd=oldlog";
-    parent::__construct($cid,$url_vil,$url_log);
-
-    $this->is_evil = false;
-    $this->policy = true;
-  }
 
   protected function fetch_name()
   {

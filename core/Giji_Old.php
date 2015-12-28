@@ -3,7 +3,6 @@
 abstract class Giji_Old extends Country
 {
   use TRS_Giji_Old;
-  protected $is_evil; //裏切り陣営あり
   private   $WTM_ZAP = [
      "の人物が消え失せ、守り育む"=>Data::TM_NONE
     ,"可の組織は全滅した……。「"=>Data::TM_VILLAGER
@@ -24,18 +23,17 @@ abstract class Giji_Old extends Country
     $this->fetch_from_info();
     $this->fetch_from_pro();
     $this->fetch_from_epi();
-    //var_dump($this->village->get_vars());
   }
 
   protected function fetch_from_info()
   {
-    $this->fetch->load_file($this->url.$this->village->vno."&cmd=vinfo");
+    $this->fetch->load_file($this->url."&cmd=vinfo");
       sleep(1);
 
     $this->fetch_name();
     $this->fetch_days();
     $this->fetch_rp();
-    if(!isset($this->policy))
+    if($this->policy === null)
     {
       $this->fetch_policy();
     }
@@ -106,7 +104,7 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_from_pro()
   {
-    $url = $this->url.$this->village->vno.'&turn=0&row=10&mode=all&move=page&pageno=1';
+    $url = $this->url.'&turn=0&row=10&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
       sleep(1);
 
@@ -121,7 +119,7 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_from_epi()
   {
-    $url = $this->url.$this->village->vno.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
+    $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
       sleep(1);
 
