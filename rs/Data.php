@@ -15,6 +15,7 @@ class Data
   const TM_SEA       = 17; //深海団
   const TM_DEVIL     = 12; //妖魔族
   const TM_BMOON     = 11; //蒼月教会
+  const TM_DRAGON    = 24; //龍人族
   //追加勝利
   const TM_EVIL      =  9; //裏切りの陣営
   const TM_FISH      = 10; //据え膳
@@ -24,6 +25,7 @@ class Data
   const TM_MARTYR    = 22; //殉教者陣営
   //その他
   const TM_NONE      = 99; //陣営なし
+  const TM_DOLL      = 23; //無魂人形
   const TM_ONLOOKER  = 98; //見物人  
   //輪廻
   const TM_R_VIL     = 18; //村人
@@ -135,6 +137,7 @@ class Data
     const SKL_MOON_MINUS      =316; //月忌師 月のカウントをゼロにする
     const SKL_SIREN           =335; //歌姫 2d以降処刑突然衰退死以外の死者を蘇らせる
     const SKL_STAR            =337; //星狩り 事件「流星群」を起こす
+    const SKL_HASTY           =338; //無思慮 特に何も起きない能力行使を行う
     //被襲撃防衛系
     const SKL_HUNTER          = 21; //賞金稼 死亡時指定した相手を道連れにする
     const SKL_SICK            = 28; //病人 襲撃相手を無能にする
@@ -217,6 +220,7 @@ class Data
     const SKL_TEMPT           =243; //黒薔薇 一人を村人陣営にする。黒薔薇全員が死んだら元の陣営に戻る
     const SKL_NO_BAND         =285; //偶人 一切の絆がつかない。両絆が付加された場合、一方的なものになる
     const SKL_TROUBLEMAKER    =304; //渦中者 生存中は特定の事件がランダムで起きる
+    const SKL_APPEAL          =339; //自己主張者 能力行使をウケるとアピールする
   //裏切りの陣営
   const SKL_LUNATIC         =  6; //狂人 能力なし
     //囁き系
@@ -238,6 +242,7 @@ class Data
     const SKL_LUNA_SEER_ROLE  = 40; //魔術師 賢者
     const SKL_LUNA_SEER_ID    = 86; //呪魂者 中身占い師 占われると呪殺できる
     const SKL_LUNA_SEER_ROLETM=185; //祈祷師 一日遅れで役職と陣営を占う
+    const SKL_LUNA_SEER_TM    =340; //信仰魔術師 信仰占い師
     //誘惑・変質系
     const SKL_LUNA_WIS_TEMPT  = 88; //誘惑者 邪教徒(深海) 囁き狂人+初日に一人を隷従者(恩恵)にする
     const SKL_LUNA_TEMPT      = 81; //冒涜者 狂信者+初日に一人を背信者にする
@@ -438,6 +443,18 @@ class Data
   const SKL_SLAVE           = 91; //奴隷 貴族が死んでいれば勝ち
   //悪霊陣営
   const SKL_YANDERE         =135; //恋未練 指定先と自分が死ねば追加勝利、墓下投票可
+  //無魂人形
+  const SKL_DOLL            =341; //土人形 能力行使してきた相手と同じ陣営になる
+  const SKL_DOLL_IRON       =342; //鋼鉄人形 土人形+襲撃無効
+  const SKL_DOLL_SICK       =343; //塵埃人形 土人形+被襲撃者を無能にする
+  //龍人族
+  const SKL_DRAGON          =344; //童子龍 龍人族同士で囁ける
+  const SKL_DRAGON_BAP      =345; //輪廻龍 自分以外の龍人族が全員死んだ後、蘇生能力が使えるようになる
+  const SKL_DRAGON_POISON   =346; //召雷龍 自分以外の龍人族が全員死んだ後、毒殺能力が使えるようになる
+  const SKL_DRAGON_ASS      =347; //黄昏龍 自分以外の龍人族が全員死んだ後、襲撃能力が使えるようになる
+  const SKL_DRAGON_SEAL     =348; //空翠龍 自分以外の龍人族が全員死んだ後、封印能力が使えるようになる
+  const SKL_DRAGON_SICK     =349; //朧夜龍 自分以外の龍人族が全員死んだ後、相手を無能にする能力が使えるようになる
+  const SKL_DRAGON_GRD      =350; //幽鬼龍 自分以外の龍人族が全員死んだ後、護衛能力が使えるようになる
   //妖魔族
   const SKL_DEVIL           =248; //古妖魔 妖魔族基本、独自窓を持つ
   const SKL_DVL_MIMIC_FM    =236; //響鳴種 共鳴窓に潜り込む
@@ -466,7 +483,7 @@ class Data
   const SKL_SHEEP           =255; //迷える子羊 4dに衰退死、それまでに占能力を受けると一定の役職に変化
   const SKL_JOKER           =268; //ジョーカー ランダムに提示された役職に変われる
   const SKL_ANTINOMY        =333; //二律背反 一日ごとに村陣営と裏切り陣営に切り替わる
-  const SKL_NARCISSUS       =334; //雪中花 1dに選んだ相手を襲撃死から守る/片恋絆を結ぶ
+  const SKL_NARCISSUS       =334; //雪中花 1dに選んだ相手を襲撃死から守る/片恋絆を結んで恋陣営になる
   //見物人
   const SKL_ONLOOKER        = 10; //見物人
   const SKL_OWNER           = 77; //支配人 進行中に全てのログが読める

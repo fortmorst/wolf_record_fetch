@@ -73,6 +73,8 @@ trait TRS_Crescent
     ,"猟兵"=>Data::SKL_JAEGER
     ,"渦中者"=>Data::SKL_TROUBLEMAKER
     ,"若輩占師"=>Data::SKL_MISTAKE_NOCURSE
+    ,"無思慮"=>Data::SKL_HASTY
+    ,"自己主張者"=>Data::SKL_APPEAL
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -98,6 +100,7 @@ trait TRS_Crescent
     ,"転業之民"=>Data::SKL_FRY_PIXY_WIS
     ,"崩れ星"=>Data::SKL_LUNA_SUICIDE
     ,"人魂"=>Data::SKL_LUNA_POISON_G
+    ,"信仰魔術師"=>Data::SKL_LUNA_SEER_TM
     //人狼
     ,"凶狼"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -190,6 +193,18 @@ trait TRS_Crescent
     ,"横惑師"=>Data::SKL_MRT_FRY_ADD_ODD
     ,"御節介"=>Data::SKL_MRT_LOVE_ADD_LOVE
     ,"死之商人"=>Data::SKL_MRT_EFB_ADD_ODD
+    //無魂人形
+    ,"土人形"=>Data::SKL_DOLL
+    ,"鋼鉄人形"=>Data::SKL_DOLL_IRON
+    ,"塵埃人形"=>Data::SKL_DOLL_SICK
+    //龍人族
+    ,"童子龍"=>Data::SKL_DRAGON
+    ,"輪廻龍"=>Data::SKL_DRAGON_BAP
+    ,"召雷龍"=>Data::SKL_DRAGON_POISON
+    ,"黄昏龍"=>Data::SKL_DRAGON_ASS
+    ,"空翠龍"=>Data::SKL_DRAGON_SEAL
+    ,"朧夜龍"=>Data::SKL_DRAGON_SICK
+    ,"幽鬼龍"=>Data::SKL_DRAGON_GRD
     ];
   public $TM_BM = [
      "村人"=>[Data::TM_VILLAGER,false]
@@ -205,6 +220,7 @@ trait TRS_Crescent
     ,"物干"=>[Data::TM_TERU,false]
     ,"悪霊"=>[Data::TM_YANDERE,false]
     ,"殉教"=>[Data::TM_MARTYR,false]
+    ,"無魂"=>[Data::TM_DOLL,false]
     ,"--"  =>[Data::TM_NONE,false] //2d突然死の片想い
     ,"勝利"=>[Data::TM_NONE,false]
     ];
