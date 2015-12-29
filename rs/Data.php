@@ -111,6 +111,8 @@ class Data
     const SKL_READ_G          =113; //霊感少年 墓ログ閲覧
     const SKL_REALIZE_WOLF    =109; //野生児 残狼人数が分かる
     const SKL_REALIZE_FRY     =233; //陰陽生 残妖精人数が分かる
+    const SKL_MEDI_EX         =315; //鏡霊者 襲撃後追呪詛死者の役職が分かる
+    const SKL_MEDI_ROLE_PURIFY=319; //祓霊者 導師+一度だけ除霊できる
     //護衛系
     const SKL_GUARD           =  4; //狩人 一人を襲撃から守る
     const SKL_GRD_BLACK       = 54; //守護獣 判定で黒が出る+自分を守れる狩人
@@ -121,6 +123,7 @@ class Data
     const SKL_GRD_NOT_STRAIGHT=256; //見習い騎士 前日と同じ護衛先を護衛できない
     const SKL_GRD_NOT_TWICE   =270; //風来狩人 GJが出た護衛先を二度と護衛できない
     const SKL_GRD_SELF_WOLF   =281; //神祓衆 自分護衛可能+襲撃死等を一度だけ防ぐが恩恵「悪鬼」を得る
+    const SKL_GRD_HOLY        =313; //聖盾 自分が生存している限り対象一人を襲撃死から守る
     //その他能動能力
     const SKL_SEER_CURSED     =224; //審神者 呪殺/被呪殺のみの占い師
     const SKL_DOCTOR          = 25; //医師 とらエリルールの感染を解除
@@ -129,6 +132,9 @@ class Data
     const SKL_SEAL            =282; //狛犬 一日だけ能力を封じる
     const SKL_EXCHANGE_GIFT   =216; //交易商 対象にランダムな恩恵を付与、所持済の場合はその恩恵を貰う
     const SKL_AZURE           =276; //空色 毎日ランダムで提示される役職能力を行使できる
+    const SKL_MOON_MINUS      =316; //月忌師 月のカウントをゼロにする
+    const SKL_SIREN           =335; //歌姫 2d以降処刑突然衰退死以外の死者を蘇らせる
+    const SKL_STAR            =337; //星狩り 事件「流星群」を起こす
     //被襲撃防衛系
     const SKL_HUNTER          = 21; //賞金稼 死亡時指定した相手を道連れにする
     const SKL_SICK            = 28; //病人 襲撃相手を無能にする
@@ -155,10 +161,14 @@ class Data
     const SKL_ADD_PSY         =301; //禰宜 任意の二人を神通会話に参加させる
     const SKL_FM_WIS_INFECT   =283; //共振者 共鳴+殺害者を共振者にする
     const SKL_FM_WIS_ASS_DYING=284; //雷鳴者 共鳴+暗殺者(三日月)+預言者
+    const SKL_FM_RECKLESS     =311; //強襲者 共鳴+貫通襲撃(自分も死ぬ)
+    const SKL_TRICK           =312; //悪戯会話を聞ける
+    const SKL_FM_MUPPETER     =317; //憑巫 ダミーで喋れる共鳴者
     //投票関係
     const SKL_FOLLOWER        = 19; //追従者 委任しか出来ない
     const SKL_LEONARD         =187; //決定者 二票持つ
     const SKL_AGITATOR        = 20; //扇動者 死んだ翌日の処刑が二人になる
+    const SKL_AGITATOR_LASTING=318; //幽幻 死亡日以降の処刑がずっと二人になる
     const SKL_PRINCE          = 23; //王子様 処刑を一度だけ取り消す
     const SKL_SG              = 32; //生贄 処刑票が同数になると死ぬが、翌日の処刑相手を指定できる
     const SKL_DICTATOR        =263; //独裁者 一度だけ99票行使できる。吊った相手が村陣営の場合、翌日追加で処刑される。
@@ -175,6 +185,7 @@ class Data
     //殺害or蘇生
     const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
     const SKL_BAP_CRESCENT    =213; //反魂師 一人を蘇生出来る
+    const SKL_MAYFLY          =314; //蜉蝣 一人を一日限り蘇生出来る
     const SKL_WITCH           = 30; //魔女 任意の一人を殺害/蘇生できる
     const SKL_ONMYO           = 94; //陰陽師 妖魔系か暗殺者を呪殺
     const SKL_ASSASSIN        = 95; //暗殺者 襲撃行使、占われると溶ける
@@ -215,6 +226,8 @@ class Data
     const SKL_LUNA_READ_W     = 62; //感応狂人 赤ログを覗けるが発言不可
     const SKL_LUNA_MIMIC_FM   = 63; //狂鳴者 共鳴ログに紛れ込む
     const SKL_LUNA_GIRL       =214; //鼠人 赤ログ閲覧 襲撃対象になると死ぬ
+    const SKL_LUNA_WIS_DVL    =323; //宝珠之民 妖魔族窓、念波窓で囁ける
+    const SKL_LUNA_WIS_VMP    =324; //月夜之民 月光族窓、念波窓で囁ける
     //把握系
     const SKL_FANATIC         = 11; //狂信者 狼を知る
     const SKL_REALIZED        = 99; //悟られ狂人 逆狂信者
@@ -229,8 +242,9 @@ class Data
     const SKL_LUNA_WIS_TEMPT  = 88; //誘惑者 邪教徒(深海) 囁き狂人+初日に一人を隷従者(恩恵)にする
     const SKL_LUNA_TEMPT      = 81; //冒涜者 狂信者+初日に一人を背信者にする
     const SKL_LUNA_TEMPTED    = 82; //背信者 背信者、冒涜者同士で会話可能
-    const SKL_LUNA_TEMPT_SEA  =156; //誘惑者 初日に一人を半端者にする
+    const SKL_LUNA_TEMPT_SEA  =156; //誘惑者(深海) 初日に一人を半端者にする
     const SKL_LUNA_BAND       =277; //月下美人 自分を占護衛した相手に一方的な不可視絆を結ぶ
+    const SKL_LUNA_BAND_SUICIDE=320;//夢蜘蛛 月下美人+いつでも自殺できる
     //能動能力
     const SKL_LUNA_ADD_FRY    =163; //呪術師 一人に襲撃無効・被呪殺能力を付与
     const SKL_JAMMER          = 34; //邪魔之民 対象を占い能力から保護する
@@ -245,6 +259,8 @@ class Data
     const SKL_NONE            =139; //瘴気狂人 2Dに一人を無能状態にする
     const SKL_MAD             =153; //狂学者 2Dに一人を人狼にする
     const SKL_LUNA_POISON_G   =289; //人魂 死後に毒薬が使えるようになる
+    const SKL_LUNA_FAKE_BAND  =322; //堕天使 偽恋絆を打つ
+    const SKL_LUNA_FOG        =336; //招霧之民 事件「濃霧」を起こす
     //霊能者系
     const SKL_LUNA_MEDI       = 39; //魔神官 導師
     //襲撃で変化
@@ -252,6 +268,7 @@ class Data
     const SKL_SLEEPER         = 89; //睡狼 自覚なし。被襲撃で人狼になる
     const SKL_HALFWOLF        = 38; //半狼 自覚あり。非襲撃で人狼になる
     const SKL_PSYCHOPATH      =264; //サイコパス 襲撃、占い、護衛した占師人狼狩人を死亡させる
+    const SKL_GRUDGE          =320; //鬼灯 襲撃死すると襲撃を二回に増やす
     //他
     const SKL_MUPPETER        = 37; //人形使い ダミーで喋る
     const SKL_LUNA_EXE_G      =120; //騒霊 墓下で投票できる
@@ -290,6 +307,7 @@ class Data
     const SKL_WOLF_MR_READ_G  =101; //霊狼 導師+墓下ログが読める
     const SKL_WOLF_MMC_FM_WIS =199; //愚狼 共鳴ログに紛れ込む
     const SKL_WOLF_READ_D     =242; //妖狼 妖魔族ログに紛れ込む
+    const SKL_WOLF_WIS_TRICK  =326; //幼狼 悪戯ログに参加出来る
     //特殊能力系
     const SKL_WOLF_TEMPT      = 80; //瘴狼 初日に一人を隷従者(恩恵)にする
     const SKL_WOLF_MEDI_ROLE  =100; //賢狼 導師
@@ -302,6 +320,7 @@ class Data
     const SKL_WOLF_NOTALK     = 47; //黙狼 囁けない
     const SKL_WOLF_PRINCE     =259; //崇狼 一度だけ処刑されない
     const SKL_WOLF_INFECT     =290; //蝕狼 殺害されると、行使者を蝕狼にする
+    const SKL_WOLF_DYING_RANDOM=325;  //臆狼 3d以降d0%の確率で死ぬ
   //妖魔陣営
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
     //特殊能力
@@ -320,7 +339,7 @@ class Data
     const SKL_FRY_SEER_FUZZ   =228; //幼狐 50%の確率で失敗する占い師、妖精が誰かを知る、襲撃耐性なし呪殺されない
     const SKL_FRY_CHANGELING  =245; //夜夢 最多処刑者を予想出来た場合、指定の人物と被処刑者と入れ替える
     const SKL_FRY_FOG         =267; //夕霧 一度だけ事件「濃霧」を起こす
-    const SKL_FRY_VARIABLE    =291; //歪狐 毎晩呪殺されない+襲撃される/呪殺される+襲撃されない体質を入れ替えられる
+    const SKL_FRY_VARIABLE    =291; //歪狐 適性進化 毎晩呪殺されない+襲撃される/呪殺される+襲撃されない体質を入れ替えられる
     const SKL_FRY_JAEGER      =307; //樹木子 指定した一人が能力行使した場合呪殺する
     //相手を変化
     const SKL_FRY_SNATCH      = 65; //宿借妖精 姿を入れ替える
@@ -348,6 +367,7 @@ class Data
     const SKL_FRY_CURSED      =103; //呪狐 被呪殺時相手を道連れ
     const SKL_FRY_CURSED_ALL  =218; //七歩蛇 被能力対象時に相手を殺害
     const SKL_FRY_MISTAKE     =164; //憑狐 村人思い込み妖魔
+    const SKL_FRY_MISTAKE_LUNA=327; //誑狐 狂人思い込み妖魔
     //他
     const SKL_FRY_DYING       = 49; //風花妖精 生存狼+2日目に死ぬ 
     const SKL_FRY_VOTE_TWICE  =260; //天狐 追加票を入れられる
@@ -371,13 +391,15 @@ class Data
   const SKL_EFB_SELF        =136; //決闘者 自撃ち邪気悪魔
   const SKL_EFB_KILL_BAND   =137; //般若 恋陣営が誰かを知る。全恋絆死亡+自分生存で勝利
   const SKL_EFB_TRIPLE      =232; //三つ巴 自分+二人に邪気絆を撃つ
-  //吸血鬼陣営
+  //月光族陣営
   const SKL_VAMPIRE_SEA     =106; //吸血鬼 深海 2Dに二人を眷属に変える
   const SKL_SERVANT         =107; //眷属 眷属同士で会話可能
   const SKL_SRV_SEER_ROLE   =204; //偽神官 眷属、賢者
   const SKL_SRV_ASS         =205; //殺戮者 襲撃行使
   const SKL_VMP_PURE        =206; //純血種 毎日一人を吸血鬼陣営の役職に変える
   const SKL_VMP_HALF        =207; //覚醒種 特定役職が占を受けて吸血鬼陣営になった役職
+  const SKL_VMP_MOON        =331; //月姫 月カウントを増やせる
+  const SKL_VMP_SEAL        =332; //十六夜 一日限り能力を封印する
   //深海団
   const SKL_SEA             =261; //工作員 能力の無い深海団
   const SKL_SEA_WILD        =141; //コレクター 終了時狼+妖=1
@@ -425,6 +447,9 @@ class Data
   const SKL_DVL_GRD_CURSE   =254; //妖魔導師 一人を呪殺から護衛
   const SKL_DVL_AZURE       =275; //変化種 毎日ランダムで提示される役職の能力を行使できる
   const SKL_DVL_CURSED      =280; //樹霊妖魔 占いを受けると呪殺されるが、相手も逆呪殺する
+  const SKL_DVL_WIS_TRICK   =328; //仔妖魔 悪戯窓に参加出来る
+  const SKL_DVL_MOON        =329; //月妖魔 月カウントを増やす
+  const SKL_DVL_GRUDGE      =330; //還魂 占いにより呪殺された後、村中で占いによる呪殺を無効化する
   //輪廻
   const SKL_R_VILLAGER      =144; //村人 村陣営 全体発言が使える
   const SKL_R_GUARD         =145; //狩人 村陣営 護衛できる
@@ -440,6 +465,8 @@ class Data
   const SKL_THIEF           =161; //盗賊 黒幕見物人によって2D前に死んでいる場合、能力発動しない
   const SKL_SHEEP           =255; //迷える子羊 4dに衰退死、それまでに占能力を受けると一定の役職に変化
   const SKL_JOKER           =268; //ジョーカー ランダムに提示された役職に変われる
+  const SKL_ANTINOMY        =333; //二律背反 一日ごとに村陣営と裏切り陣営に切り替わる
+  const SKL_NARCISSUS       =334; //雪中花 1dに選んだ相手を襲撃死から守る/片恋絆を結ぶ
   //見物人
   const SKL_ONLOOKER        = 10; //見物人
   const SKL_OWNER           = 77; //支配人 進行中に全てのログが読める

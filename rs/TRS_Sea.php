@@ -67,6 +67,18 @@ trait TRS_Sea
     ,"狼化呪者"=>Data::SKL_CHANGE_WOLF
     ,"潜在意識"=>Data::SKL_ASS_MISTAKE
     ,"空色"=>Data::SKL_AZURE
+    ,"悪戯好き"=>Data::SKL_TRICK
+    ,"強襲者"=>Data::SKL_FM_RECKLESS
+    ,"聖盾"=>Data::SKL_GRD_HOLY
+    ,"蜉蝣"=>Data::SKL_MAYFLY
+    ,"鏡霊者"=>Data::SKL_MEDI_EX
+    ,"月忌師"=>Data::SKL_MOON_MINUS
+    ,"憑巫"=>Data::SKL_FM_MUPPETER
+    ,"幽幻"=>Data::SKL_AGITATOR_LASTING
+    ,"祓霊者"=>Data::SKL_MEDI_ROLE_PURIFY
+    ,"権力者"=>Data::SKL_LEONARD
+    ,"歌姫"=>Data::SKL_SIREN
+    ,"星狩り"=>Data::SKL_STAR
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -90,8 +102,15 @@ trait TRS_Sea
     ,"邪教徒"=>Data::SKL_LUNA_WIS_TEMPT
     ,"狂化狂人"=>Data::SKL_LUNA_ASS_ONCE
     ,"サイコパス"=>Data::SKL_PSYCHOPATH
+    ,"鬼灯"=>Data::SKL_GRUDGE
     ,"月下美人"=>Data::SKL_LUNA_BAND
     ,"死操術師"=>Data::SKL_LUNA_WITCH_2DIE
+    ,"夢蜘蛛"=>Data::SKL_LUNA_BAND_SUICIDE
+    ,"堕天使"=>Data::SKL_LUNA_FAKE_BAND
+    ,"宝珠之民"=>Data::SKL_LUNA_WIS_DVL
+    ,"月夜之民"=>Data::SKL_LUNA_WIS_VMP
+    ,"背徳者"=>Data::SKL_MRT_FRY
+    ,"招霧之民"=>Data::SKL_LUNA_FOG
     //狼
     ,"首無騎士"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -113,6 +132,8 @@ trait TRS_Sea
     ,"桜狼"=>Data::SKL_WOLF_CHERRY
     ,"崇狼"=>Data::SKL_WOLF_PRINCE
     ,"霧狼"=>Data::SKL_WOLF_FOG
+    ,"臆狼"=>Data::SKL_WOLF_DYING_RANDOM
+    ,"幼狼"=>Data::SKL_WOLF_WIS_TRICK
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -136,6 +157,8 @@ trait TRS_Sea
     ,'天狐'=>Data::SKL_FRY_VOTE_TWICE
     ,'夕霧'=>Data::SKL_FRY_FOG
     ,'天眼'=>Data::SKL_FRY_FNT_READ_ALL
+    ,'誑狐'=>Data::SKL_FRY_MISTAKE_LUNA
+    ,'適性進化'=>Data::SKL_FRY_VARIABLE
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -147,13 +170,15 @@ trait TRS_Sea
     ,"片想い"=>Data::SKL_PASSION
     ,"遊び人"=>Data::SKL_BITCH
     ,"純恋者"=>Data::SKL_QP_SELF
-    //吸血鬼
+    //月光族
     ,"吸血鬼"=>Data::SKL_VAMPIRE_SEA
     ,"眷属"=>Data::SKL_SERVANT
     ,"偽神官"=>Data::SKL_SRV_SEER_ROLE
     ,"殺戮者"=>Data::SKL_SRV_ASS
     ,"純血種"=>Data::SKL_VMP_PURE
     ,"覚醒種"=>Data::SKL_VMP_HALF
+    ,"月姫"=>Data::SKL_VMP_MOON
+    ,"十六夜"=>Data::SKL_VMP_SEAL
     //深海団
     ,"コレクター"=>Data::SKL_SEA_WILD
     ,"ビブロフィリア"=>Data::SKL_SEA_NONE
@@ -173,6 +198,9 @@ trait TRS_Sea
     ,"妖魔導師"=>Data::SKL_DVL_GRD_CURSE
     ,"変化種"=>Data::SKL_DVL_AZURE
     ,"樹霊妖魔"=>Data::SKL_DVL_CURSED
+    ,"仔妖魔"=>Data::SKL_DVL_WIS_TRICK
+    ,"月妖魔"=>Data::SKL_DVL_MOON
+    ,"還魂"=>Data::SKL_DVL_GRUDGE
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳
@@ -180,6 +208,8 @@ trait TRS_Sea
     //陣営無し
     ,"迷える子羊"=>Data::SKL_SHEEP
     ,"ジョーカー"=>Data::SKL_JOKER
+    ,"二律背反"=>Data::SKL_ANTINOMY
+    ,"雪中花"=>Data::SKL_NARCISSUS
     ];
   protected $TM_SEA = [
      "村人"=>[Data::TM_VILLAGER,false]
@@ -194,7 +224,7 @@ trait TRS_Sea
     ,"--"  =>[Data::TM_NONE,false] //2d突然死の片想い
     ,"勝利"=>[Data::TM_NONE,false]
     ,"贖罪"=>[Data::TM_TERU,false]
-    ,"吸血"=>[Data::TM_VAMPIRE,true]
+    ,"月光"=>[Data::TM_VAMPIRE,true]
     ,"深海"=>[Data::TM_SEA,true]
     ,"妖魔"=>[Data::TM_DEVIL,true]
     ];
