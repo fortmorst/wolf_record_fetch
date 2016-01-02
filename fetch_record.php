@@ -37,13 +37,13 @@ $stmt = $stmt->fetchAll();
 $db->disconnect();
 
 //更新チェック
-try
-{
   $check_village = new Check_Village($stmt);
   $stmt = $check_village->check($stmt);
-  if(!empty($stmt))
+if(!empty($stmt))
+{
+  foreach($stmt as $item)
   {
-    foreach($stmt as $item)
+    try
     {
       //村取得
       $country = $item['class'];
@@ -52,15 +52,15 @@ try
       ${$country}->insert();
       unset(${$country});
     }
-  }
-}
-catch(Exception $e)
-{
-
-  echo '>ERROR '.$e->getMessage().PHP_EOL.'Caught Error->Skip'.PHP_EOL;
-  if(isset(${$country}))
-  {
-    unset(${$country});
+    catch(Exception $e)
+    {
+      echo '>ERROR '.$e->getMessage().PHP_EOL.'Caught Error->Skip'.PHP_EOL;
+      if(isset(${$country}))
+      {
+        unset(${$country});
+      }
+      continue;
+    }
   }
 }
 
