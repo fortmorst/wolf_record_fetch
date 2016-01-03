@@ -111,6 +111,8 @@ trait TRS_Sea
     ,"月夜之民"=>Data::SKL_LUNA_WIS_VMP
     ,"背徳者"=>Data::SKL_MRT_FRY
     ,"招霧之民"=>Data::SKL_LUNA_FOG
+    ,"時空干渉者"=>Data::SKL_LUNA_EVENT
+    ,"良化生命体"=>Data::SKL_LUNA_AZURE
     //狼
     ,"首無騎士"=>Data::SKL_HEADLESS
     ,"人狼"=>Data::SKL_WOLF
@@ -134,6 +136,7 @@ trait TRS_Sea
     ,"霧狼"=>Data::SKL_WOLF_FOG
     ,"臆狼"=>Data::SKL_WOLF_DYING_RANDOM
     ,"幼狼"=>Data::SKL_WOLF_WIS_TRICK
+    ,"雪狼"=>Data::SKL_WOLF_SNOW
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -204,6 +207,7 @@ trait TRS_Sea
     ,"月妖魔"=>Data::SKL_DVL_MOON
     ,"還魂"=>Data::SKL_DVL_GRUDGE
     ,"星鏡"=>Data::SKL_DVL_MEDI_EX
+    ,"封魔種"=>Data::SKL_DVL_SEAL
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳

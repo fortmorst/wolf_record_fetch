@@ -266,6 +266,8 @@ class Data
     const SKL_LUNA_POISON_G   =289; //人魂 死後に毒薬が使えるようになる
     const SKL_LUNA_FAKE_BAND  =322; //堕天使 偽恋絆を打つ
     const SKL_LUNA_FOG        =336; //招霧之民 事件「濃霧」を起こす
+    const SKL_LUNA_EVENT      =353; //時空干渉者 2回だけ事件を一日延長できる
+    const SKL_LUNA_AZURE      =354; //良化生命体 使うごとに異なる能力が発動する
     //霊能者系
     const SKL_LUNA_MEDI       = 39; //魔神官 導師
     //襲撃で変化
@@ -325,7 +327,8 @@ class Data
     const SKL_WOLF_NOTALK     = 47; //黙狼 囁けない
     const SKL_WOLF_PRINCE     =259; //崇狼 一度だけ処刑されない
     const SKL_WOLF_INFECT     =290; //蝕狼 殺害されると、行使者を蝕狼にする
-    const SKL_WOLF_DYING_RANDOM=325;  //臆狼 3d以降d0%の確率で死ぬ
+    const SKL_WOLF_DYING_RANDOM=325;//臆狼 3d以降d0%の確率で死ぬ
+    const SKL_WOLF_SNOW       =356; //雪狼
   //妖魔陣営
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
     //特殊能力
@@ -469,6 +472,7 @@ class Data
   const SKL_DVL_MOON        =329; //月妖魔 月カウントを増やす
   const SKL_DVL_GRUDGE      =330; //還魂 占いにより呪殺された後、村中で占いによる呪殺を無効化する
   const SKL_DVL_MEDI_EX     =352; //星鏡 襲撃後追呪詛死者の役職が分かる
+  const SKL_DVL_SEAL        =355; //封魔種 一日だけ能力を封印する
   //輪廻
   const SKL_R_VILLAGER      =144; //村人 村陣営 全体発言が使える
   const SKL_R_GUARD         =145; //狩人 村陣営 護衛できる
