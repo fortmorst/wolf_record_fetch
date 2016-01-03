@@ -159,6 +159,7 @@ trait TRS_Sea
     ,'天眼'=>Data::SKL_FRY_FNT_READ_ALL
     ,'誑狐'=>Data::SKL_FRY_MISTAKE_LUNA
     ,'適性進化'=>Data::SKL_FRY_VARIABLE
+    ,'封狐'=>Data::SKL_FRY_SEAL_ONCE
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -189,6 +190,7 @@ trait TRS_Sea
     ,"シビュラ"=>Data::SKL_SEA_SIBYL
     ,"セイレーン"=>Data::SKL_SEA_SIREN
     ,"工作員"=>Data::SKL_SEA
+    ,"カレイドスコープ"=>Data::SKL_SEA_KALEIDOSCOPE
     //妖魔族
     ,"古妖魔"=>Data::SKL_DEVIL
     ,"響鳴種"=>Data::SKL_DVL_MIMIC_FM
@@ -201,6 +203,7 @@ trait TRS_Sea
     ,"仔妖魔"=>Data::SKL_DVL_WIS_TRICK
     ,"月妖魔"=>Data::SKL_DVL_MOON
     ,"還魂"=>Data::SKL_DVL_GRUDGE
+    ,"星鏡"=>Data::SKL_DVL_MEDI_EX
     //照坊主
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳

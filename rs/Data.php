@@ -353,7 +353,7 @@ class Data
     const SKL_FRY_ADD_MRT     =186; //妖花 2dに一人を殉教者陣営にする
     const SKL_VAMPIRE         = 74; //吸血鬼 瓜科 人間を血人に変化させる
     const SKL_FRY_SEAL        =132; //雪女 特殊能力封印
-    const SKL_FRY_SEAL_ONCE   =227; //妖鳥 一日だけ特殊能力封印
+    const SKL_FRY_SEAL_ONCE   =227; //妖鳥 封狐 一日だけ特殊能力封印
     const SKL_FRY_NONE        =157; //瘴狐 2Dに一人を無能状態にする
     const SKL_FRY_ADD_FRY     =166; //鏡狐 一人に襲撃無効・被呪殺能力を付与
     //囁き系
@@ -415,6 +415,7 @@ class Data
   const SKL_SEA_WITCH       =172; //カロン 3Dと5Dに毒殺・蘇生できる。終了時四人で勝利
   const SKL_SEA_SIBYL       =240; //シビュラ 2d以降ランダムに指定された事件を起こせる
   const SKL_SEA_SIREN       =244; //セイレーン 2d以降処刑突然衰退死以外の死者を蘇らせる
+  const SKL_SEA_KALEIDOSCOPE=351; //カレイドスコープ あらゆる秘密会話に参加出来る
   //蒼月教会
   const SKL_BMN_SAINT       =194; //聖女 毎日一人蒼月教会陣営に引き入れる
   const SKL_BMN_SEER        =195; //祭司 占い師
@@ -467,6 +468,7 @@ class Data
   const SKL_DVL_WIS_TRICK   =328; //仔妖魔 悪戯窓に参加出来る
   const SKL_DVL_MOON        =329; //月妖魔 月カウントを増やす
   const SKL_DVL_GRUDGE      =330; //還魂 占いにより呪殺された後、村中で占いによる呪殺を無効化する
+  const SKL_DVL_MEDI_EX     =352; //星鏡 襲撃後追呪詛死者の役職が分かる
   //輪廻
   const SKL_R_VILLAGER      =144; //村人 村陣営 全体発言が使える
   const SKL_R_GUARD         =145; //狩人 村陣営 護衛できる
