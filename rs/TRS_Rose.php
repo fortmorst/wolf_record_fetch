@@ -168,7 +168,7 @@ trait TRS_Rose
     ,"ゲボク根性"=>Data::SKL_SLAVE
     ,"ボンボン"=>Data::SKL_PRINCE
     ,"夢見がち"=>Data::SKL_LUNA_WIS_LINEAGE
-    ,"従狼"=>Data::SKL_WOLF_DEPEND
+    ,"とうめい狼"=>Data::SKL_WOLF_DEPEND
     ];
   protected $SKL_JR = [
      "白薔薇兵士"=>Data::SKL_VILLAGER
