@@ -41,7 +41,7 @@ class Village
       case 'nop':
       case 'rglid':
       case 'days':
-      case 'wmtid':
+      case 'wtmid':
         if(empty($item) || !is_int($item))
         {
           $this->invalid_error($key,$item);
