@@ -22,7 +22,6 @@ class Check_Village
 
     foreach($this->stmt as $stmt_key=>$item)
     {
-      echo '☆'.$item['class'].'->'.PHP_EOL;
       $this->village_pending = [];
       //キューの確認
       $this->check_queue($item['id']);
@@ -66,21 +65,21 @@ class Check_Village
     $vno_max_vlist = $this->check_vlist_latest($url_log,$class);
     $vno_max_db = $this->check_db_latest_vno($cid);
     //後で廃村してるか否かは国で確認するようにする
-    $vno_ruin = $this->check_db_latest_ruin($cid);
+    //$vno_ruin = $this->check_db_latest_ruin($cid);
 
     //廃村が連続している国は最新村番号をチェック
     //将来的に削除
-    if($vno_ruin !== 0)
-    {
-      if($vno_ruin === $vno_max_vlist)
-      {
-        return $vno_max_db;
-      }
-      else
-      {
-        echo '▼ruin clear.'.PHP_EOL;
-      }
-    }
+    //if($vno_ruin !== 0)
+    //{
+      //if($vno_ruin === $vno_max_vlist)
+      //{
+        //return $vno_max_db;
+      //}
+      //else
+      //{
+        //echo '▼ruin clear.'.PHP_EOL;
+      //}
+    //}
 
     //dbの最大村番号よりも、村リストの最大村番号が大きければ差分を確認リストに入れる
     if($vno_max_vlist > $vno_max_db)
@@ -105,15 +104,15 @@ class Check_Village
 
     return (int)$vno_max[0];
   }
-  private function check_db_latest_ruin($cid)
-  {
-    //廃村が連続している国はDBに村番号がある 
-    $sql = "SELECT ruin FROM country WHERE id=".$cid;
-    $stmt = $this->db->query($sql);
-    $vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
+  //private function check_db_latest_ruin($cid)
+  //{
+    ////廃村が連続している国はDBに村番号がある 
+    //$sql = "SELECT ruin FROM country WHERE id=".$cid;
+    //$stmt = $this->db->query($sql);
+    //$vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
 
-    return (int)$vno_ruin[0];
-  }
+    //return (int)$vno_ruin[0];
+  //}
 
   private function check_vlist_latest($url_log,$class)
   {
@@ -178,7 +177,7 @@ class Check_Village
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
       $is_end = $this->check_end($class,$url_vil);
-      echo 'vno: '.$vno.PHP_EOL;
+      echo $class.': vno= '.$vno.PHP_EOL;
       //廃村判定は後で消す
       if($is_end)
       {
@@ -191,22 +190,22 @@ class Check_Village
         }
 
         //廃村か否か
-        if($this->check_not_ruined($class,$url_vil))
-        {
-          //両方trueならcontinue;
-          continue;
-        }
-        else
-        {
-          //is_endがtrue&ruinedがfalse(=ruinである)ならruinedコメント
-          //後で削除
-          unset($this->village_pending[$key]);
-          echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        }
+        //if($this->check_not_ruined($class,$url_vil))
+        //{
+          ////両方trueならcontinue;
+          //continue;
+        //}
+        //else
+        //{
+          ////is_endがtrue&ruinedがfalse(=ruinである)ならruinedコメント
+          ////後で削除
+          //unset($this->village_pending[$key]);
+          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
+        //}
       }
       else
       {
-        //is_endがfalseでruinedもfalseならキューに書く
+        //is_endがfalseならキューに書く
         unset($this->village_pending[$key]);
         if($vno > $vno_max_db)
         {
@@ -253,96 +252,96 @@ class Check_Village
     }
   }
 
-  private function check_not_ruined($class,$url)
-  {
-    $not_ruin = ['Ning','Phantom','Reason'];
+  //private function check_not_ruined($class,$url)
+  //{
+    //$not_ruin = ['Ning','Phantom','Reason'];
 
-    if(array_search($class,$not_ruin) !== false)
-    {
-      return true;
-    }
-    else if($class === 'Rinne')
-    {
-      $this->html->load_file($url.'&cmd=vinfo');
-      sleep(1);
-      $day = $this->html->find('p.multicolumn_role',0)->plaintext;
-      if($day === '短期')
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-      $this->html->clear();
-    }
+    //if(array_search($class,$not_ruin) !== false)
+    //{
+      //return true;
+    //}
+    //else if($class === 'Rinne')
+    //{
+      //$this->html->load_file($url.'&cmd=vinfo');
+      //sleep(1);
+      //$day = $this->html->find('p.multicolumn_role',0)->plaintext;
+      //if($day === '短期')
+      //{
+        //return false;
+      //}
+      //else
+      //{
+        //return true;
+      //}
+      //$this->html->clear();
+    //}
 
-    $this->html->load_file($url);
-      sleep(1);
-    switch($class)
-    {
-      case 'Melon':
-        $epi = $this->html->find('link[rel=Prev]',0)->href;
-        $epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
-        $this->html->clear();
-        $this->html->load_file($url.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
-      sleep(1);
-        if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
-        break;
-        break;
-      case 'Plot':
-      case 'Ciel':
-      case 'Perjury':
-        $scrap = $this->html->find('script',-2)->innertext;
-        $scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$scrap,'m');
-        $this->html->clear();
-        if($scrap === '1')
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
-        break;
-      default:
-        switch($class)
-        {
-          case 'Sebas':
-          case 'Crescent':
-            $info = 'div.info';
-            $infosp = 'div.infosp';
-            break;
-          case 'Silence':
-            $info = 'div.announce';
-            $infosp = 'div.extra';
-            break;
-          default:
-            $info = 'p.info';
-            $infosp = 'p.infosp';
-            break;
-        }
-        $epi = $this->html->find('link[rel=Prev]',0)->href;
-        $epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
-        $this->html->clear();
-        $this->html->load_file($url.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
-      sleep(1);
-        if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
-        break;
-    }
-  }
+    //$this->html->load_file($url);
+      //sleep(1);
+    //switch($class)
+    //{
+      //case 'Melon':
+        //$epi = $this->html->find('link[rel=Prev]',0)->href;
+        //$epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
+        //$this->html->clear();
+        //$this->html->load_file($url.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
+      //sleep(1);
+        //if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
+        //{
+          //return false;
+        //}
+        //else
+        //{
+          //return true;
+        //}
+        //break;
+        //break;
+      //case 'Plot':
+      //case 'Ciel':
+      //case 'Perjury':
+        //$scrap = $this->html->find('script',-2)->innertext;
+        //$scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$scrap,'m');
+        //$this->html->clear();
+        //if($scrap === '1')
+        //{
+          //return false;
+        //}
+        //else
+        //{
+          //return true;
+        //}
+        //break;
+      //default:
+        //switch($class)
+        //{
+          //case 'Sebas':
+          //case 'Crescent':
+            //$info = 'div.info';
+            //$infosp = 'div.infosp';
+            //break;
+          //case 'Silence':
+            //$info = 'div.announce';
+            //$infosp = 'div.extra';
+            //break;
+          //default:
+            //$info = 'p.info';
+            //$infosp = 'p.infosp';
+            //break;
+        //}
+        //$epi = $this->html->find('link[rel=Prev]',0)->href;
+        //$epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
+        //$this->html->clear();
+        //$this->html->load_file($url.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
+      //sleep(1);
+        //if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
+        //{
+          //return false;
+        //}
+        //else
+        //{
+          //return true;
+        //}
+        //break;
+    //}
+  //}
 }
