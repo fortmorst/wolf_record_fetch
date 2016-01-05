@@ -288,96 +288,81 @@ class Check_Village
     }
   }
 
-  //private function check_not_ruined($class,$url)
-  //{
-    //$not_ruin = ['Ning','Phantom','Reason'];
+  private function check_not_ruined($class,$url)
+  {
+    $not_ruin = ['Ning','Phantom','Reason'];
 
-    //if(array_search($class,$not_ruin) !== false)
-    //{
-      //return true;
-    //}
-    //else if($class === 'Rinne')
-    //{
-      //$this->html->load_file($url.'&cmd=vinfo');
-      //sleep(1);
-      //$day = $this->html->find('p.multicolumn_role',0)->plaintext;
-      //if($day === '短期')
-      //{
-        //return false;
-      //}
-      //else
-      //{
-        //return true;
-      //}
-      //$this->html->clear();
-    //}
+    if(array_search($class,$not_ruin) !== false)
+    {
+      return true;
+    }
 
-    //$this->html->load_file($url);
-      //sleep(1);
-    //switch($class)
-    //{
-      //case 'Melon':
-        //$epi = $this->html->find('link[rel=Prev]',0)->href;
-        //$epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
-        //$this->html->clear();
-        //$this->html->load_file($url.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
-      //sleep(1);
-        //if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
-        //{
-          //return false;
-        //}
-        //else
-        //{
-          //return true;
-        //}
-        //break;
-        //break;
-      //case 'Plot':
-      //case 'Ciel':
-      //case 'Perjury':
-        //$scrap = $this->html->find('script',-2)->innertext;
-        //$scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$scrap,'m');
-        //$this->html->clear();
-        //if($scrap === '1')
-        //{
-          //return false;
-        //}
-        //else
-        //{
-          //return true;
-        //}
-        //break;
-      //default:
-        //switch($class)
-        //{
-          //case 'Sebas':
-          //case 'Crescent':
-            //$info = 'div.info';
-            //$infosp = 'div.infosp';
-            //break;
-          //case 'Silence':
-            //$info = 'div.announce';
-            //$infosp = 'div.extra';
-            //break;
-          //default:
-            //$info = 'p.info';
-            //$infosp = 'p.infosp';
-            //break;
-        //}
-        //$epi = $this->html->find('link[rel=Prev]',0)->href;
-        //$epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
-        //$this->html->clear();
-        //$this->html->load_file($url.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
-      //sleep(1);
-        //if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
-        //{
-          //return false;
-        //}
-        //else
-        //{
-          //return true;
-        //}
-        //break;
-    //}
-  //}
+    $this->html->load_file($url);
+      sleep(1);
+    switch($class)
+    {
+      case 'Melon':
+        $epi = $this->html->find('link[rel=Prev]',0)->href;
+        $epi = mb_ereg_replace('.+;t=(\d+)','\\1',$epi);
+        $this->html->clear();
+        $this->html->load_file($url.'&t='.$epi.'&r=5&m=a&o=a&mv=p&n=1');
+      sleep(1);
+        if(count($this->html->find('p.info')) <= 1 && count($this->html->find('p.infosp')) === 0)
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+        break;
+        break;
+      case 'Plot':
+      case 'Ciel':
+      case 'Perjury':
+        $scrap = $this->html->find('script',-2)->innertext;
+        $scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$scrap,'m');
+        $this->html->clear();
+        if($scrap === '1')
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+        break;
+      default:
+        switch($class)
+        {
+          case 'Sebas':
+          case 'Crescent':
+            $info = 'div.info';
+            $infosp = 'div.infosp';
+            break;
+          case 'Silence':
+            $info = 'div.announce';
+            $infosp = 'div.extra';
+            break;
+          default:
+            $info = 'p.info';
+            $infosp = 'p.infosp';
+            break;
+        }
+        $epi = $this->html->find('link[rel=Prev]',0)->href;
+        $epi = mb_ereg_replace('.+;turn=(\d+)','\\1',$epi);
+        $this->html->clear();
+        $this->html->load_file($url.'&turn='.$epi.'&mode=all&row=5&move=page&pageno=1');
+      sleep(1);
+        if(count($this->html->find($info)) <= 1 && count($this->html->find($infosp)) === 0)
+        {
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+        break;
+    }
+  }
 }

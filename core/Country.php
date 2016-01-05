@@ -54,6 +54,7 @@ abstract class Country
       }
       $this->fetch->clear();
       //continue;
+      //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
         echo '★'.$this->village->vno.'. '.$this->village->name.' is all inserted.'.PHP_EOL;
@@ -80,6 +81,27 @@ abstract class Country
     else
     {
       return false;
+    }
+  }
+  protected function insert_as_ruin()
+  {
+    $this->village->days = 1;
+    $this->village->wtmid = Data::RGL_RUIN;
+    $this->village->nop = 1;
+    $this->village->rglid = Data::TM_RUIN;
+  }
+  protected function check_ruin()
+  {
+    $info = 'p.info';
+    $infosp = 'p.infosp';
+
+    if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
     }
   }
   protected function insert_users()

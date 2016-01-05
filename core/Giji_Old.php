@@ -22,16 +22,27 @@ abstract class Giji_Old extends Country
   {
     $this->fetch_from_info();
     $this->fetch_from_pro();
-    $this->fetch_from_epi();
+
+    if($this->village->wtmid === Data::TM_RUIN)
+    {
+      return false;
+    }
+    
+    return $this->fetch_from_epi();
   }
 
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url."&cmd=vinfo");
-      sleep(1);
+    sleep(1);
 
     $this->fetch_name();
-    $this->fetch_days();
+    if($this->fetch_days() === false)
+    {
+      $this->fetch->clear();
+      return;
+    }
+    
     $this->fetch_rp();
     if($this->policy === null)
     {
@@ -61,6 +72,11 @@ abstract class Giji_Old extends Country
   protected function fetch_days()
   {
     $days = trim($this->fetch->find('p.turnnavi',0)->find('a',-4)->innertext);
+    if($days === 'プロローグ')
+    {
+      $this->insert_as_ruin();
+      return false;
+    }
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
   }
   protected function fetch_rp()
@@ -106,7 +122,7 @@ abstract class Giji_Old extends Country
   {
     $url = $this->url.'&turn=0&row=10&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_date();
     $this->fetch->clear();
@@ -121,10 +137,16 @@ abstract class Giji_Old extends Country
   {
     $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
+    if(!$this->check_ruin())
+    {
+      $this->village->wtmid = Data::TM_RUIN;
+      return false;
+    }
 
     $this->fetch_wtmid();
     $this->make_cast();
+    return true;
   }
   protected function fetch_wtmid()
   {
