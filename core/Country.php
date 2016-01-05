@@ -20,7 +20,7 @@ abstract class Country
   function __construct($id,$url,$policy,$is_evil,$queue)
   {
     $this->cid = $id;
-    $this->url_org = mb_ereg_replace('%n','',$url); //%nの置換が必要
+    $this->url_org = mb_ereg_replace('%n','',$url);
     $this->queue = $queue;
     if($policy !== null)
     {
@@ -66,9 +66,11 @@ abstract class Country
   {
     $this->village = new Village($vno);
 
-    $this->fetch_village();
-    $this->insert_users();
-    $this->check_role();
+    if($this->fetch_village())
+    {
+      $this->insert_users();
+      $this->check_role();
+    }
 
     //var_dump($this->village->get_vars());
     if($this->village->is_valid())

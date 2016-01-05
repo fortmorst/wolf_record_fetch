@@ -149,7 +149,6 @@ class Check_Village
       case 'Moon':
       case 'Chitose':
       case 'Chitose_RP':
-      case 'Rinne':
       case 'Phantom':
       case 'Dark':
       case 'BW':
@@ -177,15 +176,26 @@ class Check_Village
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
       $is_end = $this->check_end($class,$url_vil);
+
       echo $class.': vno= '.$vno.PHP_EOL;
-      //廃村判定は後で消す
+
+      //村番号が存在しない場合
+      if(!$this->is_not_found($class,$url_vil))
+      {
+          unset($this->village_pending[$key]);
+          $this->insert_empty_village($id,$vno);
+          echo '▲'.$vno.' is empty number.Inserted.'.PHP_EOL;
+          continue;
+      }
+      //雑談村がある国の場合
+
       if($is_end)
       {
         //queueに入っている(DBの最大村番号よりも小さい)なら削除
         if($vno < $vno_max_db)
         {
           $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
-          $stmt = $this->db->query($sql);
+          $this->db->query($sql);
           echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
 
@@ -211,13 +221,39 @@ class Check_Village
         {
           //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
           $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-          $stmt = $this->db->query($sql);
+          $this->db->query($sql);
 
           echo '●'.$vno.'was written into DB.'.PHP_EOL;
         }
       }
     }
     return (!empty($this->village_pending))? true:false;
+  }
+  private function is_not_found($class,$url)
+  {
+    $this->html->load_file($url);
+    if($class === 'Silence')
+    {
+      $tag = 'div.inframe';
+    }
+    else
+    {
+      $tag = 'div.paragraph';
+    }
+    $paragraph = $this->html->find($tag.' p',0);
+    if($paragraph === '村データ が見つかりません。')
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+  private function insert_empty_village($cid,$vno)
+  {
+    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid) VALUES (".$cid.",".$vno.",'###vil not found###','0000-00-00',1,30,1,97)";
+    $this->db->query($sql);
   }
   private function check_end($class,$url)
   {
