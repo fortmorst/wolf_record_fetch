@@ -125,6 +125,7 @@ trait TRS_Giji_Old
     ,"衰退死"=>Data::DES_DROOP
     ,"後追死"=>Data::DES_SUICIDE
     ,"恐怖死"=>Data::DES_FEARED
+    ,"飢餓死"=>Data::DES_STARVE //三日月
     ];
   public $WTM_MILLERS = [
      "の人物が消え失せた時、其処"=>Data::TM_NONE

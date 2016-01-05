@@ -80,6 +80,7 @@ class Data
   const DES_SUICIDE = 8;  //後追死
   const DES_FEARED  = 9;  //恐怖死 
   const DES_MARTYR  = 11; //殉教
+  const DES_STARVE  = 12; //飢餓死
   const DES_ONLOOKER= 10; //見物
   
 
@@ -473,14 +474,6 @@ class Data
   const SKL_DVL_GRUDGE      =330; //還魂 占いにより呪殺された後、村中で占いによる呪殺を無効化する
   const SKL_DVL_MEDI_EX     =352; //星鏡 襲撃後追呪詛死者の役職が分かる
   const SKL_DVL_SEAL        =355; //封魔種 一日だけ能力を封印する
-  //輪廻
-  const SKL_R_VILLAGER      =144; //村人 村陣営 全体発言が使える
-  const SKL_R_GUARD         =145; //狩人 村陣営 護衛できる
-  const SKL_R_SEER          =146; //占い師 占い師陣営 占える
-  const SKL_R_SEER_UNSKILL  =147; //見習い占い師 占い師陣営 能力なし
-  const SKL_R_MEDIUM        =148; //霊能者 霊能者陣営 処刑された人が人狼か否か分かる
-  const SKL_R_WOLF          =149; //人狼 人狼陣営 襲撃出来る
-  const SKL_R_WOLF_WISE     =150; //智狼 人狼陣営 襲撃した相手の役職が分かる 
   //陣営なし
   const SKL_NULL            =108; //なし(廃村雑談村など)
   const SKL_SUCKER          = 73; //血人 陣営なし
