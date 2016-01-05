@@ -67,6 +67,14 @@ class Village
     }
     return true;
   }
+  private function is_int_value_valid($item)
+  {
+    if(empty($item) || !is_int($item))
+    {
+      $this->invalid_error($key,$item);
+      return false;
+    }
+  }
   function invalid_error($key,$item)
   {
     echo '>'.$key.' is invalid.->'.$item.PHP_EOL;

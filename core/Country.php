@@ -40,17 +40,11 @@ abstract class Country
     $this->db->connect();
     //指定取得用
     //$this->queue = [110,106,103,95,88,71,63,62,18];
-    //$kick = [15,16,26,35,40,43];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
-      //if(array_search($vno,$kick)  !== false)
-      //{
-        //echo '※: '.$vno.' is kicked by $kick list.'.PHP_EOL;
-        //continue;
-      //}
       $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
