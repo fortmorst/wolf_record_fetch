@@ -33,6 +33,7 @@ class Village
   function is_valid()
   {
     $list = $this->get_vars();
+    $result = true;
     foreach($list as $key=>$item)
     {
       switch($key)
@@ -41,33 +42,53 @@ class Village
       case 'nop':
       case 'rglid':
       case 'days':
-      case 'wmtid':
-        if(empty($item) || !is_int($item))
+      case 'wtmid':
+        if(!$this->is_int_value_valid($key,$item))
         {
-          $this->invalid_error($key,$item);
-          return false;
+          $result = false;
         }
         break;
       case 'name':
       case 'rgl_detail':
-        if(empty($item) || !is_string($item) || !mb_check_encoding($item))
+        if(!$this->is_string_value_valid($key,$item))
         {
-          $this->invalid_error($key,$item);
-          return false;
+          $result = false;
         }
         break;
       case 'date':
         if(empty($item) || !preg_match('/\d{2}-\d{1,2}-\d{1,2}/',$item))
         {
           $this->invalid_error($key,$item);
-          return false;
+          $result =  false;
         }
         break;
       }
     }
+    if($result === false)
+    {
+      return false;
+    }
     return true;
   }
-  function invalid_error($key,$item)
+  private function is_int_value_valid($key,$item)
+  {
+    if(empty($item) || !is_int($item))
+    {
+      $this->invalid_error($key,$item);
+      return false;
+    }
+    return true;
+  }
+  private function is_string_value_valid($key,$item)
+  {
+    if(empty($item) || !is_string($item) || !mb_check_encoding($item))
+    {
+      $this->invalid_error($key,$item);
+      return false;
+    }
+    return true;
+  }
+  private function invalid_error($key,$item)
   {
     echo '>'.$key.' is invalid.->'.$item.PHP_EOL;
   }
