@@ -221,6 +221,7 @@ trait TRS_Crescent
     ,"悪霊"=>[Data::TM_YANDERE,false]
     ,"殉教"=>[Data::TM_MARTYR,false]
     ,"無魂"=>[Data::TM_DOLL,false]
+    ,"龍人"=>[Data::TM_DRAGON,false]
     ,"--"  =>[Data::TM_NONE,false] //2d突然死の片想い
     ,"勝利"=>[Data::TM_NONE,false]
     ];
