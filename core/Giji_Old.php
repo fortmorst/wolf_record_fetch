@@ -28,7 +28,7 @@ abstract class Giji_Old extends Country
       return false;
     }
     
-    return $this->fetch_from_epi();
+    $this->fetch_from_epi();
   }
 
   protected function fetch_from_info()
@@ -75,6 +75,7 @@ abstract class Giji_Old extends Country
     if($days === 'プロローグ')
     {
       $this->insert_as_ruin();
+      $this->output_comment('ruin_prologue');
       return false;
     }
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
@@ -138,15 +139,18 @@ abstract class Giji_Old extends Country
     $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
     $this->fetch->load_file($url);
     sleep(1);
+    //廃村なら非参加扱い
     if(!$this->check_ruin())
     {
-      $this->village->wtmid = Data::TM_RUIN;
-      return false;
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('ruin_midway');
+    }
+    else
+    {
+      $this->fetch_wtmid();
     }
 
-    $this->fetch_wtmid();
     $this->make_cast();
-    return true;
   }
   protected function fetch_wtmid()
   {
