@@ -72,7 +72,7 @@ class Village
   }
   private function is_int_value_valid($key,$item)
   {
-    if(empty($item) || !is_int($item))
+    if($item === null || !is_int($item))
     {
       $this->invalid_error($key,$item);
       return false;
