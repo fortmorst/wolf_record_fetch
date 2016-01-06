@@ -29,6 +29,20 @@ class Crescent extends Giji_Old
       $this->output_comment('rp');
     }
   }
+  protected function check_ruin()
+  {
+    $info = 'div.info';
+    $infosp = 'div.infosp';
+
+    if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
   protected function fetch_wtmid()
   {
     if($this->village->policy)
