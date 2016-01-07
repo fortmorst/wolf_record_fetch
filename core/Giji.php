@@ -8,21 +8,38 @@ abstract class Giji extends Country
   function fetch_village()
   {
     $this->fetch->load_file($this->url."#mode=info_open_player");
-      sleep(1);
+    sleep(1);
     $this->base = $this->fetch->find('script',-2)->innertext;
 
     $this->fetch_name();
     $this->fetch_date();
-    $this->fetch_days();
+
+    $is_not_scrap = $this->check_ruin();
+    $is_days_not_empty = $this->fetch_days();
+    if(!$is_not_scrap && $is_days_not_empty === false)
+    {
+      //開始前廃村
+      $this->fetch->clear();
+      return;
+    }
+    else if(!$is_not_scrap)
+    {
+      //進行中廃村
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('ruin_midway');
+    }
+    else
+    {
+      if($this->policy === null)
+      {
+        $this->fetch_policy();
+      }
+      $this->fetch_wtmid();
+    }
 
     $this->make_cast();
     $this->check_sprule();
     
-    if($this->policy === null)
-    {
-      $this->fetch_policy();
-    }
-    $this->fetch_wtmid();
   }
   protected function fetch_name()
   {
@@ -33,9 +50,20 @@ abstract class Giji extends Country
     $date = preg_replace('/.+"updateddt":    new Date\(1000 \* (\d+)\),.+/s',"$1",$this->base);
     $this->village->date = date('Y-m-d',$date);
   }
+  protected function check_ruin()
+  {
+    $scrap = mb_ereg_replace('.+"is_scrap":     \(0 !== (\d)\),.+',"\\1",$this->base,'m');
+    return ($scrap !== '1') ? true:false;
+  }
   protected function fetch_days()
   {
-    $this->village->days = (int)preg_replace('/.+"turn": (\d+).+/s',"$1",$this->base);
+    $days = (int)preg_replace('/.+"turn": (\d+).+/s',"$1",$this->base);
+    if($days === 1)
+    {
+      $this->insert_as_ruin();
+      return false;
+    }
+    $this->village->days = $days;
   }
   protected function check_sprule()
   {
