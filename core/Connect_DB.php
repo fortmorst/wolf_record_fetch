@@ -32,12 +32,6 @@ class Connect_DB
   {
     $vid = $this->insert_village($village->get_vars(),$cid);
     
-    //廃村は村データのみ
-    if(empty($cast))
-    {
-      return true;
-    }
-
     if(isset($vid['id']))
     {
       if(!$this->insert_user((int)$vid['id'],$cast))
@@ -45,6 +39,11 @@ class Connect_DB
         echo 'ERROR: Cannot insert users.'.PHP_EOL;
         return false;
       }
+    }
+    else if(empty($cast))
+    {
+      //廃村は村データのみ
+      return true;
     }
     else
     {

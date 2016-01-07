@@ -75,7 +75,6 @@ abstract class Giji_Old extends Country
     if($days === 'プロローグ')
     {
       $this->insert_as_ruin();
-      $this->output_comment('ruin_prologue');
       return false;
     }
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
