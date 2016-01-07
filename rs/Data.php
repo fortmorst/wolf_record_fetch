@@ -27,12 +27,7 @@ class Data
   const TM_NONE      = 99; //陣営なし
   const TM_DOLL      = 23; //無魂人形
   const TM_ONLOOKER  = 98; //見物人  
-  //輪廻
-  const TM_R_VIL     = 18; //村人
-  const TM_R_SEER    = 19; //占い師
-  const TM_R_MED     = 20; //霊能者
-  const TM_R_WOLF    = 21; //人狼
-    
+  const TM_RUIN      = 97; //廃村
 
   //編成 regulation
   const RGL_C    =  1;      //C編成
@@ -60,6 +55,7 @@ class Data
   const RGL_PLOT = 29;      //陰謀に集う胡蝶
   const RGL_RINNE= 33;      //輪廻
   const RGL_ETC  = 24;      //特殊
+  const RGL_RUIN = 30;      //廃村
 
 
   //結果 result

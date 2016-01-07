@@ -22,7 +22,6 @@ class Check_Village
 
     foreach($this->stmt as $stmt_key=>$item)
     {
-      echo '☆'.$item['class'].'->'.PHP_EOL;
       $this->village_pending = [];
       //キューの確認
       $this->check_queue($item['id']);
@@ -66,21 +65,21 @@ class Check_Village
     $vno_max_vlist = $this->check_vlist_latest($url_log,$class);
     $vno_max_db = $this->check_db_latest_vno($cid);
     //後で廃村してるか否かは国で確認するようにする
-    $vno_ruin = $this->check_db_latest_ruin($cid);
+    //$vno_ruin = $this->check_db_latest_ruin($cid);
 
     //廃村が連続している国は最新村番号をチェック
     //将来的に削除
-    if($vno_ruin !== 0)
-    {
-      if($vno_ruin === $vno_max_vlist)
-      {
-        return $vno_max_db;
-      }
-      else
-      {
-        echo '▼ruin clear.'.PHP_EOL;
-      }
-    }
+    //if($vno_ruin !== 0)
+    //{
+      //if($vno_ruin === $vno_max_vlist)
+      //{
+        //return $vno_max_db;
+      //}
+      //else
+      //{
+        //echo '▼ruin clear.'.PHP_EOL;
+      //}
+    //}
 
     //dbの最大村番号よりも、村リストの最大村番号が大きければ差分を確認リストに入れる
     if($vno_max_vlist > $vno_max_db)
@@ -105,15 +104,15 @@ class Check_Village
 
     return (int)$vno_max[0];
   }
-  private function check_db_latest_ruin($cid)
-  {
-    //廃村が連続している国はDBに村番号がある 
-    $sql = "SELECT ruin FROM country WHERE id=".$cid;
-    $stmt = $this->db->query($sql);
-    $vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
+  //private function check_db_latest_ruin($cid)
+  //{
+    ////廃村が連続している国はDBに村番号がある 
+    //$sql = "SELECT ruin FROM country WHERE id=".$cid;
+    //$stmt = $this->db->query($sql);
+    //$vno_ruin= $stmt->fetch(PDO::FETCH_NUM);
 
-    return (int)$vno_ruin[0];
-  }
+    //return (int)$vno_ruin[0];
+  //}
 
   private function check_vlist_latest($url_log,$class)
   {
@@ -150,7 +149,6 @@ class Check_Village
       case 'Moon':
       case 'Chitose':
       case 'Chitose_RP':
-      case 'Rinne':
       case 'Phantom':
       case 'Dark':
       case 'BW':
@@ -178,47 +176,84 @@ class Check_Village
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
       $is_end = $this->check_end($class,$url_vil);
-      echo 'vno: '.$vno.PHP_EOL;
-      //廃村判定は後で消す
+
+      echo $class.': vno= '.$vno.PHP_EOL;
+
+      //村番号が存在しない場合
+      if(!$this->is_not_found($class,$url_vil))
+      {
+          unset($this->village_pending[$key]);
+          $this->insert_empty_village($id,$vno);
+          echo '▲'.$vno.' is empty number.Inserted.'.PHP_EOL;
+          continue;
+      }
+      //雑談村がある国の場合
+
       if($is_end)
       {
         //queueに入っている(DBの最大村番号よりも小さい)なら削除
         if($vno < $vno_max_db)
         {
           $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
-          $stmt = $this->db->query($sql);
+          $this->db->query($sql);
           echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
 
         //廃村か否か
-        if($this->check_not_ruined($class,$url_vil))
-        {
-          //両方trueならcontinue;
-          continue;
-        }
-        else
-        {
-          //is_endがtrue&ruinedがfalse(=ruinである)ならruinedコメント
-          //後で削除
-          unset($this->village_pending[$key]);
-          echo '※'.$vno.'>> ruined.'.PHP_EOL;
-        }
+        //if($this->check_not_ruined($class,$url_vil))
+        //{
+          ////両方trueならcontinue;
+          //continue;
+        //}
+        //else
+        //{
+          ////is_endがtrue&ruinedがfalse(=ruinである)ならruinedコメント
+          ////後で削除
+          //unset($this->village_pending[$key]);
+          //echo '※'.$vno.'>> ruined.'.PHP_EOL;
+        //}
       }
       else
       {
-        //is_endがfalseでruinedもfalseならキューに書く
+        //is_endがfalseならキューに書く
         unset($this->village_pending[$key]);
         if($vno > $vno_max_db)
         {
           //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
           $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-          $stmt = $this->db->query($sql);
+          $this->db->query($sql);
 
           echo '●'.$vno.'was written into DB.'.PHP_EOL;
         }
       }
     }
     return (!empty($this->village_pending))? true:false;
+  }
+  private function is_not_found($class,$url)
+  {
+    $this->html->load_file($url);
+    if($class === 'Silence')
+    {
+      $tag = 'div.inframe';
+    }
+    else
+    {
+      $tag = 'div.paragraph';
+    }
+    $paragraph = $this->html->find($tag.' p',0);
+    if($paragraph === '村データ が見つかりません。')
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
+  private function insert_empty_village($cid,$vno)
+  {
+    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid) VALUES (".$cid.",".$vno.",'###vil not found###','0000-00-00',1,30,1,97)";
+    $this->db->query($sql);
   }
   private function check_end($class,$url)
   {
@@ -260,21 +295,6 @@ class Check_Village
     if(array_search($class,$not_ruin) !== false)
     {
       return true;
-    }
-    else if($class === 'Rinne')
-    {
-      $this->html->load_file($url.'&cmd=vinfo');
-      sleep(1);
-      $day = $this->html->find('p.multicolumn_role',0)->plaintext;
-      if($day === '短期')
-      {
-        return false;
-      }
-      else
-      {
-        return true;
-      }
-      $this->html->clear();
     }
 
     $this->html->load_file($url);

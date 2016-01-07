@@ -43,9 +43,18 @@ class Melon extends SOW
   {
     $url = $this->url.'&t='.$this->village->days.'&row=40&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
-    $this->fetch_wtmid();
+    //廃村なら非参加扱い
+    if(!$this->check_ruin())
+    {
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('ruin_midway');
+    }
+    else
+    {
+      $this->fetch_wtmid();
+    }
     $this->make_cast();
   }
   protected function fetch_wtmid()
@@ -246,7 +255,7 @@ class Melon extends SOW
   }
   protected function fetch_rltid_m($person)
   {
-    if(!$this->village->policy)
+    if($this->village->wtmid === Data::TM_RP)
     {
       $this->user->rltid = Data::RSL_JOIN;
     }

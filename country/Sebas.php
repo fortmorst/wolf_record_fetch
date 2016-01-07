@@ -38,7 +38,30 @@ class Sebas extends SOW
   protected function fetch_days()
   {
     $days = trim($this->fetch->find('p.turnnavi',1)->find('a',-1)->href);
-    $this->village->days = preg_replace('/.+turn=(\d+)&amp.+/','\1',$days) -1;
+    $days = preg_replace('/.+turn=(\d+)&amp.+/','\1',$days) -1;
+    if($days === 1)
+    {
+      $this->insert_as_ruin();
+      return false;
+    }
+    else
+    {
+      $this->village->days = $days;
+    }
+  }
+  protected function check_ruin()
+  {
+    $info = 'div.info';
+    $infosp = 'div.infosp';
+
+    if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
   protected function fetch_rp()
   {

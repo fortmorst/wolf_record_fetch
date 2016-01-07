@@ -40,6 +40,11 @@ class Silence extends SOW
   protected function fetch_days()
   {
     $days = trim($this->fetch->find('p',0)->find('a',-4)->innertext);
+    if($days === 'プロローグ')
+    {
+      $this->insert_as_ruin();
+      return false;
+    }
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
   }
   protected function fetch_rp()
@@ -68,6 +73,20 @@ class Silence extends SOW
       } while(preg_match("/村の更新日が延長|村の設定が変更/",$wtmid));
     }
     return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
+  }
+  protected function check_ruin()
+  {
+    $info = 'div.announce';
+    $infosp = 'div.extra';
+
+    if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
   protected function make_cast()
   {

@@ -37,6 +37,17 @@ class Phantom extends SOW
     $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
     $this->is_ruined = false;
   }
+  protected function fetch_days()
+  {
+    //幻夢は廃村もそのまま取得する
+    $days = trim($this->fetch->find('p.turnnavi',0)->find('a',-4)->innertext);
+    $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
+  }
+  protected function check_ruin()
+  {
+    //幻夢は廃村もそのまま取得する
+    return true;
+  }
   protected function fetch_wtmid()
   {
     $wtmid = $this->fetch_win_message();

@@ -40,6 +40,11 @@ class Connect_DB
         return false;
       }
     }
+    else if(empty($cast))
+    {
+      //廃村は村データのみ
+      return true;
+    }
     else
     {
       echo 'ERROR: Cannot fetch vid.'.PHP_EOL;

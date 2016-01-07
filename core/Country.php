@@ -20,7 +20,7 @@ abstract class Country
   function __construct($id,$url,$policy,$is_evil,$queue)
   {
     $this->cid = $id;
-    $this->url_org = mb_ereg_replace('%n','',$url); //%nの置換が必要
+    $this->url_org = mb_ereg_replace('%n','',$url);
     $this->queue = $queue;
     if($policy !== null)
     {
@@ -40,26 +40,21 @@ abstract class Country
     $this->db->connect();
     //指定取得用
     //$this->queue = [110,106,103,95,88,71,63,62,18];
-    //$kick = [15,16,26,35,40,43];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
-      //if(array_search($vno,$kick)  !== false)
-      //{
-        //echo '※: '.$vno.' is kicked by $kick list.'.PHP_EOL;
-        //continue;
-      //}
       $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
-        echo 'ERROR: '.$vno.'could not fetched.'.PHP_EOL;
+        $this->output_comment('fetch_error');
         $this->fetch->clear();
-        //continue;
+        continue;
       }
       $this->fetch->clear();
       //continue;
+      //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
         echo '★'.$this->village->vno.'. '.$this->village->name.' is all inserted.'.PHP_EOL;
@@ -72,9 +67,11 @@ abstract class Country
   {
     $this->village = new Village($vno);
 
-    $this->fetch_village();
-    $this->insert_users();
-    $this->check_role();
+    if($this->fetch_village() !== false)
+    {
+      $this->insert_users();
+      $this->check_role();
+    }
 
     //var_dump($this->village->get_vars());
     if($this->village->is_valid())
@@ -84,6 +81,30 @@ abstract class Country
     else
     {
       return false;
+    }
+  }
+  protected function insert_as_ruin()
+  {
+    $this->village->days = 0;
+    $this->village->rglid = Data::RGL_RUIN;
+    $this->village->nop = 1;
+    $this->village->wtmid = Data::TM_RUIN;
+    $this->village->rgl_detail = '1,';
+
+    $this->output_comment('ruin_prologue');
+  }
+  protected function check_ruin()
+  {
+    $info = 'p.info';
+    $infosp = 'p.infosp';
+
+    if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
     }
   }
   protected function insert_users()
@@ -385,16 +406,25 @@ abstract class Country
     switch($type)
     {
       case 'rp':
-        $str =  'is guessed RP.';
+        $str = 'NOTICE-> 非勝負村として取得します。';
         break;
       case 'undefined':
-        $str = 'has undefined ->'.$detail;
+        $str = 'NOTICE-> '.$detail.' は未定義の値です。';
         break;
       case 'n_user':
-        $str = 'NOTICE:'.$this->user->persona.' could not fetched.';
+        $str = 'NOTICE->' .$this->user->persona.'は正常に取得できませんでした。';
+        break;
+      case 'ruin_prologue':
+        $str = 'NOTICE-> 開始前に廃村しています。';
+        break;
+      case 'ruin_midway':
+        $str = 'NOTICE-> 進行中に廃村しています。非勝負扱いで取得します。';
+        break;
+      case 'fetch_error':
+        $str = 'ERROR-> 村を取得できませんでした。';
         break;
     }
-    echo '>'.$this->village->vno.' '.$str.PHP_EOL;
+    echo '>'.$this->village->vno.'/ '.$str.PHP_EOL;
   }
 
   abstract protected function fetch_village();
