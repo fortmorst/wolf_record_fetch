@@ -37,16 +37,27 @@ class Sebas extends SOW
 
   protected function fetch_days()
   {
-    $days = trim($this->fetch->find('p.turnnavi',1)->find('a',-1)->href);
-    $days = preg_replace('/.+turn=(\d+)&amp.+/','\1',$days) -1;
-    if($days === 1)
+    $days = $this->fetch->find('p.turnnavi',1);
+    if($days === null)
     {
+      //進行中の雑談村
       $this->insert_as_ruin();
       return false;
     }
     else
     {
-      $this->village->days = $days;
+      $days = $days->find('a',-1)->href;
+      $days = preg_replace('/.+turn=(\d+)&amp.+/','\1',$days) -1;
+      if($days === 1)
+      {
+        //開始しなかった廃村村
+        $this->insert_as_ruin();
+        return false;
+      }
+      else
+      {
+        $this->village->days = $days;
+      }
     }
   }
   protected function check_ruin()

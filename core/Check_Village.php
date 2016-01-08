@@ -28,7 +28,7 @@ class Check_Village
       //新規村の確認
       $vno_max_db = $this->check_new_fetch($item['id'],$item['class'],$item['url_log']);
       //village_pendingリストから更新確認
-      if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$vno_max_db))
+      if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$item['talk_title'],$vno_max_db))
       {
         //stmtに書き込む
         $this->stmt[$stmt_key]['queue'] = $this->village_pending;
@@ -145,7 +145,7 @@ class Check_Village
     return $list_vno;
   }
 
-  private function check_village_pending($id,$class,$url,$vno_max_db)
+  private function check_village_pending($id,$class,$url,$talk,$vno_max_db)
   {
     foreach($this->village_pending as $key=>$vno)
     {
@@ -157,12 +157,17 @@ class Check_Village
       //村番号が存在しない場合
       if(!$this->is_not_found($class,$url_vil))
       {
-          unset($this->village_pending[$key]);
-          $this->insert_empty_village($id,$vno);
-          echo '▲'.$vno.' is empty number.Inserted.'.PHP_EOL;
-          continue;
+        unset($this->village_pending[$key]);
+        $this->insert_empty_village($id,$vno);
+        echo '▲'.$vno.' is empty number.Inserted.'.PHP_EOL;
+        continue;
       }
       //雑談村がある国の場合
+      if(!$this->is_not_talk_village($class,$url_vil,$talk))
+      {
+        echo '▲'.$vno.' is talk village.'.PHP_EOL;
+        continue;
+      }
 
       if($is_end)
       {
@@ -190,6 +195,20 @@ class Check_Village
     }
     return (!empty($this->village_pending))? true:false;
   }
+  private function is_not_talk_village($class,$url,$talk)
+  {
+    $this->html->load_file($url);
+    $title = $this->html->find('title',0)->plaintext;
+    $this->html->clear();
+    if(mb_strpos($title,$talk) !== false)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+  }
   private function is_not_found($class,$url)
   {
     $this->html->load_file($url);
@@ -202,12 +221,14 @@ class Check_Village
       $tag = 'div.paragraph';
     }
     $paragraph = $this->html->find($tag.' p',0);
-    if($paragraph === '村データ が見つかりません。')
+    if($paragraph && $paragraph->plaintext === '村データ が見つかりません。')
     {
+      $this->html->clear();
       return false;
     }
     else
     {
+      $this->html->clear();
       return true;
     }
   }

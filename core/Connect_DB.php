@@ -40,7 +40,7 @@ class Connect_DB
         return false;
       }
     }
-    else if(empty($cast))
+    else if(empty($cast) && $vid !== false)
     {
       //廃村は村データのみ
       return true;

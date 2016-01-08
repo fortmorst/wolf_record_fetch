@@ -57,7 +57,7 @@ abstract class Country
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
-        echo '★'.$this->village->vno.'. '.$this->village->name.' is all inserted.'.PHP_EOL;
+        echo '★'.$this->village->vno.'. '.$this->village->name.' を取得しました。'.PHP_EOL;
       }
     }
     $this->db->disconnect();
@@ -415,7 +415,7 @@ abstract class Country
         $str = 'NOTICE->' .$this->user->persona.'は正常に取得できませんでした。';
         break;
       case 'ruin_prologue':
-        $str = 'NOTICE-> 開始前に廃村しています。';
+        $str = 'NOTICE-> 開始前に廃村しています。または常設の雑談村です。';
         break;
       case 'ruin_midway':
         $str = 'NOTICE-> 進行中に廃村しています。非勝負扱いで取得します。';

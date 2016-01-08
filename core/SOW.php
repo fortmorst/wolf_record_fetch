@@ -45,13 +45,14 @@ class SOW extends Country
   }
   protected function fetch_days()
   {
-    $days = trim($this->fetch->find('p.turnnavi',0)->find('a',-4)->innertext);
-    if($days === 'プロローグ')
+    $days = $this->fetch->find('p.turnnavi',0)->find('a',-4);
+    //進行中(=雑談村)または開始しなかった廃村村
+    if($days === null || $days->innertext === 'プロローグ')
     {
       $this->insert_as_ruin();
       return false;
     }
-    $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
+    $this->village->days = mb_substr($days->innertext,0,mb_strpos($days,'日')) +1;
   }
   protected function fetch_rp()
   {
