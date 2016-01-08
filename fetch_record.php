@@ -14,7 +14,7 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 $db = new Connect_DB();
 $db->connect();
 
-$sql = "select id,class,url,url_log,policy,is_evil,ruin from country where class";
+$sql = "select id,class,url,url_log,policy,is_evil,talk_title from country where class";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
