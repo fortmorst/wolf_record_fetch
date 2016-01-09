@@ -200,7 +200,7 @@ class Check_Village
     $this->html->load_file($url);
     $title = $this->html->find('title',0)->plaintext;
     $this->html->clear();
-    if(mb_strpos($title,$talk) !== false)
+    if($talk !== null && mb_strpos($title,$talk) !== false)
     {
       return false;
     }
