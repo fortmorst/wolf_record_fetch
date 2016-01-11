@@ -25,18 +25,27 @@ class Check_Village
       $this->village_pending = [];
       //キューの確認
       $this->check_queue($item['id']);
-      //新規村の確認
-      $vno_max_db = $this->check_new_fetch($item['id'],$item['class'],$item['url_log']);
-      //village_pendingリストから更新確認
-      if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$item['talk_title'],$vno_max_db))
+      try
       {
-        //stmtに書き込む
-        $this->stmt[$stmt_key]['queue'] = $this->village_pending;
+        //新規村の確認
+        $vno_max_db = $this->check_new_fetch($item['id'],$item['class'],$item['url_log']);
+        //village_pendingリストから更新確認
+        if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$item['talk_title'],$vno_max_db))
+        {
+          //stmtに書き込む
+          $this->stmt[$stmt_key]['queue'] = $this->village_pending;
+        }
+        else
+        {
+          //更新村がゼロの場合、stmtを削除
+          unset($this->stmt[$stmt_key]);
+        }
       }
-      else
+      catch(Exception $e)
       {
-        //更新村がゼロの場合、stmtを削除
+        echo '※ERROR: '.$item['class'].'取得中にエラーが発生しました。この国をスキップします。->'.$e->getMessage().PHP_EOL;
         unset($this->stmt[$stmt_key]);
+        continue;
       }
     }
     $this->db->disconnect();
