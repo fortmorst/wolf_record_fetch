@@ -391,6 +391,7 @@ class Data
   const SKL_MISTAKE_QP      =134; //狂愛者 絆を結んだと思い込む。無自覚かつランダムに襲撃する
   const SKL_MISTAKE_PSS     =196; //天然誑 能力を受けると相手に片恋絆を付ける
   const SKL_ADD_LOVE        =308; //水仙鏡 一人を凄い恋人にする
+  const SKL_NARCISSUS_DEAD  =357; //猿猴 片恋絆を結ぶ+相手が襲撃死するとき身代わりになる。
   //邪気陣営
   const SKL_EFB             = 51; //邪気悪魔 二人に邪気絆を撃ち、どちらかだけが生き残れば勝ち
   const SKL_EFB_SELF        =136; //決闘者 自撃ち邪気悪魔

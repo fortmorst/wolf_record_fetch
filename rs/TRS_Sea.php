@@ -174,6 +174,7 @@ trait TRS_Sea
     ,"片想い"=>Data::SKL_PASSION
     ,"遊び人"=>Data::SKL_BITCH
     ,"純恋者"=>Data::SKL_QP_SELF
+    ,"猿猴"=>Data::SKL_NARCISSUS_DEAD
     //月光族
     ,"吸血鬼"=>Data::SKL_VAMPIRE_SEA
     ,"眷属"=>Data::SKL_SERVANT
