@@ -213,6 +213,8 @@ trait TRS_Sea
     ,"悔罪人"=>Data::SKL_TERU
     //据え膳
     ,"鱗魚人"=>Data::SKL_FISH
+    //こそどろ
+    ,"どろねこ"=>Data::SKL_THF_CAT
     //陣営無し
     ,"迷える子羊"=>Data::SKL_SHEEP
     ,"ジョーカー"=>Data::SKL_JOKER
