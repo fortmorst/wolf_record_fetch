@@ -53,7 +53,7 @@ abstract class Country
         continue;
       }
       $this->fetch->clear();
-      //continue;
+      continue;
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {

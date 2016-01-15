@@ -3,6 +3,51 @@ class Rose extends SOW
 {
   use TRS_Rose;
 
+  protected function fetch_from_info()
+  {
+    $this->fetch->load_file($this->url."&cmd=vinfo");
+    sleep(1);
+
+    $this->fetch_name();
+    if($this->fetch_days() === false)
+    {
+      $this->fetch->clear();
+      return;
+    }
+
+    $this->fetch_sysword();
+
+    if($this->policy === null)
+    {
+      $this->fetch_policy();
+    }
+
+    $this->fetch->clear();
+  }
+  protected function fetch_rp()
+  {
+    if(empty($this->RP_PRO))
+    {
+      return trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
+    }
+    else
+    {
+      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+      if(array_key_exists($rp,$this->RP_PRO))
+      {
+        $this->village->rp = $this->RP_PRO[$rp];
+        return;
+      }
+    }
+    return '人狼物語';
+  }
+  protected function fetch_sysword()
+  {
+    $rp = $this->fetch_rp();
+    $sql = 'SELECT name,sklset,tmset,dtset,wtmset FROM sysword WHERE name="'.$rp.'";';
+    $stmt = $this->db->query($sql);
+    $stmt = $stmt->fetchAll();
+  }
   protected function fetch_policy()
   {
     parent::fetch_policy();
