@@ -1,6 +1,7 @@
 <?php
 class Rose extends SOW
 {
+  protected $syswords = [];
   use TRS_Rose;
 
   protected function fetch_from_info()
@@ -15,7 +16,8 @@ class Rose extends SOW
       return;
     }
 
-    $this->fetch_sysword();
+    $this->fetch_rp();
+    exit;
 
     if($this->policy === null)
     {
@@ -28,25 +30,57 @@ class Rose extends SOW
   {
     if(empty($this->RP_PRO))
     {
-      return trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
+       $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     }
     else
     {
       $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
-      if(array_key_exists($rp,$this->RP_PRO))
-      {
-        $this->village->rp = $this->RP_PRO[$rp];
-        return;
-      }
+      //プロローグから取得する場合 書き直し
+      //if(array_key_exists($rp,$this->RP_PRO))
+      //{
+        //$this->village->rp = $this->RP_PRO[$rp];
+      //}
     }
-    return '人狼物語';
+    //言い換えリストに登録がなければ追加
+    if(!isset($this->syswords[$rp]))
+    {
+      $this->fetch_sysword($rp);
+    }
+    $this->village->rp = $rp;
   }
-  protected function fetch_sysword()
+  protected function fetch_sysword($rp)
   {
-    $rp = $this->fetch_rp();
-    $sql = 'SELECT name,sklset,tmset,dtset,wtmset FROM sysword WHERE name="'.$rp.'";';
+    $sql = 'SELECT name,mes_skill,mes_team,mes_dt,mes_wtm FROM sysword WHERE name="'.$rp.'"';
     $stmt = $this->db->query($sql);
     $stmt = $stmt->fetchAll();
+    $name = $stmt[0]['name'];
+    unset($stmt[0]['name']);
+    $this->syswords[$name] = new Sysword();
+    array_walk($stmt[0],[$this,'make_sysword_set'],$name);
+    var_dump($this->syswords[$name]->get_vars());
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    $sql = "SELECT * from $table where id in ($values)";
+    $stmt = $this->db->query($sql);
+    //$stmt = $stmt->fetchAll();
+    $list = [];
+    if($table === 'mes_dt')
+    {
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+      }
+      $this->syswords[$name]->mes_dt = $list;
+    }
+    else
+    {
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = (int)$item['orgid'];
+      }
+      $this->syswords[$name]->{$table} = $list;
+    }
   }
   protected function fetch_policy()
   {
