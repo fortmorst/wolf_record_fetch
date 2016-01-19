@@ -79,6 +79,8 @@ trait TRS_Sea
     ,"権力者"=>Data::SKL_LEONARD
     ,"歌姫"=>Data::SKL_SIREN
     ,"星狩り"=>Data::SKL_STAR
+    ,"蒼薔薇"=>Data::SKL_ROSE_BLUE
+    ,"坑夫"=>Data::SKL_IRON
     //裏切り
     ,"邪魔之民"=>Data::SKL_JAMMER
     ,"宿借之民"=>Data::SKL_SNATCH
@@ -137,6 +139,7 @@ trait TRS_Sea
     ,"臆狼"=>Data::SKL_WOLF_DYING_RANDOM
     ,"幼狼"=>Data::SKL_WOLF_WIS_TRICK
     ,"雪狼"=>Data::SKL_WOLF_SNOW
+    ,"猛狼"=>Data::SKL_WOLF_ELDER_MARK
     //妖魔
     ,"ハムスター人間"=>Data::SKL_FAIRY
     ,"九尾"=>Data::SKL_FRY_ASS_COUNTER
@@ -163,6 +166,7 @@ trait TRS_Sea
     ,'誑狐'=>Data::SKL_FRY_MISTAKE_LUNA
     ,'適性進化'=>Data::SKL_FRY_VARIABLE
     ,'封狐'=>Data::SKL_FRY_SEAL_ONCE
+    ,'焔狐'=>Data::SKL_FRY_FIRE
     //一匹狼
     ,"一匹狼"=>Data::SKL_LONEWOLF
     //笛吹き
@@ -175,6 +179,7 @@ trait TRS_Sea
     ,"遊び人"=>Data::SKL_BITCH
     ,"純恋者"=>Data::SKL_QP_SELF
     ,"猿猴"=>Data::SKL_NARCISSUS_DEAD
+    ,"紅薔薇"=>Data::SKL_QP_SELF_DEAD
     //月光族
     ,"吸血鬼"=>Data::SKL_VAMPIRE_SEA
     ,"眷属"=>Data::SKL_SERVANT
@@ -184,6 +189,7 @@ trait TRS_Sea
     ,"覚醒種"=>Data::SKL_VMP_HALF
     ,"月姫"=>Data::SKL_VMP_MOON
     ,"十六夜"=>Data::SKL_VMP_SEAL
+    ,"満月症候群"=>Data::SKL_VMP_AFTER_HALF
     //深海団
     ,"コレクター"=>Data::SKL_SEA_WILD
     ,"ビブロフィリア"=>Data::SKL_SEA_NONE

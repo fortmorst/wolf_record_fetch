@@ -192,6 +192,7 @@ class Data
     const SKL_ASS_CRESCENT    =114; //暗殺者(三日月) 襲撃行使、狼や妖魔も殺害可
     const SKL_ASS_MISTAKE     =273; //潜在意識 村人思い込み、ランダムに襲撃
     const SKL_JAEGER          =303; //猟兵 指定した一人が能力行使した場合呪殺
+    const SKL_ROSE_BLUE       =360; //蒼薔薇
     //思い込み
     const SKL_MISTAKE_GRD     = 69; //闇狩人 思い込み狩人
     const SKL_MISTAKE_FRY     =116; //狐好き 思い込み狐
@@ -298,6 +299,7 @@ class Data
     const SKL_WOLF_ADD_MRT    =168; //外狼 襲撃した相手を殉教者にする
     const SKL_WOLF_ELDER_DYING=223; //焔狼 襲撃耐性を貫通するが、生存狼+2日目に死ぬ 
     const SKL_WOLF_FOG        =279; //霧狼 襲撃時に事件「濃霧」を引き起こす
+    const SKL_WOLF_ELDER_MARK =361; //猛狼
     //被占で変化
     const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
     const SKL_WOLF_ADD_SICK   =306; //疫狼 被能力行使で無能恩恵を付与
@@ -376,6 +378,7 @@ class Data
     //他
     const SKL_FRY_DYING       = 49; //風花妖精 生存狼+2日目に死ぬ 
     const SKL_FRY_VOTE_TWICE  =260; //天狐 追加票を入れられる
+    const SKL_FRY_FIRE        =363; //焔狐
   //一匹狼陣営
   const SKL_LONEWOLF        = 56; //一匹狼 人狼とは別に襲撃する
   const SKL_LONE_TWICE      =169; //人虎 襲撃を受けると、二回襲撃可能になる
@@ -392,6 +395,7 @@ class Data
   const SKL_MISTAKE_PSS     =196; //天然誑 能力を受けると相手に片恋絆を付ける
   const SKL_ADD_LOVE        =308; //水仙鏡 一人を凄い恋人にする
   const SKL_NARCISSUS_DEAD  =357; //猿猴 片恋絆を結ぶ+相手が襲撃死するとき身代わりになる。
+  const SKL_QP_SELF_DEAD    =359; //紅薔薇
   //邪気陣営
   const SKL_EFB             = 51; //邪気悪魔 二人に邪気絆を撃ち、どちらかだけが生き残れば勝ち
   const SKL_EFB_SELF        =136; //決闘者 自撃ち邪気悪魔
@@ -406,6 +410,7 @@ class Data
   const SKL_VMP_HALF        =207; //覚醒種 特定役職が占を受けて吸血鬼陣営になった役職
   const SKL_VMP_MOON        =331; //月姫 月カウントを増やせる
   const SKL_VMP_SEAL        =332; //十六夜 一日限り能力を封印する
+  const SKL_VMP_AFTER_HALF  =362; //満月症候群
   //深海団
   const SKL_SEA             =261; //工作員 能力の無い深海団
   const SKL_SEA_WILD        =141; //コレクター 終了時狼+妖=1
