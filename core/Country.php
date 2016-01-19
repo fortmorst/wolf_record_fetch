@@ -116,7 +116,7 @@ abstract class Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',$this->user->persona);
       }
       //エラーでも歯抜けが起きないように入れる
       $this->users[] = $this->user;
@@ -406,22 +406,22 @@ abstract class Country
     switch($type)
     {
       case 'rp':
-        $str = 'NOTICE-> 非勝負村として取得します。';
+        $str = '⚠️NOTICE-> 非勝負村として取得します。';
         break;
       case 'undefined':
-        $str = 'NOTICE-> '.$detail.' は未定義の値です。';
+        $str = '⚠️NOTICE-> '.$detail.' は未定義の値です。';
         break;
       case 'n_user':
-        $str = 'NOTICE->' .$this->user->persona.'は正常に取得できませんでした。';
+        $str = '⚠️NOTICE->' .$detail.'は正常に取得できませんでした。';
         break;
       case 'ruin_prologue':
-        $str = 'NOTICE-> 開始前に廃村しています。または常設の雑談村です。';
+        $str = 'note-> 開始前に廃村しています。または常設の雑談村です。';
         break;
       case 'ruin_midway':
-        $str = 'NOTICE-> 進行中に廃村しています。非勝負扱いで取得します。';
+        $str = 'note-> 進行中に廃村しています。非勝負扱いで取得します。';
         break;
       case 'fetch_error':
-        $str = 'ERROR-> 村を取得できませんでした。';
+        $str = '❌ERROR-> 村を取得できませんでした。';
         break;
     }
     echo '>'.$this->village->vno.'/ '.$str.PHP_EOL;
