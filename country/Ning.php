@@ -52,8 +52,7 @@ class Ning extends Country
     $filesize = $this->remote_filesize($this->url_epi);
     if(!$filesize || $filesize > 1000000)
     {
-      $this->check->remove_queue($this->village->vno);
-      throw new Exception($this->village->vno.': Broken Epilogue.');
+      throw new Exception($this->village->vno.'ERROR: **エピローグが壊れています** 手動で取得後キューを削除して下さい。');
     }
     $this->fetch->load_file($this->url_epi);
     sleep(1);
