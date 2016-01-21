@@ -57,7 +57,7 @@ class Silence extends SOW
     else
     {
       $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      $this->output_comment('undefined',__function__,$rp);
     }
   }
   protected function fetch_win_message()

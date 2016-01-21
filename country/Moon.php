@@ -60,7 +60,7 @@ class Moon extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_rp()
@@ -73,7 +73,7 @@ class Moon extends SOW
     else
     {
       $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      $this->output_comment('undefined',__function__,$rp);
     }
   }
   protected function insert_users()
@@ -85,7 +85,7 @@ class Moon extends SOW
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
     }

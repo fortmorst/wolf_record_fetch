@@ -57,7 +57,7 @@ class BW extends SOW
       if(preg_match('/物語/',$policy))
       {
         $this->village->policy = false;
-        $this->output_comment('rp');
+        $this->output_comment('rp',__function__);
       }
     }
   }
@@ -83,7 +83,7 @@ class BW extends SOW
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
     }

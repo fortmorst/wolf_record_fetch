@@ -48,7 +48,7 @@ abstract class Country
       $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
-        $this->output_comment('fetch_error');
+        $this->output_comment('fetch_error',__function__);
         $this->fetch->clear();
         continue;
       }
@@ -91,7 +91,7 @@ abstract class Country
     $this->village->wtmid = Data::TM_RUIN;
     $this->village->rgl_detail = '1,';
 
-    $this->output_comment('ruin_prologue');
+    $this->output_comment('ruin_prologue',__function__);
   }
   protected function check_ruin()
   {
@@ -116,7 +116,7 @@ abstract class Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user',$this->user->persona);
+        $this->output_comment('n_user',__function__,$this->user->persona);
       }
       //エラーでも歯抜けが起きないように入れる
       $this->users[] = $this->user;
@@ -344,7 +344,7 @@ abstract class Country
     if(preg_match($rp,$this->village->name))
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
     else
     {
@@ -401,7 +401,7 @@ abstract class Country
       $this->user->life = round(($this->user->end-1) / $this->village->days,3);
     }
   }
-  protected function output_comment($type,$detail='')
+  protected function output_comment($type,$function,$detail='')
   {
     switch($type)
     {
@@ -414,6 +414,9 @@ abstract class Country
       case 'n_user':
         $str = '⚠️NOTICE->' .$detail.'は正常に取得できませんでした。';
         break;
+      case 'fool':
+        $str = "⚠️NOTICE-> 適当系の被襲撃者です。手動で入力して下さい。";
+        break;
       case 'ruin_prologue':
         $str = 'note-> 開始前に廃村しています。または常設の雑談村です。';
         break;
@@ -424,7 +427,7 @@ abstract class Country
         $str = '❌ERROR-> 村を取得できませんでした。';
         break;
     }
-    echo '>'.$this->village->vno.'/ '.$str.PHP_EOL;
+    echo ">$function vno. ".$this->village->vno." / $str".PHP_EOL;
   }
 
   abstract protected function fetch_village();

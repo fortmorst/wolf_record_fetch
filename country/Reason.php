@@ -78,7 +78,7 @@ class Reason extends Country
         $this->village->wtmid = Data::TM_WOLF;
         break;
       default:
-        $this->output_comment('undefined',$wtmid);
+        $this->output_comment('undefined',__function__,$wtmid);
         break;
     }
   }
@@ -105,7 +105,7 @@ class Reason extends Country
       //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
     }
   }

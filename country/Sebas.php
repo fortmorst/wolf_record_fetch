@@ -84,7 +84,7 @@ class Sebas extends SOW
     else
     {
       $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      $this->output_comment('undefined',__function__,$rp);
     }
   }
   protected function fetch_policy()
@@ -97,7 +97,7 @@ class Sebas extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_date()
@@ -131,7 +131,7 @@ class Sebas extends SOW
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
       //エラーでも歯抜けが起きないように入れる
       $this->users[] = $this->user;

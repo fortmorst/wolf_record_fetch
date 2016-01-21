@@ -53,13 +53,13 @@ class Rose extends SOW
   //SOWに上書き
   protected function fetch_sysword($rp)
   {
-    $sql = "SELECT name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
+    $sql = "SELECT name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
     $stmt = $this->db->query($sql);
-    $stmt = $stmt->fetchAll();
-    $name = $stmt[0]['name'];
-    unset($stmt[0]['name']);
+    $stmt = $stmt->fetch();
+    $name = $stmt['name'];
+    unset($stmt['name']);
     $this->syswords[$name] = new Sysword();
-    array_walk($stmt[0],[$this,'make_sysword_set'],$name);
+    array_walk($stmt,[$this,'make_sysword_set'],$name);
     //var_dump($this->syswords[$name]->get_vars());
   }
   //SOWに上書き
@@ -99,7 +99,7 @@ class Rose extends SOW
       else
       {
         $this->village->policy = false;
-        $this->output_comment('rp');
+        $this->output_comment('rp',__FUNCTION__);
       }
     }
   }
@@ -144,7 +144,7 @@ class Rose extends SOW
       else
       {
         $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
+        $this->output_comment('undefined',__FUNCTION__,$wtmid);
       }
     }
   }
@@ -180,7 +180,7 @@ class Rose extends SOW
       var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user',$user->persona);
+        $this->output_comment('n_user',__FUNCTION__,$user->persona);
       }
     }
   }
@@ -222,7 +222,7 @@ class Rose extends SOW
     else
     {
       $this->user->{$column} = null;
-      $this->output_comment('undefined',$value);
+      $this->output_comment('undefined',__FUNCTION__,$value);
     }
   }
   protected function fetch_role($person)
@@ -308,8 +308,13 @@ class Rose extends SOW
     }
     else
     {
-      //適当系の場合警告を出す
-      //$this->output_comment('undefined',$destiny);
+      return false;
+    }
+
+    //適当系の被襲撃者はスキップ
+    if($regex === null)
+    {
+      $this->output_comment('fool',__FUNCTION__);
       return false;
     }
 

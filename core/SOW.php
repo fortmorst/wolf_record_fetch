@@ -105,7 +105,7 @@ class SOW extends Country
     if(!$this->check_ruin())
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('ruin_midway');
+      $this->output_comment('ruin_midway',__function__);
     }
     else
     {
@@ -125,7 +125,7 @@ class SOW extends Country
       else
       {
         $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
+        $this->output_comment('undefined',__function__,$wtmid);
       }
     }
     else
@@ -177,7 +177,7 @@ class SOW extends Country
       //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
     }
   }

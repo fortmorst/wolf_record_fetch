@@ -88,7 +88,7 @@ class Phantom extends SOW
     {
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
     }
   }

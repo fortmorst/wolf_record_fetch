@@ -115,7 +115,7 @@ abstract class Giji_Old extends Country
         break;
       default:
         $this->village->policy = false;
-        $this->output_comment('rp');
+        $this->output_comment('rp',__function__);
         break;
     }
   }
@@ -143,7 +143,7 @@ abstract class Giji_Old extends Country
     if(!$this->check_ruin())
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('ruin_midway');
+      $this->output_comment('ruin_midway',__function__);
     }
     else
     {
@@ -195,7 +195,7 @@ abstract class Giji_Old extends Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
     }

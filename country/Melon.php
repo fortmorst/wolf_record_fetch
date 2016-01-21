@@ -14,7 +14,7 @@ class Melon extends SOW
     else
     {
       $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      $this->output_comment('undefined',__function__,$rp);
     }
   }
   protected function fetch_policy()
@@ -27,7 +27,7 @@ class Melon extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_from_pro()
@@ -49,7 +49,7 @@ class Melon extends SOW
     if(!$this->check_ruin())
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('ruin_midway');
+      $this->output_comment('ruin_midway',__function__);
     }
     else
     {
@@ -96,7 +96,7 @@ class Melon extends SOW
       else
       {
         $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
+        $this->output_comment('undefined',__function__,$wtmid);
       }
     }
   }
@@ -124,7 +124,7 @@ class Melon extends SOW
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__);
       }
       //エラーでも歯抜けが起きないように入れる
       $this->users[] = $this->user;
@@ -198,7 +198,7 @@ class Melon extends SOW
         //未定義の役職
         $this->user->sklid = $this->SKILL[0][0];
         $this->user->tmid = $this->SKILL[0][1];
-        $this->output_comment('undefined',$sklid);
+        $this->output_comment('undefined',__function__,$sklid);
       }
       $this->fetch_end($dtid);
       $this->fetch_rltid_m($person);
