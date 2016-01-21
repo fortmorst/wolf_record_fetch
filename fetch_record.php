@@ -39,6 +39,11 @@ $db->disconnect();
 //更新チェック
   $check_village = new Check_Village($stmt);
   $stmt = $check_village->check($stmt);
+
+//言い換え用
+$syswords = [];
+
+//国ごとに取得開始
 if(!empty($stmt))
 {
   foreach($stmt as $item)

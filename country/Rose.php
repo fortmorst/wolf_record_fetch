@@ -1,8 +1,6 @@
 <?php
 class Rose extends SOW
 {
-  //SOWに上書き
-  protected $syswords = [];
   //use TRS_Rose;
 
   protected function fetch_from_info()
@@ -43,24 +41,33 @@ class Rose extends SOW
         //$this->village->rp = $this->RP_PRO[$rp];
       //}
     }
+    $this->village->rp = $rp;
     //言い換えリストに登録がなければ追加
-    if(!isset($this->syswords[$rp]))
+    if(!isset($GLOBALS['syswords'][$rp]))
     {
       $this->fetch_sysword($rp);
     }
-    $this->village->rp = $rp;
   }
   //SOWに上書き
   protected function fetch_sysword($rp)
   {
-    $sql = "SELECT name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
+    $sql = "SELECT name,cid,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
     $stmt = $this->db->query($sql);
     $stmt = $stmt->fetch();
-    $name = $stmt['name'];
-    unset($stmt['name']);
-    $this->syswords[$name] = new Sysword();
+    //cidがある場合nameにcidを付ける
+    if($stmt['cid'] !== null)
+    {
+      $name = $stmt['name'];
+    }
+    else
+    {
+      $name = $stmt['name'].'_'.$stmt['cid'];
+      $this->village->rp = $name;
+    }
+    unset($stmt['name'],$stmt['cid']);
+    $GLOBALS['syswords'][$name] = new Sysword();
     array_walk($stmt,[$this,'make_sysword_set'],$name);
-    //var_dump($this->syswords[$name]->get_vars());
+    //var_dump($GLOBALS['syswords'][$name]->get_vars());
   }
   //SOWに上書き
   protected function make_sysword_set($values,$table,$name)
@@ -75,7 +82,7 @@ class Rose extends SOW
         {
           $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
         }
-        $this->syswords[$name]->mes_dt_sys = $list;
+        $GLOBALS['syswords'][$name]->mes_dt_sys = $list;
     }
     else
     {
@@ -83,7 +90,7 @@ class Rose extends SOW
       {
         $list[$item['name']] = (int)$item['orgid'];
       }
-      $this->syswords[$name]->{$table} = $list;
+      $GLOBALS['syswords'][$name]->{$table} = $list;
     }
   }
   protected function fetch_policy()
@@ -131,9 +138,9 @@ class Rose extends SOW
     else
     {
       $wtmid = $this->fetch_win_message();
-      if(array_key_exists($wtmid,$this->syswords[$this->village->rp]->mes_wtmid))
+      if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
       {
-        $this->village->wtmid = $this->syswords[$this->village->rp]->mes_wtmid[$wtmid];
+        $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
         //奴隷勝利の場合追加勝利扱いにする
         if($this->village->wtmid === Data::TM_SLAVE)
         {
@@ -215,9 +222,9 @@ class Rose extends SOW
   //SOWに上書き
   protected function fetch_from_sysword($value,$column)
   {
-    if(array_key_exists($value,$this->syswords[$this->village->rp]->{'mes_'.$column}))
+    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
     {
-      $this->user->{$column} = $this->syswords[$this->village->rp]->{'mes_'.$column}[$value];
+      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
     }
     else
     {
@@ -302,9 +309,9 @@ class Rose extends SOW
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
     $key = mb_substr(trim($item->plaintext),-8,8);
 
-    if(array_key_exists($key,$this->syswords[$this->village->rp]->mes_dt_sys))
+    if(array_key_exists($key,$GLOBALS['syswords'][$this->village->rp]->mes_dt_sys))
     {
-      $regex = $this->syswords[$this->village->rp]->mes_dt_sys[$key]['regex'];
+      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
     }
     else
     {
