@@ -1,8 +1,6 @@
 <?php
 class Rose extends SOW_MOD
 {
-  //use TRS_Rose;
-
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url."&cmd=vinfo");
