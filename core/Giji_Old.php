@@ -226,6 +226,7 @@ abstract class Giji_Old extends Country
     $this->fetch_role($result[2]);
     if(mb_substr($this->user->role,-2) === "居た")
     {
+      $this->user->role  = '見物人';
       $this->insert_onlooker();
     }
     else
@@ -259,16 +260,15 @@ abstract class Giji_Old extends Country
   {
     $this->user->role = mb_substr($role,mb_strpos($role,'：')+1);
   }
-  protected function insert_onlooker()
-  {
-    $this->user->role  = '見物人';
-    $this->user->dtid  = Data::DES_ONLOOKER;
-    $this->user->end   = 1;
-    $this->user->sklid = Data::SKL_ONLOOKER;
-    $this->user->tmid  = Data::TM_ONLOOKER;
-    $this->user->life  = 0.000;
-    $this->user->rltid = Data::RSL_ONLOOKER;
-  }
+  //protected function insert_onlooker()
+  //{
+    //$this->user->dtid  = Data::DES_ONLOOKER;
+    //$this->user->end   = 1;
+    //$this->user->sklid = Data::SKL_ONLOOKER;
+    //$this->user->tmid  = Data::TM_ONLOOKER;
+    //$this->user->life  = 0.000;
+    //$this->user->rltid = Data::RSL_ONLOOKER;
+  //}
   protected function fetch_dtid($result)
   {
     $this->user->dtid = $this->DESTINY[$result];

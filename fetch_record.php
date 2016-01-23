@@ -37,8 +37,8 @@ $stmt = $stmt->fetchAll();
 $db->disconnect();
 
 //更新チェック
-  $check_village = new Check_Village($stmt);
-  $stmt = $check_village->check($stmt);
+  //$check_village = new Check_Village($stmt);
+  //$stmt = $check_village->check($stmt);
 
 //言い換え用
 $syswords = [];

@@ -1,5 +1,5 @@
 <?php
-class Rose extends SOW
+class Rose extends SOW_MOD
 {
   //use TRS_Rose;
 
@@ -25,64 +25,22 @@ class Rose extends SOW
     $this->fetch->clear();
   }
 
-  //SOWに上書き
-  protected function fetch_rp()
+  protected function make_sysword_sql($rp)
   {
-    if(empty($this->RP_PRO))
-    {
-       $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
-    }
-    else
-    {
-      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
-      //プロローグから取得する場合 書き直し
-      //if(array_key_exists($rp,$this->RP_PRO))
-      //{
-        //$this->village->rp = $this->RP_PRO[$rp];
-      //}
-    }
-    $this->village->rp = $rp;
-    //言い換えリストに登録がなければ追加
-    if(!isset($GLOBALS['syswords'][$rp]))
-    {
-      $this->fetch_sysword($rp);
-    }
+    return "select name,cid,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid from sysword where name='$rp' and (cid = $this->cid or cid is null) order by cid desc";
   }
-  //SOWに上書き
-  protected function fetch_sysword($rp)
-  {
-    $sql = "SELECT name,cid,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
-    $stmt = $this->db->query($sql);
-    $stmt = $stmt->fetch();
-    //cidがある場合nameにcidを付ける
-    if($stmt['cid'] !== null)
-    {
-      $name = $stmt['name'];
-    }
-    else
-    {
-      $name = $stmt['name'].'_'.$stmt['cid'];
-      $this->village->rp = $name;
-    }
-    unset($stmt['name'],$stmt['cid']);
-    $GLOBALS['syswords'][$name] = new Sysword();
-    array_walk($stmt,[$this,'make_sysword_set'],$name);
-    //var_dump($GLOBALS['syswords'][$name]->get_vars());
-  }
-  //SOWに上書き
   protected function make_sysword_set($values,$table,$name)
   {
     $sql = "SELECT * from $table where id in ($values)";
     $stmt = $this->db->query($sql);
-    //$stmt = $stmt->fetchAll();
-      $list = [];
-      if($table === 'mes_dt_sys')
+    $list = [];
+
+    if($table === 'mes_dt_sys')
+    {
+      foreach($stmt as $item)
       {
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
-        }
-        $GLOBALS['syswords'][$name]->mes_dt_sys = $list;
+        $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+      }
     }
     else
     {
@@ -90,9 +48,10 @@ class Rose extends SOW
       {
         $list[$item['name']] = (int)$item['orgid'];
       }
-      $GLOBALS['syswords'][$name]->{$table} = $list;
     }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
+
   protected function fetch_policy()
   {
     parent::fetch_policy();
@@ -110,32 +69,9 @@ class Rose extends SOW
       }
     }
   }
-  //SOWに上書き
-  protected function fetch_win_message()
-  {
-    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
-
-    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-    if(preg_match($not_wtm,$wtmid))
-    {
-      $do_i = -2;
-      do
-      {
-        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
-        $do_i--;
-      } while(preg_match($not_wtm,$wtmid));
-    }
-    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
-    return $wtmid;
-  }
-  //奴隷周り以外SOWに上書き
   protected function fetch_wtmid()
   {
-    if(!$this->village->policy)
-    {
-      $this->village->wtmid = Data::TM_RP;
-    }
-    else
+    if($this->village->policy)
     {
       $wtmid = $this->fetch_win_message();
       if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
@@ -153,6 +89,10 @@ class Rose extends SOW
         $this->village->wtmid = Data::TM_RP;
         $this->output_comment('undefined',__FUNCTION__,$wtmid);
       }
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
     }
   }
 
@@ -184,14 +124,14 @@ class Rose extends SOW
 
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__FUNCTION__,$user->persona);
       }
     }
   }
-  //一部SOWに上書き
+  //一部SOWMODに上書き
   protected function fetch_users($person)
   {
     $this->fetch_persona($person);
@@ -208,18 +148,15 @@ class Rose extends SOW
       return;
     }
     //生存者
-    if($this->user->dtid === Data::DES_ALIVE)
-    {
-      $this->insert_alive();
-    }
+    $this->insert_if_alive($this->user->dtid);
     $this->fetch_rltid();
   }
-  //SOWに上書き
+  //SOWMODに上書き
   protected function make_list_using_sysword($person)
   {
     return ['dtid'=>$person->find('td',2)->plaintext,'tmid'=>$person->find('td',3)->plaintext,'sklid'=>$this->user->role];
   }
-  //SOWに上書き
+  //SOWMODに上書き
   protected function fetch_from_sysword($value,$column)
   {
     if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
@@ -271,40 +208,8 @@ class Rose extends SOW
       $this->user->rltid = Data::RSL_LOSE;
     }
   }
-  //SOWに上書き
-  protected function fetch_from_daily($list)
-  {
-    $days = $this->village->days;
-    $find = 'p.info';
-
-    //言い換えの有無
-    //if(!empty($this->{'DT_'.$this->village->rp}))
-    //{
-      //$rp = $this->village->rp;
-    //}
-    //else
-    //{
-      //$rp = 'NORMAL';
-    //}
-
-    for($i=2; $i<=$days; $i++)
-    {
-      $announce = $this->fetch_daily_url($i,$find);
-      foreach($announce as $item)
-      {
-        $key_u = $this->fetch_key_u($list,$find,$item);
-        if($key_u === false)
-        {
-          continue;
-        }
-        $this->users[$key_u]->end = $i;
-        $this->users[$key_u]->life = round(($i-1) / $this->village->days,3);
-      }
-      $this->fetch->clear();
-    }
-  }
   //一部SOWに上書き
-  protected function fetch_key_u($list,$rp,$item)
+  protected function fetch_key_u($list,$item)
   {
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
     $key = mb_substr(trim($item->plaintext),-8,8);

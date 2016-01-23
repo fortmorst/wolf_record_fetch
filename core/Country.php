@@ -39,7 +39,7 @@ abstract class Country
   {
     $this->db->connect();
     //指定取得用
-    //$this->queue = [110,106,103,95,88,71,63,62,18];
+    $this->queue = [75];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //村番号順に挿入
@@ -73,7 +73,7 @@ abstract class Country
       $this->check_role();
     }
 
-    //var_dump($this->village->get_vars());
+    var_dump($this->village->get_vars());
     if($this->village->is_valid())
     {
       return true;
@@ -106,6 +106,74 @@ abstract class Country
     {
       return true;
     }
+  }
+  protected function make_sysword_sql($rp)
+  {
+    return "SELECT name,cid,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
+  }
+  protected function fetch_sysword($rp)
+  {
+    $sql = $this->make_sysword_sql($rp);
+    $stmt = $this->db->query($sql);
+    //stmtがfalseの場合、人狼物語で再度検索する
+    if($stmt === false)
+    {
+      $this->output_comment('undefined',__FUNCTION__,$rp);
+      $rp = '人狼物語';
+      $this->village->rp = '人狼物語';
+      $sql = $this->make_sysword_sql($rp);
+      $stmt = $this->db->query($sql);
+    }
+    $stmt = $stmt->fetch();
+    //cidがある場合nameにcidを付ける
+    if($stmt['cid'] !== null)
+    {
+      $name = $stmt['name'];
+    }
+    else
+    {
+      $name = $stmt['name'].'_'.$stmt['cid'];
+      $this->village->rp = $name;
+    }
+    unset($stmt['name'],$stmt['cid']);
+    $GLOBALS['syswords'][$name] = new Sysword();
+    array_walk($stmt,[$this,'make_sysword_set'],$name);
+    //var_dump($GLOBALS['syswords'][$name]->get_vars());
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    if($table === 'mes_sklid')
+    {
+      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
+    }
+    else
+    {
+      $sql = "SELECT * from $table where id in ($values)";
+    }
+    $stmt = $this->db->query($sql);
+    $list = [];
+    switch($table)
+    {
+      case 'mes_sklid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+        }
+        break;
+      case 'mes_dt_sys':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+        }
+        break;
+      case 'mes_wtmid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = (int)$item['orgid'];
+        }
+        break;
+    }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function insert_users()
   {
@@ -384,6 +452,22 @@ abstract class Country
     else
     {
       return $player;
+    }
+  }
+  protected function insert_onlooker()
+  {
+    $this->user->dtid  = Data::DES_ONLOOKER;
+    $this->user->end   = 1;
+    $this->user->life  = 0.000;
+    $this->user->rltid = Data::RSL_ONLOOKER;
+  }
+  protected function insert_if_alive($status)
+  {
+    if($status === '生存' || $status === Data::DES_ALIVE)
+    {
+      $this->user->dtid = Data::DES_ALIVE;
+      $this->user->end = $this->village->days;
+      $this->user->life = 1.000;
     }
   }
   protected function fetch_life()
