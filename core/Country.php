@@ -38,8 +38,6 @@ abstract class Country
   function insert()
   {
     $this->db->connect();
-    //指定取得用
-    $this->queue = [75];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //村番号順に挿入

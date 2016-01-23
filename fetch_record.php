@@ -20,7 +20,7 @@ $sql = "select id,class,url,url_log,policy,is_evil,talk_title from country where
 if(isset($argv[1]))
 {
   //引数に渡した国だけ取得
-  $countries = '='.'"'.$argv[1].'"';
+  $countries = "='$argv[1]'";
 }
 else
 {
@@ -36,9 +36,17 @@ $stmt = $stmt->fetchAll();
 //DB切断
 $db->disconnect();
 
-//更新チェック
-  //$check_village = new Check_Village($stmt);
-  //$stmt = $check_village->check($stmt);
+//村番号が指定されていればそれだけ取得する
+if(isset($argv[2]))
+{
+  $stmt[0]['queue'] = [(int)$argv[2]];
+}
+else
+{
+  //更新チェック
+  $check_village = new Check_Village($stmt);
+  $stmt = $check_village->check($stmt);
+}
 
 //言い換え用
 $syswords = [];
@@ -70,7 +78,3 @@ if(!empty($stmt))
 }
 
 echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;
-
-
-//
-//更新のある国だけ読み込む
