@@ -94,14 +94,14 @@ class Moon extends SOW
   {
     $this->fetch_persona($person);
     $this->fetch_player($person);
-    $this->fetch_role($person);
-
-    if($this->user->role === '見物人')
+    if($person->find('td',2)->plaintext=== '見物参加')
     {
+      $this->user->role = '見物人';
       $this->insert_onlooker();
     }
     else
     {
+      $this->fetch_role($person);
       $this->fetch_sklid();
       $this->fetch_rltid();
       $this->fetch_end($person);
