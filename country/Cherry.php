@@ -2,14 +2,6 @@
 
 class Cherry extends SOW
 {
-  protected function fetch_rp()
-  {
-    $this->village->rp = '人狼物語';
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
-    {
-      $this->fetch_sysword($this->village->rp);
-    }
-  }
   protected function make_cast()
   {
     $cast = $this->fetch->find('table tr');

@@ -29,7 +29,7 @@ class SOW extends Country
     }
 
     //判定方法を変える
-    if(empty($this->RP_PRO))
+    if($this->sysword !== 'pro')
     {
       $this->fetch_rp();
     }
@@ -58,18 +58,20 @@ class SOW extends Country
   }
   protected function fetch_rp()
   {
-    if(empty($this->RP_PRO))
+    if($this->sysword === 'pro')
     {
+      //プロローグから取得する
+      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+    }
+    else if($this->sysword === null)
+    {
+      //情報欄から取得する
        $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     }
     else
     {
-      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
-      //プロローグから取得する場合 書き直し
-      //if(array_key_exists($rp,$this->RP_PRO))
-      //{
-        //$this->village->rp = $this->RP_PRO[$rp];
-      //}
+      //固定
+      $rp = $this->sysword;
     }
     $this->village->rp = $rp;
     //言い換えリストに登録がなければ追加
