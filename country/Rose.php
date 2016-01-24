@@ -146,7 +146,10 @@ class Rose extends SOW_MOD
       return;
     }
     //生存者
-    $this->insert_if_alive($this->user->dtid);
+    if($this->user->dtid === Data::DES_ALIVE)
+    {
+      $this->insert_alive();
+    }
     $this->fetch_rltid();
   }
   //SOWMODに上書き

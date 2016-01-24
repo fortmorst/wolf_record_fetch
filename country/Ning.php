@@ -143,7 +143,18 @@ class Ning extends Country
     $this->fetch_tmid();
     $this->fetch_rltid();
 
-    $this->insert_if_alive($person[2]);
+    $this->is_alive($person[2]);
+  }
+  protected function is_alive($status)
+  {
+    if($status === '生存')
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 
   protected function fetch_from_daily($list)

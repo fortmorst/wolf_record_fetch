@@ -200,7 +200,22 @@ class SOW extends Country
       $this->insert_onlooker();
       return;
     }
-    $this->insert_if_alive($person->find('td',2)->plaintext);
+    if($this->is_alive($person))
+    {
+      $this->insert_alive();
+    }
+  }
+  protected function is_alive($person)
+  {
+    $status = $person->find('td',2)->plaintext;
+    if($status === '生存')
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
   protected function fetch_sklid()
   {
@@ -208,6 +223,12 @@ class SOW extends Country
     {
       $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
       $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+
+      //狂人を人狼陣営にする
+      if($this->user->tmid === Data::TM_EVIL)
+      {
+        $this->user->tmid = Data::TM_WOLF;
+      }
 
       //呪狼の名前をメモ
       if($this->user->sklid === Data::SKL_WOLF_CURSED)

@@ -2,10 +2,13 @@
 
 class Cherry extends SOW
 {
-  use TRS_SOW;
   protected function fetch_rp()
   {
-    $this->village->rp = 'SOW';
+    $this->village->rp = '人狼物語';
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    {
+      $this->fetch_sysword($this->village->rp);
+    }
   }
   protected function make_cast()
   {

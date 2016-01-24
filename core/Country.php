@@ -459,14 +459,11 @@ abstract class Country
     $this->user->life  = 0.000;
     $this->user->rltid = Data::RSL_ONLOOKER;
   }
-  protected function insert_if_alive($status)
+  protected function insert_alive()
   {
-    if($status === '生存' || $status === Data::DES_ALIVE)
-    {
-      $this->user->dtid = Data::DES_ALIVE;
-      $this->user->end = $this->village->days;
-      $this->user->life = 1.000;
-    }
+    $this->user->dtid = Data::DES_ALIVE;
+    $this->user->end = $this->village->days;
+    $this->user->life = 1.000;
   }
   protected function fetch_life()
   {

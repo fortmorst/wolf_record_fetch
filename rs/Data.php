@@ -2,6 +2,39 @@
 
 class Data
 {
+  //新Data 後でコメント解除
+  ////陣営
+  //const TM_RP        =  0; //勝敗なし
+  //const TM_RUIN      = 97; //廃村
+  //const TM_VILLAGER  =  1; //村人陣営
+  //const TM_WOLF      =  2; //人狼陣営
+  //const TM_FAIRY     =  3; //妖魔陣営
+  //const TM_EFB       =  8; //邪気陣営
+  //const TM_EVIL      =  9; //裏切りの陣営
+  //const TM_SLAVE     = 14; //奴隷陣営
+  //const TM_MARTYR    = 22; //殉教者陣営
+  //const TM_ONLOOKER  = 98; //見物人  
+  //
+  ////役職
+  //const SKL_SEER            =  2; //占い師 人狼かそれ以外かを判定、妖魔陣営を呪殺
+  //const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
+  //const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
+  //
+  //結末 destiny
+  //const DES_ALIVE   = 1;  //生存
+  //const DES_EATEN   = 4;  //襲撃死
+  //const DES_CURSED  = 5;  //呪詛死
+  //const DES_ONLOOKER=10;  //見物
+  //
+  ////結果
+  //const RSL_WIN      = 1;
+  //const RSL_LOSE     = 2;
+  //const RSL_JOIN     = 3;   //参加(非ガチ村)
+  //
+  //
+  //ここから旧Data
+  //
+  //
   //陣営 team
   const TM_RP        =  0; //勝敗なし
   const TM_VILLAGER  =  1; //村人陣営
