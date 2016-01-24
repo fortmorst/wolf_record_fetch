@@ -1,73 +1,37 @@
 <?php
 class Phantom extends SOW
 {
-  use TRS_SOW;
-  private  $is_ruined;
-  protected $RP_PRO = [
-     'この村にも'=>'SOW'
-    ,'なんか人狼'=>'FOOL'
-    ,'　村は数十'=>'JUNA'
-    ,'昼間は人間'=>'WBBS'
-    ,'呼び寄せた'=>'PHANTOM'
-    ,'　それはま'=>'DREAM'
-    ];
-  protected $WTM_RUINED = [
-     'SOW'    =>'もう人影はない……。'
-    ,'FOOL'   =>'て誰もいなくなった。'
-    ,'JUNA'   =>'が忽然と姿を消した。'
-    ,'WBBS'   =>'が忽然と姿を消した。'
-    ,'PHANTOM'=>'らぬ静けさのみ……。'
-    ,'DREAM'  =>'、静かな朝です……。'
-    ];
-  protected $SKL_SP = [
-     "妖狐"=>[Data::SKL_FAIRY,Data::TM_FAIRY]
-    ,"天狐"=>[Data::SKL_FRY_WIS,Data::TM_FAIRY]
-    ,"冥狐"=>[Data::SKL_PIXY,Data::TM_FAIRY]
-    ,"幻魔"=>[Data::SKL_PIXY,Data::TM_FAIRY]
-    ,"--"=>[Data::SKL_NULL,Data::TM_NONE]
-    ];
-  protected $DT_DREAM = [
-     'のです……。'=>['.+(\(ランダム投票\)|指差しました。)(.+) は人々の意思により処断されたのです……。',Data::DES_HANGED]
-    ,'突然死した。'=>['^( ?)(.+) は、突然死した。',Data::DES_RETIRED]
-    ,'されました。'=>['(.+)朝、 ?(.+) が無残.+',Data::DES_EATEN]
-    ,'後を追った。'=>['^( ?)(.+) は(絆に引きずられるように) .+ の後を追った。',Data::DES_SUICIDE]
-  ];
-  function set_village_data()
-  {
-    $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
-    $this->is_ruined = false;
-  }
   protected function fetch_days()
   {
-    //幻夢は廃村もそのまま取得する
     $days = trim($this->fetch->find('p.turnnavi',0)->find('a',-4)->innertext);
     $this->village->days = mb_substr($days,0,mb_strpos($days,'日')) +1;
   }
-  protected function check_ruin()
+  protected function fetch_from_epi()
   {
-    //幻夢は廃村もそのまま取得する
-    return true;
-  }
-  protected function fetch_wtmid()
-  {
-    $wtmid = $this->fetch_win_message();
-    if($wtmid === $this->WTM_RUINED[$this->village->rp])
-    {
-      $this->is_ruined = true;
-    }
+    $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
+    $this->fetch->load_file($url);
+    sleep(1);
+
     $this->village->wtmid = Data::TM_RP;
+    $this->make_cast();
   }
 
+  protected function make_sysword_sql($rp)
+  {
+    return "SELECT name,cid,mes_sklid,mes_dt_sys FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
+  }
   protected function insert_users()
   {
     $list = [];
     $this->users = [];
+
+    $is_not_ruined = $this->check_ruin();
     foreach($this->cast as $key=>$person)
     {
       $this->user = new User();
       $this->fetch_users($person);
       $this->users[] = $this->user;
-      if($this->is_ruined)
+      if(!$is_not_ruined)
       {
         //廃村村はリストを作らない
         continue;
@@ -79,7 +43,7 @@ class Phantom extends SOW
         unset($list[$key]);
       }
     }
-    if($this->is_ruined === false)
+    if($is_not_ruined === true)
     {
       $this->fetch_from_daily($list);
     }
@@ -106,7 +70,7 @@ class Phantom extends SOW
   }
   protected function modify_cursed_seer($persona,$key_u)
   {
-    if($this->village->rp === 'DREAM')
+    if($this->village->rp === 'ゆめまぼろし')
     {
       $dialog = 'みました。';
       $pattern = '　 ?(.+) は、(.+) を詠みました。';

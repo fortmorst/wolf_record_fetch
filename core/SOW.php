@@ -28,7 +28,6 @@ class SOW extends Country
       return;
     }
 
-    //判定方法を変える
     if($this->sysword !== 'pro')
     {
       $this->fetch_rp();
@@ -62,6 +61,18 @@ class SOW extends Country
     {
       //プロローグから取得する
       $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+      $sql = "SELECT name FROM sysword WHERE prologue='$rp' AND (cid = $this->cid OR cid is null)";
+      $stmt = $this->db->query($sql);
+      if($stmt === false)
+      {
+        $this->output_comment('undefined',__FUNCTION__,$rp);
+        $rp = "人狼物語";
+      }
+      else
+      {
+        $stmt = $stmt->fetch();
+        $rp = $stmt['name'];
+      }
     }
     else if($this->sysword === null)
     {
@@ -87,7 +98,7 @@ class SOW extends Country
     sleep(1);
 
     $this->fetch_date();
-    if(!empty($this->RP_PRO))
+    if($this->sysword === 'pro')
     {
       $this->fetch_rp();
     }
