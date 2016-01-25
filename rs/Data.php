@@ -9,6 +9,7 @@ class Data
   //const TM_VILLAGER  =  1; //村人陣営
   //const TM_WOLF      =  2; //人狼陣営
   //const TM_FAIRY     =  3; //妖魔陣営
+  //const TM_LOVERS    =  4; //恋人陣営
   //const TM_EFB       =  8; //邪気陣営
   //const TM_EVIL      =  9; //裏切りの陣営
   //const TM_SLAVE     = 14; //奴隷陣営

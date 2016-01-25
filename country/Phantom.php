@@ -18,7 +18,7 @@ class Phantom extends SOW
 
   protected function make_sysword_sql($rp)
   {
-    return "SELECT name,cid,mes_sklid,mes_dt_sys FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
+    return "SELECT name,mes_sklid,mes_dt_sys FROM sysword WHERE name='$rp'";
   }
   protected function insert_users()
   {

@@ -108,7 +108,7 @@ abstract class Country
   }
   protected function make_sysword_sql($rp)
   {
-    return "SELECT name,cid,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp' AND (cid = $this->cid OR cid is null) ORDER BY cid DESC";
+    return "SELECT name,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
   }
   protected function fetch_sysword($rp)
   {
@@ -124,17 +124,8 @@ abstract class Country
       $stmt = $this->db->query($sql);
     }
     $stmt = $stmt->fetch();
-    //cidがある場合nameにcidを付ける
-    if($stmt['cid'] !== null)
-    {
-      $name = $stmt['name'];
-    }
-    else
-    {
-      $name = $stmt['name'].'_'.$stmt['cid'];
-      $this->village->rp = $name;
-    }
-    unset($stmt['name'],$stmt['cid']);
+    $name = $stmt['name'];
+    unset($stmt['name']);
     $GLOBALS['syswords'][$name] = new Sysword();
     array_walk($stmt,[$this,'make_sysword_set'],$name);
     //var_dump($GLOBALS['syswords'][$name]->get_vars());

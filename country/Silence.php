@@ -2,37 +2,6 @@
 
 class Silence extends SOW
 {
-  use TRS_SOW;
-  protected $RP_PRO = [
-     'この村にも'=>'SOW'
-    ,'昼間は人間'=>'WBBS'
-    ,'あいさつす'=>'PO'
-    ];
-  protected $WTM_PO = [
-     'ーんはぽぽぽぽーん！'=>Data::TM_VILLAGER
-    ,'CMを去っていった。'=>Data::TM_WOLF
-    ,'がおはよウナギ……。'=>Data::TM_FAIRY
-    ,'の村を去っていった。'=>Data::TM_LOVERS
-  ];
-  protected $SKL_PO = [
-     "たのしいなかま"=>[Data::SKL_VILLAGER,Data::TM_VILLAGER]
-    ,"ぽぽぽぽーん"=>[Data::SKL_WOLF,Data::TM_WOLF]
-    ,"おやすみなサイ"=>[Data::SKL_SEER,Data::TM_VILLAGER]
-    ,"ただいマンボウ"=>[Data::SKL_MEDIUM,Data::TM_VILLAGER]
-    ,"あいさつ坊や"=>[Data::SKL_LUNATIC,Data::TM_WOLF]
-    ,"スタッフ"=>[Data::SKL_GUARD,Data::TM_VILLAGER]
-    ,"AC"=>[Data::SKL_FM,Data::TM_VILLAGER]
-    ,"いただきマウス"=>[Data::SKL_FAIRY,Data::TM_FAIRY]
-    ,"あいさつガール"=>[Data::SKL_WHISPER,Data::TM_WOLF]
-    ,"ごちそうさマウス"=>[Data::SKL_PIXY,Data::TM_FAIRY]
-    ,"ありがとウサギ"=>[Data::SKL_QP,Data::TM_LOVERS]
-  ];
-  protected $DT_PO = [
-     '挨殺された。'=>['.+(\(ランダムあいさつ\)|あいさつした。)(.+) はたのしいなかま達に挨殺された。',Data::DES_HANGED]
-    ,'突然死した。'=>['\A( ?)(.+) は、突然死した。',Data::DES_RETIRED]
-    ,'ち亡くすね。'=>['(.+)朝、(.+) の首がぽぽぽ.+',Data::DES_EATEN]
-    ,'後を追った。'=>['\A( ?)(.+) は(民間の広告ネットワークに引きずられるように|感謝の気持ちを込めて) .+ の後を追った。',Data::DES_SUICIDE]
-  ];
   protected function fetch_name()
   {
     $this->village->name = $this->fetch->find('table.list tr td',1)->plaintext;
@@ -50,29 +19,24 @@ class Silence extends SOW
   protected function fetch_rp()
   {
     $rp = mb_substr($this->fetch->find('div.announce',0)->plaintext,0,5);
-    if(array_key_exists($rp,$this->RP_PRO))
+    $sql = "SELECT name FROM sysword WHERE prologue='$rp'";
+    $stmt = $this->db->query($sql);
+    if($stmt === false)
     {
-      $this->village->rp = $this->RP_PRO[$rp];
+      $this->output_comment('undefined',__FUNCTION__,$rp);
+      $rp = "人狼物語";
     }
     else
     {
-      $this->village->rp = 'SOW';
-      $this->output_comment('undefined',__function__,$rp);
+      $stmt = $stmt->fetch();
+      $rp = $stmt['name'];
     }
-  }
-  protected function fetch_win_message()
-  {
-    $wtmid = trim($this->fetch->find('div.announce',-1)->plaintext);
-    if(preg_match("/村の更新日が延長|村の設定が変更/",$wtmid))
+    $this->village->rp = $rp;
+    //言い換えリストに登録がなければ追加
+    if(!isset($GLOBALS['syswords'][$rp]))
     {
-      $do_i = -2;
-      do
-      {
-        $wtmid = trim($this->fetch->find('div.announce',$do_i)->plaintext);
-        $do_i--;
-      } while(preg_match("/村の更新日が延長|村の設定が変更/",$wtmid));
+      $this->fetch_sysword($rp);
     }
-    return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
   }
   protected function check_ruin()
   {
@@ -88,27 +52,43 @@ class Silence extends SOW
       return true;
     }
   }
+  protected function fetch_wtmid()
+  {
+    $wtmid = trim($this->fetch->find('div.announce',-1)->plaintext);
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+
+    if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
+    {
+      $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('undefined',__FUNCTION__,$wtmid);
+    }
+  }
   protected function make_cast()
   {
     $cast = $this->fetch->find('table tr');
     array_shift($cast);
     $this->cast = $cast;
   }
-  protected function fetch_sklid()
+  protected function fetch_users($person)
   {
-    if(!empty($this->{'SKL_'.$this->village->rp}))
-    {
-      $this->user->sklid = $this->{'SKL_'.$this->village->rp}[$this->user->role][0];
-      $this->user->tmid = $this->{'SKL_'.$this->village->rp}[$this->user->role][1];
-    }
-    else
-    {
-      $this->user->sklid = $this->SKILL[$this->user->role][0];
-      $this->user->tmid = $this->SKILL[$this->user->role][1];
-    }
+    $this->fetch_persona($person);
+    $this->fetch_player($person);
+    $this->fetch_role($person);
     if(preg_match('/恋人/',$this->user->role))
     {
       $this->user->tmid = Data::TM_LOVERS;
+    }
+
+    $this->fetch_sklid();
+    $this->fetch_rltid();
+
+    if($this->is_alive($person))
+    {
+      $this->insert_alive();
     }
   }
   protected function fetch_from_daily($list)
@@ -116,22 +96,12 @@ class Silence extends SOW
     $days = $this->village->days;
     $find = 'div.announce';
 
-    //言い換えの有無
-    if(!empty($this->{'DT_'.$this->village->rp}))
-    {
-      $rp = $this->village->rp;
-    }
-    else
-    {
-      $rp = 'NORMAL';
-    }
-
     for($i=2; $i<=$days; $i++)
     {
       $announce = $this->fetch_daily_url($i,$find);
       foreach($announce as $item)
       {
-        $key_u = $this->fetch_key_u($list,$rp,$item);
+        $key_u = $this->fetch_key_u($list,$item);
         if($key_u === false)
         {
           continue;

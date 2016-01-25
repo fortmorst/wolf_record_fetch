@@ -23,9 +23,26 @@ class Rose extends SOW_MOD
     $this->fetch->clear();
   }
 
+  protected function fetch_rp()
+  {
+    $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
+    if($rp !== '薔薇の下')
+    {
+      $this->village->rp = $rp.'_薔薇';
+    }
+    else
+    {
+      $this->village->rp = $rp;
+    }
+    //言い換えリストに登録がなければ追加
+    if(!isset($GLOBALS['syswords'][$rp]))
+    {
+      $this->fetch_sysword($rp);
+    }
+  }
   protected function make_sysword_sql($rp)
   {
-    return "select name,cid,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid from sysword where name='$rp' and (cid = $this->cid or cid is null) order by cid desc";
+    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid from sysword where name='$rp'";
   }
   protected function make_sysword_set($values,$table,$name)
   {

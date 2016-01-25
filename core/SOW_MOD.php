@@ -6,7 +6,7 @@ class SOW_MOD extends SOW
 
   protected function make_sysword_sql($rp)
   {
-    return "select name,cid,mes_sklid,mes_tmid,mes_dtid,mes_wtmid from sysword where name='$rp' and (cid = $this->cid or cid is null) order by cid desc";
+    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_wtmid from sysword where name='$rp'";
   }
   protected function make_sysword_set($values,$table,$name)
   {
