@@ -20,12 +20,16 @@ class Data
   //const SKL_SEER            =  2; //占い師 人狼かそれ以外かを判定、妖魔陣営を呪殺
   //const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
   //const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
+  //const SKL_ONLOOKER        = 10; //見物人
   //
   //結末 destiny
   //const DES_ALIVE   = 1;  //生存
   //const DES_EATEN   = 4;  //襲撃死
   //const DES_CURSED  = 5;  //呪詛死
   //const DES_ONLOOKER=10;  //見物
+  //
+  //編成
+  //const RGL_SECRET=27;      //秘話村
   //
   ////結果
   //const RSL_WIN      = 1;

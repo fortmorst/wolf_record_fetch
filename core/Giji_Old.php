@@ -2,22 +2,6 @@
 
 abstract class Giji_Old extends Country
 {
-  use TRS_Giji_Old;
-  private   $WTM_ZAP = [
-     "の人物が消え失せ、守り育む"=>Data::TM_NONE
-    ,"可の組織は全滅した……。「"=>Data::TM_VILLAGER
-    ,"達は自らの過ちに気付いた。"=>Data::TM_WOLF
-    ,"の結社員を退治した……。"=>Data::TM_FAIRY
-    ,"時、「人狼」は勝利を確信し"=>Data::TM_FAIRY
-    ,"も、「人狼」も、ミュータン"=>Data::TM_LOVERS
-    ,"達は、そして「人狼」も自ら"=>Data::TM_LWOLF
-    ,"達は気付いてしまった。もう"=>Data::TM_PIPER
-    ,"はたった独りだけを選んだ。"=>Data::TM_EFB
-  ];
-  protected $RP_SP = [
-    "ParanoiA"=>'ZAP'
-  ];
-
   function fetch_village()
   {
     $this->fetch_from_info();
@@ -43,12 +27,12 @@ abstract class Giji_Old extends Country
       return;
     }
     
+    $this->check_sprule();
     $this->fetch_rp();
     if($this->policy === null)
     {
       $this->fetch_policy();
     }
-    $this->check_sprule();
 
     $this->fetch->clear();
   }
@@ -59,10 +43,21 @@ abstract class Giji_Old extends Country
   }
   protected function check_sprule()
   {
+    //タブラの人狼以外ならDBから引く
     $rule= trim($this->fetch->find('dl.mes_text_report dt',1)->plaintext);
-    if(array_key_exists($rule,$this->RGL_SP))
+    if(strpos($rule,'タブラの人狼') === false)
     {
-      $this->village->rglid = $this->RGL_SP[$rule];
+      $sql = "SELECT id FROM regulation where name='$rule'";
+      $stmt = $this->db->query($sql);
+      if($stmt === false)
+      {
+        $this->output_comment('undefined',__FUNCTION__,$rule);
+      }
+      else
+      {
+        $stmt = $stmt->fetch();
+        $this->village->rglid = $stmt['id'];
+      }
     }
     else if(preg_match("/秘話/",$this->village->name))
     {
@@ -83,14 +78,39 @@ abstract class Giji_Old extends Country
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
-    if(array_key_exists($rp,$this->RP_SP))
+    $this->village->rp = $rp;
+    if(!isset($GLOBALS['syswords'][$rp]))
     {
-      $this->village->rp = $this->RP_SP[$rp]; 
+      $this->fetch_sysword($rp);
+    }
+  }
+  protected function make_sysword_sql($rp)
+  {
+    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_wtmid from sysword where name='$rp'";
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    $sql = "SELECT * from $table where id in ($values)";
+    $stmt = $this->db->query($sql);
+    $list = [];
+
+    if($table === 'mes_tmid')
+    {
+      $sql = "SELECT m.name,orgid,evil_flg FROM mes_tmid m JOIN team t ON orgid = t.id WHERE m.id IN ($values)";
+      $stmt = $this->db->query($sql);
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = ['tmid'=>(int)$item['orgid'],'evil_flg'=>(bool)$item['evil_flg']];
+      }
     }
     else
     {
-      $this->village->rp = 'NORMAL'; 
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = (int)$item['orgid'];
+      }
     }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_policy()
   {
@@ -152,29 +172,36 @@ abstract class Giji_Old extends Country
 
     $this->make_cast();
   }
+  protected function fetch_win_message()
+  {
+    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
+
+    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
+    if(preg_match($not_wtm,$wtmid))
+    {
+      $do_i = -2;
+      do
+      {
+        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
+        $do_i--;
+      } while(preg_match($not_wtm,$wtmid));
+    }
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    return $wtmid;
+  }
   protected function fetch_wtmid()
   {
-    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。|が参加しました。/';
     if($this->policy || $this->village->policy)
     {
-      $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-      if(preg_match($not_wtm,$wtmid))
+      $wtmid = $this->fetch_win_message();
+      if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
       {
-        $do_i = -2;
-        do
-        {
-          $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
-          $do_i--;
-        } while(preg_match($not_wtm,$wtmid));
-      }
-      $wtmid = mb_substr(preg_replace("/\r\n/","",$wtmid),2,13);
-      if($this->village->rp !== 'NORMAL')
-      {
-        $this->village->wtmid = $this->{'WTM_'.$this->village->rp}[$wtmid];
+        $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
       }
       else
       {
-        $this->village->wtmid = $this->WTM[$wtmid];
+        $this->village->wtmid = Data::TM_RP;
+        $this->output_comment('undefined',__FUNCTION__,$wtmid);
       }
     }
     else
@@ -195,10 +222,11 @@ abstract class Giji_Old extends Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user',__function__);
+        $this->output_comment('n_user',__function__,$this->user->persona);
       }
       $this->users[] = $this->user;
     }
+    //sow_modはfetch_usersで行う
     if($this->is_evil === true && $this->village->evil_rgl !== true)
     {
       $this->change_evil_team();
@@ -231,14 +259,14 @@ abstract class Giji_Old extends Country
     }
     else
     {
-      $this->fetch_end($result[0],$person);
       $this->fetch_rltid($result[1]);
       $this->fetch_sklid();
-      $this->fetch_dtid($result[0]);
+      $this->fetch_from_sysword($result[0],'dtid');
+      $this->fetch_end($person);
       $this->fetch_tmid($result[2]);
       $this->fetch_life();
     }
-    //var_dump($this->user->get_vars());
+    var_dump($this->user->get_vars());
   }
   protected function fetch_persona($person)
   {
@@ -260,22 +288,9 @@ abstract class Giji_Old extends Country
   {
     $this->user->role = mb_substr($role,mb_strpos($role,'：')+1);
   }
-  //protected function insert_onlooker()
-  //{
-    //$this->user->dtid  = Data::DES_ONLOOKER;
-    //$this->user->end   = 1;
-    //$this->user->sklid = Data::SKL_ONLOOKER;
-    //$this->user->tmid  = Data::TM_ONLOOKER;
-    //$this->user->life  = 0.000;
-    //$this->user->rltid = Data::RSL_ONLOOKER;
-  //}
-  protected function fetch_dtid($result)
+  protected function fetch_end($person)
   {
-    $this->user->dtid = $this->DESTINY[$result];
-  }
-  protected function fetch_end($result,$person)
-  {
-    if($result === '生存者')
+    if($this->user->dtid === Data::DES_ALIVE)
     {
       $this->user->end = $this->village->days;
     }
@@ -296,15 +311,35 @@ abstract class Giji_Old extends Country
       //役職欄に絆などついている場合
       $sklid = mb_substr($role,0,mb_strpos($role,"、"));
     }
-    $this->user->sklid = $this->SKILL[$sklid];
+    $this->fetch_from_sysword($sklid,'sklid');
   }
   protected function fetch_tmid($result)
   {
-    $tmid = mb_substr($result,0,2);
-    $this->user->tmid = $this->TEAM[$tmid][0];
-    if($this->is_evil && $this->TEAM[$tmid][1])
+    $tmid = mb_substr($result,0,mb_strpos($result,'：'));
+    if(array_key_exists($tmid,$GLOBALS['syswords'][$this->village->rp]->mes_tmid))
     {
-      $this->village->evil_rgl = true;
+      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['tmid'];
+      if($this->is_evil && $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['evil_flg'])
+      {
+        $this->village->evil_rgl = true;
+      }
+    }
+    else
+    {
+      $this->user->tmid = null;
+      $this->output_comment('undefined',__FUNCTION__,$tmid);
+    }
+  }
+  protected function fetch_from_sysword($value,$column)
+  {
+    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+    {
+      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
+    }
+    else
+    {
+      $this->user->{$column} = null;
+      $this->output_comment('undefined',__FUNCTION__,$value);
     }
   }
   protected function fetch_rltid($result)
@@ -315,7 +350,22 @@ abstract class Giji_Old extends Country
     }
     else
     {
-      $this->user->rltid = $this->RSL[$result];
+      switch($result)
+      {
+        case '勝利':
+          $this->user->rltid = Data::RSL_WIN;
+          break;
+        case '敗北':
+          $this->user->rltid = Data::RSL_LOSE;
+          break;
+        case '': //突然死
+          $this->user->rltid = Data::RSL_INVALID;
+          break;
+        default:
+          $this->output_comment('undefined',__FUNCTION__,$result);
+          $this->user->rltid = Data::RSL_JOIN;
+          break;
+      }
     }
   }
 }

@@ -446,6 +446,8 @@ abstract class Country
   }
   protected function insert_onlooker()
   {
+    $this->user->sklid = Data::SKL_ONLOOKER;
+    $this->user->tmid = Data::TM_ONLOOKER;
     $this->user->dtid  = Data::DES_ONLOOKER;
     $this->user->end   = 1;
     $this->user->life  = 0.000;

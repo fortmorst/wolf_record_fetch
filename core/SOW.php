@@ -2,11 +2,10 @@
 
 class SOW extends Country
 {
-  private $cursewolf = [];
+  protected $cursewolf = [];
 
   function fetch_village()
   {
-    $this->cursedwolf = [];
     $this->fetch_from_info();
     $this->fetch_from_pro();
 
