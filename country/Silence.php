@@ -78,17 +78,43 @@ class Silence extends SOW
     $this->fetch_persona($person);
     $this->fetch_player($person);
     $this->fetch_role($person);
-    if(preg_match('/恋人/',$this->user->role))
-    {
-      $this->user->tmid = Data::TM_LOVERS;
-    }
 
     $this->fetch_sklid();
-    $this->fetch_rltid();
+    $this->fetch_rltid_sow();
 
     if($this->is_alive($person))
     {
       $this->insert_alive();
+    }
+  }
+  protected function fetch_role($person)
+  {
+    $role = $person->find('td',3)->plaintext;
+    if(preg_match('/恋人/',$role))
+    {
+      $this->user->tmid = Data::TM_LOVERS;
+    }
+    $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
+  }
+  protected function fetch_sklid()
+  {
+    if(array_key_exists($this->user->role,$GLOBALS['syswords'][$this->village->rp]->mes_sklid))
+    {
+      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      //既に恋人陣営指定がある場合はスキップ
+      if($this->user->tmid === null)
+      {
+        $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+        echo 'kiteru';
+      }
+
+      $this->modify_from_sklid();
+    }
+    else
+    {
+      $this->user->sklid= null;
+      $this->user->tmid= null;
+      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
     }
   }
   protected function fetch_from_daily($list)
