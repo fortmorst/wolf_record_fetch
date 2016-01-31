@@ -21,6 +21,9 @@ class Data
   //const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
   //const SKL_BAPTIST         = 78; //洗礼者 一人を蘇生できるが、自分が代わりに死ぬ
   //const SKL_ONLOOKER        = 10; //見物人
+  const SKL_EVIL            =365; //裏切り狂人
+  const SKL_EVL_KNOW_WF     =366; //滅殺者
+  const SKL_EVL_SEER_ROLE   =367; //愛好家
   //
   //結末 destiny
   //const DES_ALIVE   = 1;  //生存

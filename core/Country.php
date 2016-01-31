@@ -396,6 +396,18 @@ abstract class Country
       $this->village->rglid = Data::RGL_ETC;
     }
   }
+  protected function fetch_from_sysword($value,$column)
+  {
+    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+    {
+      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
+    }
+    else
+    {
+      $this->user->{$column} = null;
+      $this->output_comment('undefined',__FUNCTION__,$value);
+    }
+  }
   protected function fetch_policy()
   {
     $rp = '/[^A-Z+]RP|[^Ａ-Ｚ+]ＲＰ|[^ァ-ヾ+]ネタ村|[^ァ-ヾ+]ランダ村|[^ァ-ヾ+]ラ神|[^ァ-ヾ+]ランダム|[^ァ-ヾ+]テスト村|薔薇村|百合村|[^ァ-ヾ+]グリード村|[^A-Z+]GR村|[^Ａ-Ｚ+]ＧＲ村|スゴロク/u';

@@ -27,7 +27,6 @@ abstract class Giji_Old extends Country
       return;
     }
     
-    $this->check_sprule();
     $this->fetch_rp();
     if($this->policy === null)
     {
@@ -77,6 +76,7 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_rp()
   {
+    $this->check_sprule();
     $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
     $this->village->rp = $rp;
     if(!isset($GLOBALS['syswords'][$rp]))
@@ -226,7 +226,6 @@ abstract class Giji_Old extends Country
       }
       $this->users[] = $this->user;
     }
-    //sow_modはfetch_usersで行う
     if($this->is_evil === true && $this->village->evil_rgl !== true)
     {
       $this->change_evil_team();
@@ -328,18 +327,6 @@ abstract class Giji_Old extends Country
     {
       $this->user->tmid = null;
       $this->output_comment('undefined',__FUNCTION__,$tmid);
-    }
-  }
-  protected function fetch_from_sysword($value,$column)
-  {
-    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
-    {
-      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
-    }
-    else
-    {
-      $this->user->{$column} = null;
-      $this->output_comment('undefined',__FUNCTION__,$value);
     }
   }
   protected function fetch_rltid($result)

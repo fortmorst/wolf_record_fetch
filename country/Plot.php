@@ -32,6 +32,7 @@ class Plot extends Giji_Old
   }
   protected function fetch_rp()
   {
+    $this->check_sprule();
     //既に陰謀に集う胡蝶が入っているならスキップ
     if(empty($this->village->rp))
     {

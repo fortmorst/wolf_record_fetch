@@ -1,43 +1,14 @@
 <?php
-class Rose extends SOW_MOD
+class Rose extends SOW
 {
-  protected function fetch_from_info()
-  {
-    $this->fetch->load_file($this->url."&cmd=vinfo");
-    sleep(1);
-
-    $this->fetch_name();
-    if($this->fetch_days() === false)
-    {
-      $this->fetch->clear();
-      return;
-    }
-
-    $this->fetch_rp();
-
-    if($this->policy === null)
-    {
-      $this->fetch_policy();
-    }
-
-    $this->fetch->clear();
-  }
-
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
-    if($rp !== '薔薇の下')
-    {
-      $this->village->rp = $rp.'_薔薇';
-    }
-    else
-    {
-      $this->village->rp = $rp;
-    }
+    $this->village->rp = $rp.'_薔薇';
     //言い換えリストに登録がなければ追加
-    if(!isset($GLOBALS['syswords'][$rp]))
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $this->fetch_sysword($rp);
+      $this->fetch_sysword($this->village->rp);
     }
   }
   protected function make_sysword_sql($rp)
@@ -67,21 +38,17 @@ class Rose extends SOW_MOD
     $GLOBALS['syswords'][$name]->{$table} = $list;
   }
 
-  protected function fetch_policy()
+  protected function fetch_policy_detail()
   {
-    parent::fetch_policy();
-    if($this->village->policy === true)
+    $policy = $this->fetch->find('p.multicolumn_left',11)->plaintext;
+    if(preg_match('/一般|初心者歓迎/',$policy))
     {
-      $policy = $this->fetch->find('p.multicolumn_left',11)->plaintext;
-      if(preg_match('/一般|初心者歓迎/',$policy))
-      {
-        $this->village->policy = true;
-      }
-      else
-      {
-        $this->village->policy = false;
-        $this->output_comment('rp',__FUNCTION__);
-      }
+      $this->village->policy = true;
+    }
+    else
+    {
+      $this->village->policy = false;
+      $this->output_comment('rp',__FUNCTION__);
     }
   }
   protected function fetch_wtmid()
@@ -146,7 +113,6 @@ class Rose extends SOW_MOD
       }
     }
   }
-  //一部SOWMODに上書き
   protected function fetch_users($person)
   {
     $this->fetch_persona($person);
@@ -167,14 +133,12 @@ class Rose extends SOW_MOD
     {
       $this->insert_alive();
     }
-    $this->fetch_rltid();
+    $this->fetch_rltid_sow();
   }
-  //SOWMODに上書き
   protected function make_list_using_sysword($person)
   {
     return ['dtid'=>$person->find('td',2)->plaintext,'tmid'=>$person->find('td',3)->plaintext,'sklid'=>$this->user->role];
   }
-  //SOWMODに上書き
   protected function fetch_from_sysword($value,$column)
   {
     if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
@@ -197,7 +161,7 @@ class Rose extends SOW_MOD
       $this->user->rltid = Data::RSL_WIN;
     }
   }
-  protected function fetch_rltid()
+  protected function fetch_rltid_sow()
   {
     if(!empty($this->user->rltid))
     {
@@ -226,7 +190,6 @@ class Rose extends SOW_MOD
       $this->user->rltid = Data::RSL_LOSE;
     }
   }
-  //一部SOWに上書き
   protected function fetch_key_u($list,$item)
   {
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
