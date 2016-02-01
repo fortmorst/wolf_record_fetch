@@ -1,40 +1,6 @@
 <?php
-class Sebas extends SOW
+class Sebas extends SOW_MOD
 {
-  use TRS_SOW;
-  protected $RP_SP = [
-     '鬼ごっこ'=>'ONI'
-    ,'無茶振り人狼'=>'JUNA'
-    ,'ガチっているフリ'=>'FOOL'
-  ];
-  protected $WTM_ONI = [
-     'した……！ぜぇはぁ。'=>Data::TM_VILLAGER
-    ,'テープを切りました。'=>Data::TM_WOLF
-    ,'時代が到来しました。'=>Data::TM_FAIRY
-  ];
-  protected $SKL_SP = [
-     "鬼（人狼）"=>[Data::SKL_WOLF,Data::TM_WOLF]
-    ,"狐"=>[Data::SKL_FAIRY,Data::TM_FAIRY]
-    ,"天狗"=>[Data::SKL_FRY_WIS,Data::TM_FAIRY]
-    ,"呪鬼"=>[Data::SKL_WOLF_CURSED,Data::TM_WOLF]
-    ,"智鬼"=>[Data::SKL_WISEWOLF,Data::TM_WOLF]
-    ,"悪戯っ子"=>[Data::SKL_PIXY,Data::TM_FAIRY]
-  ];
-  protected $DT_SP = [
-     '生き'=>Data::DES_ALIVE
-    ,"突然"=>Data::DES_RETIRED
-    ,"処刑"=>Data::DES_HANGED
-    ,"襲撃"=>Data::DES_EATEN
-    ,"呪殺"=>Data::DES_CURSED
-    ,"後追"=>Data::DES_SUICIDE
-  ];
-
-  function set_village_data()
-  {
-    $this->RP_LIST = array_merge($this->RP_LIST,$this->RP_SP);
-    $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
-  }
-
   protected function fetch_days()
   {
     $days = $this->fetch->find('p.turnnavi',1);
@@ -77,14 +43,10 @@ class Sebas extends SOW
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('p.multicolumn_left',8)->plaintext);
-    if(array_key_exists($rp,$this->RP_LIST))
+    $this->village->rp = $rp.'_執事';
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $this->village->rp = $this->RP_LIST[$rp];
-    }
-    else
-    {
-      $this->village->rp = 'SOW';
-      $this->output_comment('undefined',__function__,$rp);
+      $this->fetch_sysword($this->village->rp);
     }
   }
   protected function fetch_policy()
@@ -109,74 +71,57 @@ class Sebas extends SOW
   protected function fetch_win_message()
   {
     $not_wtm = "/0に設定されました。|村の設定が変更|に変更します。/";
+
     $wtmid = trim($this->fetch->find('div.info',-1)->plaintext);
     if(preg_match($not_wtm,$wtmid))
     {
       $do_i = -2;
       do
       {
-        $wtmid = trim($this->fetch->find('div.info',$do_i)->plaintext);
+        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
         $do_i--;
       } while(preg_match($not_wtm,$wtmid));
     }
-    return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    return $wtmid;
   }
 
-  protected function insert_users()
-  {
-    $this->users = [];
-    foreach($this->cast as $person)
-    {
-      $this->user = new User();
-      $this->fetch_users($person);
-      if(!$this->user->is_valid())
-      {
-        $this->output_comment('n_user',__function__);
-      }
-      //エラーでも歯抜けが起きないように入れる
-      $this->users[] = $this->user;
-    }
-  }
   protected function fetch_users($person)
   {
     $this->fetch_persona($person);
     $this->fetch_player($person);
+    $this->fetch_dtid($person);
     $this->fetch_role($person);
 
-    if($this->user->role === '参観者' || $this->user->role === '観てるだけ')
+    if($this->user->dtid === Data::DES_ONLOOKER)
     {
       $this->insert_onlooker();
+      return;
     }
-    else
-    {
-      $this->fetch_sklid();
-      $this->fetch_destiny($person);
-      $this->fetch_rltid();
-      $this->fetch_life();
-    }
+
+    $this->fetch_sklid();
+    $this->fetch_rltid_sow();
+    $this->fetch_life();
   }
   protected function fetch_role($person)
   {
     $role = $person->find('td',3)->plaintext;
     $this->user->role = trim(mb_ereg_replace('\A([^\r\n]+)(\r\n.+|)','\1',$role,'m'));
   }
-  protected function fetch_destiny($person)
+  protected function fetch_dtid($person)
   {
     $destiny = $person->find('td',2)->plaintext;
-    $pattern = '/(\d+)日(目に|間を)(.{6}).+/';
+    $pattern = '/(\d+)日(目に|間を|目から)(.+)/';
     preg_match_all($pattern,$destiny,$matches);
-    $this->user->dtid = $this->DT_SP[$matches[3][0]];
-    $this->user->end = (int)$matches[1][0];
-  }
-  protected function fetch_life()
-  {
-    if($this->user->dtid === Data::DES_ALIVE)
+    if(array_key_exists($matches[3][0],$GLOBALS['syswords'][$this->village->rp]->mes_dtid))
     {
-      $this->user->life = 1.000;
+      $this->user->dtid = $GLOBALS['syswords'][$this->village->rp]->mes_dtid[$matches[3][0]];
     }
     else
     {
-      $this->user->life = round(($this->user->end-1) / $this->village->days,3);
+      $this->user->dtid = null;
+      $this->output_comment('undefined',__FUNCTION__,$destiny);
     }
+    $this->user->end = (int)$matches[1][0];
   }
 }
