@@ -105,7 +105,6 @@ class Silence extends SOW
       if($this->user->tmid === null)
       {
         $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
-        echo 'kiteru';
       }
 
       $this->modify_from_sklid();
