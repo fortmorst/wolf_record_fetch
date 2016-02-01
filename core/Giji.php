@@ -148,14 +148,7 @@ abstract class Giji extends Country
   protected function fetch_player($person)
   {
     $player = preg_replace('/.+sow_auth_id = "([^"]*)".+/s',"$1",$person);
-    if(isset($this->{'d_'.get_class($this)}))
-    {
-      $this->user->player =$this->modify_player($player);
-    }
-    else
-    {
-      $this->user->player = $player;
-    }
+    $this->user->player =$this->modify_player($player);
   }
   protected function fetch_dtid($person)
   {

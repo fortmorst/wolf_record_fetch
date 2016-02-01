@@ -208,14 +208,7 @@ class SOW extends Country
   protected function fetch_player($person)
   {
     $player =trim($person->find("td a",0)->plaintext);
-    if(isset($this->{'d_'.get_class($this)}))
-    {
       $this->user->player =$this->modify_player($player);
-    }
-    else
-    {
-      $this->user->player = $player;
-    }
   }
   protected function is_alive($person)
   {
