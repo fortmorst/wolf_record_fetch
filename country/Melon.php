@@ -1,20 +1,17 @@
 <?php
 
-class Melon extends SOW
+class Melon extends SOW_MOD
 {
-  use TRS_Melon;
-
+  protected $WTM_SKIP = [
+     '/村の設定が変更されました。/','/遺言状が公開されました。/','/遺言メモが公開/','/おさかな、美味しかったね！/','/魚人はとても美味/','/人魚は/','/とってもきれいだね！/','/自殺志願者/','/運動会は晴天です！/','/見物しに/','/がやってきたよ/'
+  ];
   protected function fetch_rp()
   {
     $rp = $this->fetch->find('p.multicolumn_left',9)->plaintext;
-    if(array_key_exists($rp,$this->RP_LIST))
+    $this->village->rp = $rp.'_瓜科';
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $this->village->rp = $this->RP_LIST[$rp];
-    }
-    else
-    {
-      $this->village->rp = 'SOW';
-      $this->output_comment('undefined',__function__,$rp);
+      $this->fetch_sysword($this->village->rp);
     }
   }
   protected function fetch_policy()
@@ -34,7 +31,7 @@ class Melon extends SOW
   {
     $url = $this->url.'&t=0&r=10&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_date();
     $this->fetch->clear();
@@ -57,48 +54,24 @@ class Melon extends SOW
     }
     $this->make_cast();
   }
-  protected function fetch_wtmid()
+  protected function fetch_win_message()
   {
-    if(!$this->village->policy)
+    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
+    //遅刻見物人のシスメなどを除外
+    $count_replace = 0;
+    preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
+    if($count_replace)
     {
-      $this->village->wtmid = Data::TM_RP;
+      $do_i = -2;
+      do
+      {
+        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
+        $do_i--;
+        preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
+      } while($count_replace);
     }
-    else
-    {
-      $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-      //遅刻見物人のシスメなどを除外
-      $count_replace = 0;
-      preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
-      if($count_replace)
-      {
-        $do_i = -2;
-        do
-        {
-          $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
-          $do_i--;
-          preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
-        } while($count_replace);
-      }
-      $wtmid = preg_replace('/\r\n/','',$wtmid);
-      //人狼劇場言い換えのみ、先頭12文字で取得する
-      if($this->village->rp === 'THEATER')
-      {
-        $wtmid = mb_substr($wtmid,0,12);
-      }
-      else
-      {
-        $wtmid = mb_substr($wtmid,-10);
-      }
-      if(array_key_exists($wtmid,$this->{'WTM_'.$this->village->rp}))
-      {
-        $this->village->wtmid = $this->{'WTM_'.$this->village->rp}[$wtmid];
-      }
-      else
-      {
-        $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',__function__,$wtmid);
-      }
-    }
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    return $wtmid;
   }
   protected function make_cast()
   {
@@ -114,21 +87,6 @@ class Melon extends SOW
       }
     }
     $this->cast = $cast;
-  }
-  protected function insert_users()
-  {
-    $this->users = [];
-    foreach($this->cast as $person)
-    {
-      $this->user = new User();
-      $this->fetch_users($person);
-      if(!$this->user->is_valid())
-      {
-        $this->output_comment('n_user',__function__);
-      }
-      //エラーでも歯抜けが起きないように入れる
-      $this->users[] = $this->user;
-    }
   }
   protected function fetch_users($person)
   {
