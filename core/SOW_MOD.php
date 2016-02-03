@@ -53,7 +53,7 @@ class SOW_MOD extends Giji_Old
       var_dump($this->user->get_vars());
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user',__function__);
+        $this->output_comment('n_user',__function__,$this->user->persona);
       }
       $this->users[] = $this->user;
     }
@@ -102,7 +102,7 @@ class SOW_MOD extends Giji_Old
   }
   protected function fetch_sklid()
   {
-    if(array_key_exists($this->user->role,$GLOBALS['syswords'][$this->village->rp]->mes_sklid))
+    if($this->check_syswords($this->user->role,"sklid"))
     {
       $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
       $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];

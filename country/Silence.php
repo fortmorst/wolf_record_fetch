@@ -57,7 +57,7 @@ class Silence extends SOW
     $wtmid = trim($this->fetch->find('div.announce',-1)->plaintext);
     $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
 
-    if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
+    if($this->check_syswords($wtmid,'wtmid'))
     {
       $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
     }
@@ -98,7 +98,7 @@ class Silence extends SOW
   }
   protected function fetch_sklid()
   {
-    if(array_key_exists($this->user->role,$GLOBALS['syswords'][$this->village->rp]->mes_sklid))
+    if($this->check_syswords($this->user->role,'sklid'))
     {
       $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
       //既に恋人陣営指定がある場合はスキップ

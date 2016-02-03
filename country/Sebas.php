@@ -113,7 +113,7 @@ class Sebas extends SOW_MOD
     $destiny = $person->find('td',2)->plaintext;
     $pattern = '/(\d+)日(目に|間を|目から)(.+)/';
     preg_match_all($pattern,$destiny,$matches);
-    if(array_key_exists($matches[3][0],$GLOBALS['syswords'][$this->village->rp]->mes_dtid))
+    if($this->check_syswords($matches[3][0],'dtid'))
     {
       $this->user->dtid = $GLOBALS['syswords'][$this->village->rp]->mes_dtid[$matches[3][0]];
     }

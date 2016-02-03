@@ -456,6 +456,10 @@ abstract class Country
       return $player;
     }
   }
+  protected function check_syswords($value,$table)
+  {
+    return array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$table});
+  }
   protected function insert_onlooker()
   {
     $this->user->sklid = Data::SKL_ONLOOKER;

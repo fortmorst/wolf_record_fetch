@@ -194,7 +194,7 @@ abstract class Giji_Old extends Country
     if($this->policy || $this->village->policy)
     {
       $wtmid = $this->fetch_win_message();
-      if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
+      if($this->check_syswords($wtmid,'wtmid'))
       {
         $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
       }
@@ -308,7 +308,7 @@ abstract class Giji_Old extends Country
   protected function fetch_tmid($result)
   {
     $tmid = mb_substr($result,0,mb_strpos($result,'：'));
-    if(array_key_exists($tmid,$GLOBALS['syswords'][$this->village->rp]->mes_tmid))
+    if($this->check_syswords($tmid,'tmid'))
     {
       $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['tmid'];
       if($this->is_evil && $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['evil_flg'])

@@ -15,6 +15,7 @@ class Data
   //const TM_SLAVE     = 14; //奴隷陣営
   //const TM_MARTYR    = 22; //殉教者陣営
   //const TM_ONLOOKER  = 98; //見物人  
+  //const SKL_OWNER           = 77; //支配人 進行中に全てのログが読める
   //
   ////役職
   //const SKL_SEER            =  2; //占い師 人狼かそれ以外かを判定、妖魔陣営を呪殺

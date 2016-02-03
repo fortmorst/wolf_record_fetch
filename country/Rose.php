@@ -56,7 +56,7 @@ class Rose extends SOW
     if($this->village->policy)
     {
       $wtmid = $this->fetch_win_message();
-      if(array_key_exists($wtmid,$GLOBALS['syswords'][$this->village->rp]->mes_wtmid))
+      if($this->check_syswords($wtmid,'wtmid'))
       {
         $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
         //奴隷勝利の場合追加勝利扱いにする
@@ -195,7 +195,7 @@ class Rose extends SOW
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
     $key = mb_substr(trim($item->plaintext),-8,8);
 
-    if(array_key_exists($key,$GLOBALS['syswords'][$this->village->rp]->mes_dt_sys))
+    if($this->check_syswords($key,'dt_sys'))
     {
       $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
     }

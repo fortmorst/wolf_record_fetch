@@ -145,7 +145,7 @@ class SOW extends SOW_MOD
       var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user',__function__);
+        $this->output_comment('n_user',__function__,$user->persona);
       }
     }
   }
@@ -252,7 +252,7 @@ class SOW extends SOW_MOD
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
     $key= mb_substr(trim($item->plaintext),-8,8);
 
-    if(array_key_exists($key,$GLOBALS['syswords'][$this->village->rp]->mes_dt_sys))
+    if($this->check_syswords($key,'dt_sys'))
     {
       $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
       $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
