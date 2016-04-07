@@ -174,7 +174,7 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_win_message()
   {
-    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
+    $not_wtm = '/延長されました。|村の設定が変更されました。/';
 
     $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
     if(preg_match($not_wtm,$wtmid))
@@ -230,6 +230,10 @@ abstract class Giji_Old extends Country
     {
       $this->change_evil_team();
     }
+    foreach($this->users as $user)
+    {
+      var_dump($user->get_vars());
+    }
   }
   protected function change_evil_team()
   {
@@ -265,7 +269,6 @@ abstract class Giji_Old extends Country
       $this->fetch_tmid($result[2]);
       $this->fetch_life();
     }
-    var_dump($this->user->get_vars());
   }
   protected function fetch_persona($person)
   {

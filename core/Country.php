@@ -29,11 +29,6 @@ abstract class Country
     $this->is_evil = $is_evil;
     $this->sysword = $sysword;
     $this->db = new Connect_DB();
-    $this->set_village_data();
-  }
-  function set_village_data()
-  {
-    return;
   }
 
   function insert()
@@ -41,6 +36,8 @@ abstract class Country
     $this->db->connect();
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
+    //テストの場合
+    $Data_Test = new Data_Test();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
@@ -52,6 +49,8 @@ abstract class Country
         continue;
       }
       $this->fetch->clear();
+      //テストの場合
+      $Data_Test->check_from_DB($this->cid,$this->village,$this->users);
       continue;
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))

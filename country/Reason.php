@@ -3,17 +3,6 @@
 class Reason extends Country
 {
   private $url_epi;
-  private $skill =
-    [
-        "村人"  =>Data::SKL_VILLAGER
-       ,"占い師"=>Data::SKL_SEER
-       ,"霊能者"=>Data::SKL_MEDIUM
-       ,"狩人"  =>Data::SKL_GUARD
-       ,"共有者"=>Data::SKL_FM
-       ,"人狼"  =>Data::SKL_WOLF
-       ,"狂人"  =>Data::SKL_LUNATIC
-    ]; 
-
 
   protected function fetch_village()
   {
@@ -29,6 +18,8 @@ class Reason extends Country
     $this->fetch_name();
     $this->fetch_date();
     $this->fetch_days();
+    $this->village->rp = '推理と説得';
+    $this->fetch_sysword($this->village->rp);
 
     $this->fetch->clear();
   }
@@ -39,7 +30,7 @@ class Reason extends Country
   protected function fetch_date()
   {
     $date = $this->fetch->find('span.character_name',0)->id;
-    $this->village->date = date("y-m-d",mb_ereg_replace('mes(.+)c1',"\\1",$date));
+    $this->village->date = date("Y-m-d",mb_ereg_replace('mes(.+)c1',"\\1",$date));
   }
   protected function fetch_days()
   {
@@ -69,17 +60,15 @@ class Reason extends Country
   protected function fetch_wtmid()
   {
     $wtmid = trim($this->fetch->find('div.systemmessage p',-2)->plaintext);
-    switch(mb_substr($wtmid,0,3))
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    if($this->check_syswords($wtmid,'wtmid'))
     {
-      case '全ての': //村勝利
-        $this->village->wtmid = Data::TM_VILLAGER;
-        break;
-      case 'もう人': //狼勝利
-        $this->village->wtmid = Data::TM_WOLF;
-        break;
-      default:
-        $this->output_comment('undefined',__function__,$wtmid);
-        break;
+      $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('undefined',__FUNCTION__,$wtmid);
     }
   }
 
@@ -102,10 +91,10 @@ class Reason extends Country
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user',__function__);
+        $this->output_comment('n_user',__function__,$user->persona);
       }
     }
   }
@@ -114,14 +103,11 @@ class Reason extends Country
     $life = $this->fetch_person(trim($person));
 
     $this->fetch_sklid();
-    $this->fetch_tmid();
     $this->fetch_rltid();
 
     if($life === '生存')
     {
-      $this->user->dtid = Data::DES_ALIVE;
-      $this->user->end = $this->village->days;
-      $this->user->life = 1.000;
+      $this->insert_alive();
     }
   }
   protected function fetch_person($person)
@@ -136,57 +122,25 @@ class Reason extends Country
 
     return mb_ereg_replace($pattern,'\\3',$person);;
   }
-
-  protected function fetch_from_daily($list)
-  {
-    $days = $this->village->days;
-    for($i=2; $i<=$days; $i++)
-    {
-      $this->fetch->load_file($this->url.'/'.$i);
-      sleep(1);
-      $announce = $this->fetch->find('div.systemmessage_white');
-      foreach($announce as $item)
-      {
-        $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
-        switch(mb_substr($destiny,-6,6))
-        {
-          case "突然死した。":
-            $persona = mb_ereg_replace("^(.+)は突然死した。", "\\1", $destiny);
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_RETIRED;
-            break;
-          case "処刑された。":
-            $persona = mb_ereg_replace(".+投票した。(.+) は 村.+", "\\1", $destiny,'m');
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_HANGED;
-            break;
-          case "発見された。":
-            $persona = mb_ereg_replace("翌朝、(.+)が無残.+", "\\1", $destiny);
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_EATEN;
-            break;
-          default:
-            continue;
-        }   
-        $this->users[$key]->end = $i;
-        $this->users[$key]->life = round(($i-1) / $this->village->days,3);
-      }
-      $this->fetch->clear();
-    }
-  }
   protected function fetch_sklid()
   {
-    $this->user->sklid = $this->skill[$this->user->role];
-  }
-  protected function fetch_tmid()
-  {
-    if($this->user->role === "人狼" || $this->user->role === "狂人")
+    if($this->check_syswords($this->user->role,"sklid"))
     {
-      $this->user->tmid = Data::TM_WOLF;
+      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      if($this->user->sklid === Data::SKL_LUNATIC)
+      {
+        $this->user->tmid = Data::TM_WOLF;
+      }
+      else
+      {
+        $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+      }
     }
     else
     {
-      $this->user->tmid = Data::TM_VILLAGER;
+      $this->user->sklid= null;
+      $this->user->tmid= null;
+      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
     }
   }
   protected function fetch_rltid()
@@ -199,5 +153,52 @@ class Reason extends Country
     {
       $this->user->rltid = Data::RSL_LOSE;
     }
+  }
+
+  protected function fetch_from_daily($list)
+  {
+    $days = $this->village->days;
+    for($i=2; $i<=$days; $i++)
+    {
+      $this->fetch->load_file($this->url.'/'.$i);
+      sleep(1);
+      $announce = $this->fetch->find('div.systemmessage_white');
+      foreach($announce as $item)
+      {
+        $key_u = $this->fetch_key_u($list,$item);
+        if($key_u === false)
+        {
+          continue;
+        }
+        $this->users[$key_u]->end = $i;
+        $this->users[$key_u]->life = round(($i-1) / $this->village->days,3);
+      }
+      $this->fetch->clear();
+    }
+  }
+  protected function fetch_key_u($list,$item)
+  {
+    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $key = mb_substr(trim($item->plaintext),-8,8);
+
+    if($this->check_syswords($key,'dt_sys'))
+    {
+      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+    }
+    else
+    {
+      return false;
+    }
+
+    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+
+    $key_u = array_search($persona,$list);
+    if($key_u === false)
+    {
+      return false;
+    }
+    $this->users[$key_u]->dtid = $dtid;
+    return $key_u;
   }
 }

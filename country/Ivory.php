@@ -2,12 +2,12 @@
 
 class Ivory extends Giji_Old
 {
-  use TRS_Ivory;
-  protected $RP_SP = [
-     "象牙の塔"=>'IVORY'
-    ,"ミラーズホロウ"=>'MILLERS'
-    ,"マフィア"=>'MAFIA'
-  ];
+  public $RGL_IVORY = [
+     'M.hollow'      =>Data::RGL_MILL
+    ,'Dead or Alive' =>Data::RGL_DEATH
+    ,'Trouble Aliens'=>Data::RGL_TA
+    ,'Mystery'       =>Data::RGL_MIST
+    ];
 
   protected function fetch_name()
   {
@@ -16,56 +16,32 @@ class Ivory extends Giji_Old
   }
   protected function check_sprule()
   {
+    //タブラの人狼以外ならDBから引く
     $rule= trim($this->fetch->find('dl.mes_text_report dt',1)->plaintext);
-    if(array_key_exists($rule,$this->RGL_IVORY))
+    if(strpos($rule,'Lupus in Tabula') === false)
     {
-      $this->village->rglid = $this->RGL_IVORY[$rule];
+      if(array_key_exists($rule,$this->RGL_IVORY))
+      {
+        $this->village->rglid = $this->RGL_IVORY[$rule];
+      }
+      else
+      {
+        $this->output_comment('undefined',__FUNCTION__,$rule);
+      }
+    }
+    else if(preg_match("/秘話/",$this->village->name))
+    {
+      $this->village->rglid = Data::RGL_SECRET;
     }
   }
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
     $rp = mb_ereg_replace('文章セット：「(.+)」','\\1',$rp);
-    if(array_key_exists($rp,$this->RP_SP))
+    $this->village->rp = $rp;
+    if(!isset($GLOBALS['syswords'][$rp]))
     {
-      $this->village->rp = $this->RP_SP[$rp]; 
-    }
-    else
-    {
-      $this->village->rp = 'NORMAL'; 
-    }
-  }
-  protected function fetch_sklid()
-  {
-    $role = $this->user->role;
-    if(mb_strpos($role,"、") === false)
-    {
-      $sklid = $role;
-    }
-    else
-    {
-      //役職欄に絆などついている場合
-      $sklid = mb_substr($role,0,mb_strpos($role,"、"));
-    }
-    if($this->village->rp !== 'NORMAL')
-    {
-      $this->user->sklid = $this->{'SKL_'.$this->village->rp}[$sklid];
-    }
-    else
-    {
-      $this->user->sklid = $this->SKILL[$sklid];
-    }
-  }
-  protected function fetch_tmid($result)
-  {
-    $tmid = mb_substr($result,0,2);
-    if($this->village->rp !== 'NORMAL')
-    {
-      $this->user->tmid = $this->{'TM_'.$this->village->rp}[$tmid];
-    }
-    else
-    {
-      $this->user->tmid = $this->TEAM[$tmid][0];
+      $this->fetch_sysword($rp);
     }
   }
 }

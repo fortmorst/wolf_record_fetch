@@ -2,8 +2,23 @@
 
 abstract class Giji extends Country
 {
-  use TRS_Giji;
   protected $base;
+  protected $GIFT = [
+     2=>'喪失'
+    ,3=>'感染'
+    ,5=>'光の輪'
+    ,6=>'魔鏡'
+    ,7=>'悪鬼'
+    ,8=>'妖精の子'
+    ,9=>'半端者'
+    ,11=>'決定者'
+    ,12=>'夢占師'
+    ,13=>'酔払い'
+    ];
+  protected $BAND = [
+     "love"=>"恋人"
+    ,"hate"=>"邪気"
+    ];
 
   function fetch_village()
   {
@@ -25,21 +40,24 @@ abstract class Giji extends Country
     else if(!$is_not_scrap)
     {
       //進行中廃村
-      $this->village->wtmid = Data::TM_RP;
       $this->output_comment('ruin_midway',__function__);
     }
-    else
-    {
-      if($this->policy === null)
-      {
-        $this->fetch_policy();
-      }
-      $this->fetch_wtmid();
-    }
+    //else
+    //{
+      //if($this->policy === null)
+      //{
+        //$this->fetch_policy();
+      //}
+      //$this->fetch_wtmid();
+    //}
+
+    //現在Cielのみ
+    $this->village->wtmid = Data::TM_RP;
 
     $this->make_cast();
     $this->check_sprule();
-    
+    $this->village->rp = '新議事';
+    $this->fetch_sysword($this->village->rp);
   }
   protected function fetch_name()
   {
@@ -67,41 +85,98 @@ abstract class Giji extends Country
   }
   protected function check_sprule()
   {
-    $rule = preg_replace('/.+"game_name": "([^"]*)",.+/s',"$1",$this->base);
-    if(array_key_exists($rule,$this->RGL_SP))
-    {
-      $this->village->rglid = $this->RGL_SP[$rule];
-    }
-    else if(preg_match("/秘話/",$this->village->name))
+    //秘話村かどうか
+    if(preg_match("/秘話/",$this->village->name))
     {
       $this->village->rglid = Data::RGL_SECRET;
+      return;
+    }
+    $rule = preg_replace('/.+"game_name": "([^"]*)",.+/s',"$1",$this->base);
+    switch($rule)
+    {
+      case 'ミラーズホロウ（死んだら負け）':
+        $this->village->rglid = Data::RGL_MILL;
+        break;
+      case 'タブラの人狼（死んだら負け）':
+        $this->village->rglid = Data::RGL_DEATH;
+        break;
+      default:
+        $sql = "SELECT id FROM regulation where name='$rule'";
+        $stmt = $this->db->query($sql);
+        if($stmt === false)
+        {
+          $this->output_comment('undefined',__FUNCTION__,$rule);
+        }
+        else
+        {
+          $stmt = $stmt->fetch();
+          $this->village->rglid = $stmt['id'];
+        }
+        break;
     }
   }
-  protected function fetch_wtmid()
+  protected function make_sysword_sql($rp)
   {
-    if($this->policy || $this->village->policy)
+    return "select name,mes_sklid,mes_tmid,mes_dtid from sysword where name='$rp'";
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    if($table === 'mes_sklid')
     {
-      $policy = preg_replace('/.+"rating": "([^"]*)".+/s',"$1",$this->base);
-      switch($policy)
+      $sql = "SELECT m.name,orgid,s.name orgname from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
+    }
+    else
+    {
+      $sql = "SELECT * from $table where id in ($values)";
+    }
+
+    $stmt = $this->db->query($sql);
+    $list = [];
+
+    if($table === 'mes_sklid')
+    {
+      //裏切り陣営考慮外
+      foreach($stmt as $item)
       {
-        case "とくになし":
-        case "[言] 殺伐、暴言あり":
-        case "[遖] あっぱれネタ風味":
-        case "[張] うっかりハリセン":
-        case "[全] 大人も子供も初心者も、みんな安心":
-        case "[危] 無茶ぶり上等":
-          $this->village->wtmid = $this->WTM[preg_replace('/.+"winner": giji\.event\.winner\((\d+)\),.+/s',"$1",$this->base)];
-          break;
-        default:
-          $this->village->wtmid = Data::TM_RP;
-          $this->output_comment('rp',__function__);
-          break;
+        $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'orgname'=>$item['orgname']];
       }
     }
     else
     {
-      $this->village->wtmid = Data::TM_RP;
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = (int)$item['orgid'];
+      }
     }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
+  }
+  //現在Cielのみ
+  protected function fetch_wtmid()
+  {
+    //if($this->policy || $this->village->policy)
+    //{
+      //$policy = preg_replace('/.+"rating": "([^"]*)".+/s',"$1",$this->base);
+      //switch($policy)
+      //{
+        //case "とくになし":
+        //case "[言] 殺伐、暴言あり":
+        //case "[遖] あっぱれネタ風味":
+        //case "[張] うっかりハリセン":
+        //case "[全] 大人も子供も初心者も、みんな安心":
+        //case "[危] 無茶ぶり上等":
+          //$wtmid = preg_replace('/.+"winner": giji\.event\.winner\((\d+)\),.+/s',"$1",$this->base);
+          //$this->village->wtmid = $this->fetch_from_sysword($wtmid,'wtmid');
+          //break;
+        //default:
+          //$this->village->wtmid = Data::TM_RP;
+          //$this->output_comment('rp',__function__,$policy);
+          //break;
+      //}
+    //}
+    //else
+    //{
+      //$this->village->wtmid = Data::TM_RP;
+    //}
   }
   protected function make_cast()
   {
@@ -123,18 +198,26 @@ abstract class Giji extends Country
         $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
+      var_dump($this->user->get_vars());
     }
-    if($this->is_evil === true && $this->village->evil_rgl !== true)
-    {
-      $this->change_evil_team();
-    }
+    //Cielは裏切り陣営なし
+    //if($this->is_evil === true && $this->village->evil_rgl !== true)
+    //{
+      //$this->change_evil_team();
+    //}
   }
   protected function fetch_users($person)
   {
     $this->fetch_persona($person);
     $this->fetch_player($person);
-    $this->fetch_dtid($person);
     $this->fetch_tmid($person);
+    $this->fetch_dtid($person);
+
+    //Cielは裏切り陣営なし
+    if($this->user->tmid  === Data::TM_EVIL)
+    {
+      $this->users[$key]->tmid = Data::TM_WOLF;
+    }
 
     $this->fetch_role($person);
     $this->fetch_end($person);
@@ -152,33 +235,36 @@ abstract class Giji extends Country
   }
   protected function fetch_dtid($person)
   {
-    $this->user->dtid =$this->DESTINY[preg_replace('/.+"live": "([^"]*)",.+/s',"$1",$person)];
+    $dtid =preg_replace('/.+"live": "([^"]*)",.+/s',"$1",$person);
+    $this->fetch_from_sysword($dtid,'dtid');
   }
   protected function fetch_tmid($person)
   {
     $tmid = preg_replace('/.+visible: "([^"]*)",.+/s',"$1",$person);
-    $this->user->tmid =$this->TEAM[$tmid][0];
+    $this->fetch_from_sysword($tmid,'tmid');
 
-    if($this->is_evil && $this->TEAM[$tmid][1])
-    {
-      $this->village->evil_rgl = true;
-    }
+    //if($this->is_evil && $this->TEAM[$tmid][1])
+    //{
+      //$this->village->evil_rgl = true;
+    //}
   }
-  protected function change_evil_team()
-  {
-    foreach($this->users as $key=>$user)
-    {
-      if($this->user->tmid  === Data::TM_EVIL)
-      {
-        $this->users[$key]->tmid = Data::TM_WOLF;
-      }
-    }
-  }
+  //Cielは裏切り陣営なし
+  //protected function change_evil_team()
+  //{
+    //foreach($this->users as $key=>$user)
+    //{
+      //if($this->user->tmid  === Data::TM_EVIL)
+      //{
+        //$this->users[$key]->tmid = Data::TM_WOLF;
+      //}
+    //}
+  //}
   protected function fetch_role($person)
   {
-    $sklid = preg_replace('/.+giji\.potof\.roles\((\d+), -?\d+\);.+/s',"$1",$person);
-    $this->user->sklid =$this->SKILL[$sklid][0];
+    $skill = preg_replace('/.+giji\.potof\.roles\((\d+), -?\d+\);.+/s',"$1",$person);
+    $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['sklid'];
 
+    //役職名を出力
     $gift = (int)preg_replace('/.+giji\.potof\.roles\(\d+, (-?\d+)\);.+/s',"$1",$person);
     $love = preg_replace('/.+pl\.love = "([^"]*)".+/s',"$1",$person);
     //恩恵か恋邪気絆があれば追加
@@ -193,11 +279,23 @@ abstract class Giji extends Country
       {
         $after_role[] = $this->BAND[$love];
       }
-      $this->user->role = $this->SKILL[$sklid][1].'、'.implode('、',$after_role);
+      $this->user->role = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['orgname'].'、'.implode('、',$after_role);;
     }
     else
     {
-      $this->user->role = $this->SKILL[$sklid][1];
+      $this->user->role = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['orgname'];
+    }
+    //守護者と結社員に変更
+    switch($this->user->role)
+    {
+      case "狩人":
+        $this->user->role = "守護者";
+        break;
+      case "共有者":
+        $this->user->role = "結社員";
+        break;
+      default:
+        break;
     }
   }
   protected function fetch_end($person)
