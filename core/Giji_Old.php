@@ -55,7 +55,7 @@ abstract class Giji_Old extends Country
       else
       {
         $stmt = $stmt->fetch();
-        $this->village->rglid = $stmt['id'];
+        $this->village->rglid = (int)$stmt['id'];
       }
     }
     else if(preg_match("/秘話/",$this->village->name))
@@ -232,7 +232,7 @@ abstract class Giji_Old extends Country
     }
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      //var_dump($user->get_vars());
     }
   }
   protected function change_evil_team()

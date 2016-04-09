@@ -10,7 +10,7 @@ class Plot extends Giji_Old
       //陰謀に集う胡蝶
       $this->village->rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
     }
-    else if('タブラの人狼' === false)
+    else if(strpos($rule,'タブラの人狼') === false)
     {
       //タブラの人狼以外ならDBから引く
       $sql = "SELECT id FROM regulation where name='$rule'";
@@ -22,7 +22,7 @@ class Plot extends Giji_Old
       else
       {
         $stmt = $stmt->fetch();
-        $this->village->rglid = $stmt['id'];
+        $this->village->rglid = (int)$stmt['id'];
       }
     }
     else if(preg_match("/秘話/",$this->village->name))

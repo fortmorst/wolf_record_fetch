@@ -94,6 +94,8 @@ abstract class Giji extends Country
     $rule = preg_replace('/.+"game_name": "([^"]*)",.+/s',"$1",$this->base);
     switch($rule)
     {
+      case 'タブラの人狼':
+        break;
       case 'ミラーズホロウ（死んだら負け）':
         $this->village->rglid = Data::RGL_MILL;
         break;
@@ -110,7 +112,7 @@ abstract class Giji extends Country
         else
         {
           $stmt = $stmt->fetch();
-          $this->village->rglid = $stmt['id'];
+          $this->village->rglid = (int)$stmt['id'];
         }
         break;
     }
@@ -198,7 +200,7 @@ abstract class Giji extends Country
         $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
-      var_dump($this->user->get_vars());
+      //var_dump($this->user->get_vars());
     }
     //Cielは裏切り陣営なし
     //if($this->is_evil === true && $this->village->evil_rgl !== true)
