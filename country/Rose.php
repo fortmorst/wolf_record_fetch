@@ -3,12 +3,21 @@ class Rose extends SOW
 {
   protected function fetch_rp()
   {
+    $this->check_sprule();
+
     $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     $this->village->rp = $rp.'_薔薇';
     //言い換えリストに登録がなければ追加
     if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
+    }
+  }
+  protected function check_sprule()
+  {
+    if(preg_match("/秘話/",$this->village->name))
+    {
+      $this->village->rglid = Data::RGL_SECRET;
     }
   }
   protected function make_sysword_sql($rp)

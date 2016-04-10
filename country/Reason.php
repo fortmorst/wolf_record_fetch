@@ -91,7 +91,7 @@ class Reason extends Country
 
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__function__,$user->persona);
@@ -179,19 +179,29 @@ class Reason extends Country
   protected function fetch_key_u($list,$item)
   {
     $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
-    $key = mb_substr(trim($item->plaintext),-8,8);
 
-    if($this->check_syswords($key,'dt_sys'))
+    //突然死メッセージが6文字
+    $is_retired = mb_strpos($destiny,'は突然死');
+    if($is_retired !== false)
     {
-      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
-      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+      $dtid = Data::DES_RETIRED;
+      $persona = mb_substr($destiny,0,$is_retired);
     }
     else
     {
-      return false;
-    }
+      $key = mb_substr(trim($item->plaintext),-8,8);
+      if($this->check_syswords($key,'dt_sys'))
+      {
+        $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+        $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+      }
+      else
+      {
+        return false;
+      }
 
-    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+      $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+    }
 
     $key_u = array_search($persona,$list);
     if($key_u === false)

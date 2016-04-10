@@ -2,6 +2,10 @@
 
 class SOW_MOD extends Giji_Old
 {
+  protected function fetch_policy_detail()
+  {
+    //議事用の設定を削除
+  }
   protected function make_sysword_sql($rp)
   {
     return "select name,mes_sklid,mes_dtid,mes_wtmid from sysword where name='$rp'";
@@ -9,7 +13,6 @@ class SOW_MOD extends Giji_Old
   protected function make_sysword_set($values,$table,$name)
   {
     $list = [];
-
     if($table === 'mes_sklid')
     {
       $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
@@ -50,7 +53,7 @@ class SOW_MOD extends Giji_Old
     {
       $this->user = new User();
       $this->fetch_users($person);
-      var_dump($this->user->get_vars());
+      //var_dump($this->user->get_vars());
       if(!$this->user->is_valid())
       {
         $this->output_comment('n_user',__function__,$this->user->persona);

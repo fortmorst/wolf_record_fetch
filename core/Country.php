@@ -71,7 +71,7 @@ abstract class Country
       $this->check_role();
     }
 
-    var_dump($this->village->get_vars());
+    //var_dump($this->village->get_vars());
     if($this->village->is_valid())
     {
       return true;
@@ -114,6 +114,7 @@ abstract class Country
     $sql = $this->make_sysword_sql($rp);
     $stmt = $this->db->query($sql);
     //stmtがfalseの場合、人狼物語で再度検索する
+    $stmt = $stmt->fetch();
     if($stmt === false)
     {
       $this->output_comment('undefined',__FUNCTION__,$rp);
@@ -121,13 +122,12 @@ abstract class Country
       $this->village->rp = '人狼物語';
       $sql = $this->make_sysword_sql($rp);
       $stmt = $this->db->query($sql);
+      $stmt = $stmt->fetch();
     }
-    $stmt = $stmt->fetch();
     $name = $stmt['name'];
     unset($stmt['name']);
     $GLOBALS['syswords'][$name] = new Sysword();
     array_walk($stmt,[$this,'make_sysword_set'],$name);
-    //var_dump($GLOBALS['syswords'][$name]->get_vars());
   }
   protected function make_sysword_set($values,$table,$name)
   {
@@ -197,7 +197,6 @@ abstract class Country
   protected function make_rgl_detail($rgl)
   {
     $this->village->rgl_detail = $rgl.',';
-    //echo '>'.$this->village->vno.': rgl=>'.$rgl;
 
     //既に特殊ルールが挿入されている村はスキップ
     if($this->village->rglid === null)

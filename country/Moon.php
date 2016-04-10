@@ -134,7 +134,7 @@ class Moon extends SOW_MOD
   }
   protected function change_evil_team_moon($key,$user)
   {
-  if($this->village->evil_rgl !== true || ($this->village->evil_rgl === true && array_search($this->user->sklid,$this->EVIL_ROLE) === false))
+  if($this->village->evil_rgl !== true || ($this->village->evil_rgl === true && array_search($this->users[$key]->sklid,$this->EVIL_ROLE) === false))
     {
       $this->users[$key]->tmid = Data::TM_WOLF;
     }

@@ -49,6 +49,27 @@ class Sebas extends SOW_MOD
       $this->fetch_sysword($this->village->rp);
     }
   }
+  protected function fetch_sysword($rp)
+  {
+    $sql = $this->make_sysword_sql($rp);
+    $stmt = $this->db->query($sql);
+    //stmtがfalseの場合、人狼物語で再度検索する
+    $stmt = $stmt->fetch();
+    if($stmt === false)
+    {
+      //企画用言い換え対策
+      $this->output_comment('undefined',__FUNCTION__,$rp);
+      $rp = '人狼物語_執事';
+      $this->village->rp = '人狼物語_執事';
+      $sql = $this->make_sysword_sql($rp);
+      $stmt = $this->db->query($sql);
+      $stmt = $stmt->fetch();
+    }
+    $name = $stmt['name'];
+    unset($stmt['name']);
+    $GLOBALS['syswords'][$name] = new Sysword();
+    array_walk($stmt,[$this,'make_sysword_set'],$name);
+  }
   protected function fetch_policy()
   {
     $policy = $this->fetch->find('p.multicolumn_left',1)->plaintext;
@@ -78,7 +99,7 @@ class Sebas extends SOW_MOD
       $do_i = -2;
       do
       {
-        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
+        $wtmid = trim($this->fetch->find('div.info',$do_i)->plaintext);
         $do_i--;
       } while(preg_match($not_wtm,$wtmid));
     }

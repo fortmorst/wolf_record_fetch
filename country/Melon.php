@@ -95,7 +95,6 @@ class Melon extends SOW_MOD
   protected function check_onlooker($onlooker)
   {
     $onlooker = mb_substr($onlooker,0,-2);
-    //var_dump($onlooker);
     if($this->check_syswords($onlooker,'sklid'))
     {
       $this->ONLOOKER[$GLOBALS['syswords'][$this->village->rp]->mes_sklid[$onlooker]['sklid']] = $onlooker;

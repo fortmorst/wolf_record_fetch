@@ -35,10 +35,12 @@ class Data
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
   const SKL_QP              = 15; //恋愛天使 2dに二人に指定し、その二人が生き残れば勝利
   const SKL_QP_SELF         = 17; //求愛者 自撃ち恋愛天使
+  const SKL_QP_SELF_MELON   = 16; //求婚者 秘密窓+相手が断れる求愛者
   const SKL_ONLOOKER        = 10; //見物人
   
   //結末 destiny
   const DES_ALIVE   = 1;  //生存
+  const DES_RETIRED = 2;  //突然死
   const DES_EATEN   = 4;  //襲撃死
   const DES_CURSED  = 5;  //呪詛死
   const DES_ONLOOKER=10;  //見物

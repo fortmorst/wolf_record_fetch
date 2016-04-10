@@ -2,14 +2,6 @@
 
 class Crescent extends Giji_Old
 {
-  use TRS_Crescent;
-  protected $RP_SP = 
-  [
-     "蒼い三日月"=>'BM'
-    ,"変態BBS"=>'HENTAI'
-    ,"ＧＭイラットのクロサー"=>'CLOSED'
-  ];
-
   protected function fetch_date()
   {
     $date = $this->fetch->find('div.mes_date',0)->plaintext;

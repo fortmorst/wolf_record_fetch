@@ -342,6 +342,7 @@ abstract class Giji_Old extends Country
           $this->user->rltid = Data::RSL_LOSE;
           break;
         case '': //突然死
+        case '--':
           $this->user->rltid = Data::RSL_INVALID;
           break;
         default:
