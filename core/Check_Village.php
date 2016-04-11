@@ -117,6 +117,7 @@ class Check_Village
       case 'Sea_Old':
       case 'Ivory':
       case 'Crescent':
+      case 'Crescent_P':
       case 'Love':
       case 'Plot':
       case 'Perjury':
