@@ -37,7 +37,7 @@ abstract class Country
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
     //テストの場合
-    $Data_Test = new Data_Test();
+    //$Data_Test = new Data_Test();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
@@ -50,8 +50,8 @@ abstract class Country
       }
       $this->fetch->clear();
       //テストの場合
-      $Data_Test->check_from_DB($this->cid,$this->village,$this->users);
-      continue;
+      //$Data_Test->check_from_DB($this->cid,$this->village,$this->users);
+      //continue;
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
