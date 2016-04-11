@@ -1,55 +1,9 @@
 <?php
 
-class Moon extends SOW
+class Moon extends SOW_MOD
 {
-  use TRS_SOW;
-  protected $SKL_SP = [
-     '辻占狂人'=>[Data::SKL_LUNA_SEER_MELON,Data::TM_WOLF]
-    ,'叫迷狂人'=>[Data::SKL_LUNA_WIS,Data::TM_WOLF]
-    ,'首無騎士'=>[Data::SKL_HEADLESS,Data::TM_WOLF]
-    ,'碧狼'=>[Data::SKL_HEADLESS_NOTALK,Data::TM_WOLF]
-    ,'賢者'=>[Data::SKL_SEER_ROLE,Data::TM_VILLAGER]
-    ,'霊媒師'=>[Data::SKL_MEDI_ROLE,Data::TM_VILLAGER]
-    ,'神託者'=>[Data::SKL_MEDI_EATEN,Data::TM_VILLAGER]
-  ];
-  protected $RP_SP = [
-     '月狼'=>'MOON'
-    ,'人狼署'=>'POLICE'
-    ,'月狼学園'=>'SCHOOL'
-  ];
-  protected $WTM_POLICE= [
-     '平和は守られたのだ！'=>Data::TM_VILLAGER
-    ,'の遠吠えが響くのみ。'=>Data::TM_WOLF
-    //,'が残っていたのです。'=>Data::TM_FAIRY
-  ];
-  protected $WTM_MOON= [
-     'は終わったのだ――！'=>Data::TM_VILLAGER
-    ,'達の楽園なのだ――！'=>Data::TM_WOLF
-    ,'の始まりである――。'=>Data::TM_FAIRY
-  ];
-  protected $WTM_SCHOOL= [
-     'は終わったのだ――！'=>Data::TM_VILLAGER
-    ,'う学舎ではない――。'=>Data::TM_WOLF
-    ,'の始まりである――。'=>Data::TM_FAIRY
-  ];
-  protected $DT_MOON = [
-     '儚く散った。'=>['.+(\(ランダム投票\)|置いた。)(.+) の命が儚く散った。',Data::DES_HANGED]
-    ,'突然死した。'=>['^( ?)(.+) は、突然死した。',Data::DES_RETIRED]
-    ,'ていた……。'=>['(.+)朝、(.+) の姿が消.+',Data::DES_EATEN]
-    ,'後を追った。'=>['^( ?)(.+) は(絆に引きずられるように|哀しみに暮れて) .+ の後を追った。',Data::DES_SUICIDE]
-  ];
-  protected $DESTINY = [
-     "突然死"=>Data::DES_RETIRED
-    ,"処刑死"=>Data::DES_HANGED
-    ,"襲撃死"=>Data::DES_EATEN
-    ,"呪殺"=>Data::DES_CURSED
-    ,"後追死"=>Data::DES_SUICIDE
-    ];
-  function set_village_data()
-  {
-    $this->RP_LIST = array_merge($this->RP_LIST,$this->RP_SP);
-    $this->SKILL = array_merge($this->SKILL,$this->SKL_SP);
-  }
+  protected $EVIL_ROLE = [Data::SKL_EVIL,Data::SKL_EVL_KNOW_WF,Data::SKL_EVL_SEER_ROLE];
+
   protected function fetch_policy()
   {
     $policy= mb_strstr($this->fetch->find('p.multicolumn_left',-1)->plaintext,'推理');
@@ -60,21 +14,44 @@ class Moon extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',3)->plaintext);
-    if(array_key_exists($rp,$this->RP_LIST))
+    $this->village->rp = $rp.'_月狼';
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $this->village->rp = $this->RP_LIST[$rp];
+      $this->fetch_sysword($this->village->rp);
+    }
+  }
+  protected function make_sysword_sql($rp)
+  {
+    return "select name,mes_sklid,mes_dtid,mes_wtmid from sysword where name='$rp'";
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    $sql = "SELECT * from $table where id in ($values)";
+    $stmt = $this->db->query($sql);
+    $list = [];
+    if($table === 'mes_sklid')
+    {
+      $sql = "SELECT m.name,orgid,tmid,evil_flg FROM mes_sklid m JOIN skill s ON m.orgid = s.id JOIN team t ON s.tmid = t.id WHERE m.id IN ($values)";
+      $stmt = $this->db->query($sql);
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid'],'evil_flg'=>(bool)$item['evil_flg']];
+      }
     }
     else
     {
-      $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      foreach($stmt as $item)
+      {
+        $list[$item['name']] = (int)$item['orgid'];
+      }
     }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function insert_users()
   {
@@ -85,47 +62,109 @@ class Moon extends SOW
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__,$this->user->persona);
       }
       $this->users[] = $this->user;
+    }
+    foreach($this->users as $key=>$user)
+    {
+      if($user->tmid === Data::TM_EVIL)
+      {
+        $this->change_evil_team_moon($key,$user);
+      }
+      //var_dump($user->get_vars());
     }
   }
   protected function fetch_users($person)
   {
     $this->fetch_persona($person);
     $this->fetch_player($person);
-    if($person->find('td',2)->plaintext=== '見物参加')
+
+    $this->fetch_role($person);
+    $this->fetch_dtid($person);
+
+    if($this->user->dtid === Data::DES_ONLOOKER)
     {
       $this->user->role = '見物人';
       $this->insert_onlooker();
+      return;
+    }
+
+    if($this->user->dtid === Data::DES_ALIVE)
+    {
+      $this->insert_alive();
     }
     else
     {
-      $this->fetch_role($person);
-      $this->fetch_sklid();
-      $this->fetch_rltid();
       $this->fetch_end($person);
     }
+
+    $this->fetch_sklid();
+    //_SOWにしない
+    $this->fetch_rltid($person);
   }
   protected function fetch_role($person)
   {
-    $role = $person->find('td',4)->plaintext;
-    $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
-  }
-  protected function fetch_end($person)
-  {
-    $destiny = trim($person->find('td',2)->plaintext);
-    if($destiny === '生存')
+    $role = $person->find('td',4);
+    if(!empty($role))
     {
-      $this->user->dtid = Data::DES_ALIVE;
-      $this->user->end = $this->village->days;
-      $this->user->life = 1.000;
+      $role = $role->plaintext;
+      $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
     }
     else
     {
-      $this->user->dtid = $this->DESTINY[mb_ereg_replace('\d+日(.+)','\1',$destiny)];
-      $this->user->end = (int)mb_ereg_replace('(\d+)日.+','\1',$destiny);
-      $this->user->life = round(($this->user->end-1) / $this->village->days,3);
+      $this->user->role = '見物人';
+    }
+  }
+  protected function fetch_sklid()
+  {
+    if($this->check_syswords($this->user->role,"sklid"))
+    {
+      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+      if($this->is_evil && $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['evil_flg'])
+      {
+        $this->village->evil_rgl = true;
+      }
+    }
+    else
+    {
+      $this->user->sklid= null;
+      $this->user->tmid= null;
+      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
+    }
+  }
+  protected function change_evil_team_moon($key,$user)
+  {
+  if($this->village->evil_rgl !== true || ($this->village->evil_rgl === true && array_search($this->users[$key]->sklid,$this->EVIL_ROLE) === false))
+    {
+      $this->users[$key]->tmid = Data::TM_WOLF;
+    }
+  }
+  protected function fetch_rltid($result)
+  {
+    if($this->village->wtmid === Data::TM_RP)
+    {
+      $this->user->rltid = Data::RSL_JOIN;
+    }
+    else
+    {
+      switch($result->find('td',3)->plaintext)
+      {
+        case '勝利':
+          $this->user->rltid = Data::RSL_WIN;
+          break;
+        case '敗北':
+          $this->user->rltid = Data::RSL_LOSE;
+          break;
+        case '': //突然死
+          $this->user->rltid = Data::RSL_INVALID;
+          break;
+        default:
+          $this->output_comment('undefined',__FUNCTION__,$result);
+          $this->user->rltid = Data::RSL_JOIN;
+          break;
+      }
     }
   }
 }

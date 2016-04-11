@@ -1,37 +1,74 @@
 <?php
 class Rose extends SOW
 {
-  use TRS_Rose;
-
-  protected function fetch_policy()
+  protected function fetch_rp()
   {
-    parent::fetch_policy();
-    if($this->village->policy === true)
+    $this->check_sprule();
+
+    $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
+    $this->village->rp = $rp.'_薔薇';
+    //言い換えリストに登録がなければ追加
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $policy = $this->fetch->find('p.multicolumn_left',11)->plaintext;
-      if(preg_match('/一般|初心者歓迎/',$policy))
+      $this->fetch_sysword($this->village->rp);
+    }
+  }
+  protected function check_sprule()
+  {
+    if(preg_match("/秘話/",$this->village->name))
+    {
+      $this->village->rglid = Data::RGL_SECRET;
+    }
+  }
+  protected function make_sysword_sql($rp)
+  {
+    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid from sysword where name='$rp'";
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    $sql = "SELECT * from $table where id in ($values)";
+    $stmt = $this->db->query($sql);
+    $list = [];
+
+    if($table === 'mes_dt_sys')
+    {
+      foreach($stmt as $item)
       {
-        $this->village->policy = true;
+        $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
       }
-      else
+    }
+    else
+    {
+      foreach($stmt as $item)
       {
-        $this->village->policy = false;
-        $this->output_comment('rp');
+        $list[$item['name']] = (int)$item['orgid'];
       }
+    }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
+  }
+
+  protected function fetch_policy_detail()
+  {
+    $policy = $this->fetch->find('p.multicolumn_left',11)->plaintext;
+    if(preg_match('/一般|初心者歓迎/',$policy))
+    {
+      $this->village->policy = true;
+    }
+    else
+    {
+      $this->village->policy = false;
+      $this->output_comment('rp',__FUNCTION__);
     }
   }
   protected function fetch_wtmid()
   {
-    if(!$this->village->policy)
-    {
-      $this->village->wtmid = Data::TM_RP;
-    }
-    else
+    if($this->village->policy)
     {
       $wtmid = $this->fetch_win_message();
-      if(array_key_exists($wtmid,$this->{'WTM_'.$this->village->rp}))
+      if($this->check_syswords($wtmid,'wtmid'))
       {
-        $this->village->wtmid = $this->{'WTM_'.$this->village->rp}[$wtmid];
+        $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+        //奴隷勝利の場合追加勝利扱いにする
         if($this->village->wtmid === Data::TM_SLAVE)
         {
           $this->village->wtmid = Data::TM_VILLAGER;
@@ -41,8 +78,12 @@ class Rose extends SOW
       else
       {
         $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
+        $this->output_comment('undefined',__FUNCTION__,$wtmid);
       }
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
     }
   }
 
@@ -74,9 +115,10 @@ class Rose extends SOW
 
     foreach($this->users as $user)
     {
+      //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__FUNCTION__,$user->persona);
       }
     }
   }
@@ -85,21 +127,37 @@ class Rose extends SOW
     $this->fetch_persona($person);
     $this->fetch_player($person);
     $this->fetch_role($person);
-    $this->user->tmid = $this->TEAM[$person->find('td',3)->plaintext];
 
-    if(mb_ereg_match('見物人|やじうま',$this->user->role))
+    $list = $this->make_list_using_sysword($person);
+    array_walk($list,[$this,'fetch_from_sysword']);
+
+    //見物人
+    if($this->user->dtid === Data::DES_ONLOOKER)
     {
       $this->insert_onlooker();
+      return;
+    }
+    //生存者
+    if($this->user->dtid === Data::DES_ALIVE)
+    {
+      $this->insert_alive();
+    }
+    $this->fetch_rltid_sow();
+  }
+  protected function make_list_using_sysword($person)
+  {
+    return ['dtid'=>$person->find('td',2)->plaintext,'tmid'=>$person->find('td',3)->plaintext,'sklid'=>$this->user->role];
+  }
+  protected function fetch_from_sysword($value,$column)
+  {
+    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+    {
+      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
     }
     else
     {
-      $this->user->dtid = $this->DESTINY[$person->find('td',2)->plaintext];
-      if($this->user->dtid === Data::DES_ALIVE)
-      {
-        $this->insert_alive();
-      }
-      $this->fetch_sklid();
-      $this->fetch_rltid();
+      $this->user->{$column} = null;
+      $this->output_comment('undefined',__FUNCTION__,$value);
     }
   }
   protected function fetch_role($person)
@@ -112,25 +170,15 @@ class Rose extends SOW
       $this->user->rltid = Data::RSL_WIN;
     }
   }
-  protected function fetch_sklid()
+  protected function fetch_rltid_sow()
   {
-    if(!empty($this->{'SKL_'.$this->village->rp}))
+    if(!empty($this->user->rltid))
     {
-      $this->user->sklid = $this->{'SKL_'.$this->village->rp}[$this->user->role];
-    }
-    else
-    {
-      $this->user->sklid = $this->SKILL[$this->user->role];
-    }
-  }
-  protected function fetch_rltid()
-  {
-    if($this->user->rltid)
-    {
+      //勝利した死神陣営または見物人
       return;
     }
 
-    if(!$this->village->policy)
+    if($this->village->wtmid === Data::TM_RP)
     {
       $this->user->rltid = Data::RSL_JOIN;
     }
@@ -151,30 +199,35 @@ class Rose extends SOW
       $this->user->rltid = Data::RSL_LOSE;
     }
   }
-  protected function insert_alive()
+  protected function fetch_key_u($list,$item)
   {
-    $this->user->end = $this->village->days;
-    $this->user->life = 1.000;
-  }
-  protected function fetch_key_u($list,$rp,$item)
-  {
-      $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
-      $key= mb_substr(trim($item->plaintext),-6,6);
-      if(!isset($this->{'DT_'.$rp}[$key]))
-      {
-        return false;
-      }
-      else
-      {
-        $persona = trim(mb_ereg_replace($this->{'DT_'.$rp}[$key][0],'\2',$destiny,'m'));
-      }
+    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $key = mb_substr(trim($item->plaintext),-8,8);
 
-      $key_u = array_search($persona,$list);
-      if($key_u === false)
-      {
-        return false;
-      }
-      return $key_u;
+    if($this->check_syswords($key,'dt_sys'))
+    {
+      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+    }
+    else
+    {
+      return false;
+    }
+
+    //適当系の被襲撃者はスキップ
+    if($regex === null)
+    {
+      $this->output_comment('fool',__FUNCTION__);
+      return false;
+    }
+
+    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+
+    $key_u = array_search($persona,$list);
+    if($key_u === false)
+    {
+      return false;
+    }
+    return $key_u;
   }
   protected function insert_baptist($list)
   {

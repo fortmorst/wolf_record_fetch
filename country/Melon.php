@@ -1,20 +1,18 @@
 <?php
 
-class Melon extends SOW
+class Melon extends SOW_MOD
 {
-  use TRS_Melon;
-
+  protected $WTM_SKIP = [
+     '/村の設定が変更されました。/','/遺言状が公開されました。/','/遺言メモが公開/','/おさかな、美味しかったね！/','/魚人はとても美味/','/人魚は/','/とってもきれいだね！/','/自殺志願者/','/運動会は晴天です！/','/見物しに/','/がやってきたよ/'
+  ];
+  protected $ONLOOKER = [];
   protected function fetch_rp()
   {
     $rp = $this->fetch->find('p.multicolumn_left',9)->plaintext;
-    if(array_key_exists($rp,$this->RP_LIST))
+    $this->village->rp = $rp.'_瓜科';
+    if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
-      $this->village->rp = $this->RP_LIST[$rp];
-    }
-    else
-    {
-      $this->village->rp = 'SOW';
-      $this->output_comment('undefined',$rp);
+      $this->fetch_sysword($this->village->rp);
     }
   }
   protected function fetch_policy()
@@ -27,14 +25,14 @@ class Melon extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_from_pro()
   {
     $url = $this->url.'&t=0&r=10&o=a&mv=p&n=1';
     $this->fetch->load_file($url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_date();
     $this->fetch->clear();
@@ -49,7 +47,7 @@ class Melon extends SOW
     if(!$this->check_ruin())
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('ruin_midway');
+      $this->output_comment('ruin_midway',__function__);
     }
     else
     {
@@ -57,77 +55,54 @@ class Melon extends SOW
     }
     $this->make_cast();
   }
-  protected function fetch_wtmid()
+  protected function fetch_win_message()
   {
-    if(!$this->village->policy)
+    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
+    //遅刻見物人のシスメなどを除外
+    $count_replace = 0;
+    preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
+    if($count_replace)
     {
-      $this->village->wtmid = Data::TM_RP;
+      $do_i = -2;
+      do
+      {
+        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
+        $do_i--;
+        preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
+      } while($count_replace);
     }
-    else
-    {
-      $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-      //遅刻見物人のシスメなどを除外
-      $count_replace = 0;
-      preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
-      if($count_replace)
-      {
-        $do_i = -2;
-        do
-        {
-          $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
-          $do_i--;
-          preg_replace($this->WTM_SKIP,'',$wtmid,1,$count_replace);
-        } while($count_replace);
-      }
-      $wtmid = preg_replace('/\r\n/','',$wtmid);
-      //人狼劇場言い換えのみ、先頭12文字で取得する
-      if($this->village->rp === 'THEATER')
-      {
-        $wtmid = mb_substr($wtmid,0,12);
-      }
-      else
-      {
-        $wtmid = mb_substr($wtmid,-10);
-      }
-      if(array_key_exists($wtmid,$this->{'WTM_'.$this->village->rp}))
-      {
-        $this->village->wtmid = $this->{'WTM_'.$this->village->rp}[$wtmid];
-      }
-      else
-      {
-        $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
-      }
-    }
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    return $wtmid;
   }
   protected function make_cast()
   {
     $cast = $this->fetch->find('table tr');
     array_shift($cast);
     //「見物人」見出しを削除する
+    //「見物人」の言い換えを取得する
     foreach($cast as $key=>$item)
     {
       $line = $item->find('td',2);
       if(empty($line))
       {
+        //見物人か支配人か
+        $this->check_onlooker($item->find('th',0)->plaintext);
         unset($cast[$key]);
       }
     }
     $this->cast = $cast;
   }
-  protected function insert_users()
+  protected function check_onlooker($onlooker)
   {
-    $this->users = [];
-    foreach($this->cast as $person)
+    $onlooker = mb_substr($onlooker,0,-2);
+    if($this->check_syswords($onlooker,'sklid'))
     {
-      $this->user = new User();
-      $this->fetch_users($person);
-      if(!$this->user->is_valid())
-      {
-        $this->output_comment('n_user');
-      }
-      //エラーでも歯抜けが起きないように入れる
-      $this->users[] = $this->user;
+      $this->ONLOOKER[$GLOBALS['syswords'][$this->village->rp]->mes_sklid[$onlooker]['sklid']] = $onlooker;
+    }
+    else
+    {
+      $this->output_comment('undefined',__FUNCTION__,$onlooker);
+      $this->ONLOOKER[] = [Data::SKL_ONLOOKER=>$onlooker];
     }
   }
   protected function fetch_users($person)
@@ -135,112 +110,85 @@ class Melon extends SOW
     $this->fetch_persona($person);
     $this->fetch_player($person);
     $this->fetch_role($person);
+    if($this->user->tmid !== Data::TM_ONLOOKER)
+    {
+      $this->fetch_dtid($person);
+      $this->fetch_rltid($person->find('td',2)->plaintext);
+    }
   }
-  protected function fetch_player($person)
-  {
-    $player = trim($person->find("td",1)->plaintext);
-    $this->user->player =$this->modify_player($player);
-  }
-
   protected function fetch_role($person)
   {
     $role = $person->find("td",4)->plaintext;
     $dtid = $person->find("td",3)->plaintext;
-    //役職の改行以降をカットする
-    $this->user->role = preg_replace('/\r\n.+/s','',$role);
+    //見物人の場合
     if($role === '--')
     {
-      $this->insert_onlooker();
-      $this->modify_onlooker($dtid);
-    }
-    else
-    {
-      if(!empty($this->{'SKL_'.$this->village->rp}))
+      if($dtid === "--")
       {
-        $rp = $this->village->rp;
+        $this->user->role = $this->ONLOOKER[Data::SKL_OWNER];
+        $this->insert_owner();
       }
       else
       {
-        $rp = 'SOW';
+        $this->user->role = $this->ONLOOKER[Data::SKL_ONLOOKER];
+        $this->insert_onlooker();
       }
+      return;
+    }
+
+    $this->user->role = preg_replace('/\r\n.+/s','',$role);
+
+    if(preg_match("/\A.+\(.+\)/",$this->user->role))
+    {
       //婚約者は元の役職扱いにする
-      if(mb_strstr($this->user->role,$this->{'SKL_'.$rp}[25]))
+      $engaged = preg_replace('/^.+\((.+)\)/','\1',$this->user->role);
+      if($this->check_syswords($engaged,'sklid'))
       {
-        $sklid = preg_replace('/^.+\((.+)\)/','\1',$this->user->role);
+        $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$engaged]['sklid'];
         $this->user->tmid = Data::TM_LOVERS;
       }
       else
       {
-        $sklid = preg_replace('/\(.+/','',$this->user->role);
+        $this->user->sklid= null;
+        $this->user->tmid = Data::TM_LOVERS;
+        $this->output_comment('undefined',__FUNCTION__,$engaged);
       }
-      //能力が登録済かチェック
-      $skl_key = array_search($sklid,$this->{'SKL_'.$rp});
-      if($skl_key !== false)
-      {
-        $this->user->sklid = $this->SKILL[$skl_key][0];
-        if($this->user->tmid !== Data::TM_LOVERS)
-        {
-          $this->user->tmid = $this->SKILL[$skl_key][1];
-          if($this->user->sklid === Data::SKL_QP_SELF_MELON && preg_match('/(失恋|片思い|孤独)★/',$role))
-          {
-            $this->user->tmid = Data::TM_VILLAGER;
-          }
-        }
-      }
-      else if(mb_strstr($sklid,$this->{'SKL_'.$rp}[6]))
-      {
-        //聖痕者
-        $this->user->sklid = $this->SKILL[6][0];
-        $this->user->tmid = $this->SKILL[6][1];
-      }
-      else
-      {
-        //未定義の役職
-        $this->user->sklid = $this->SKILL[0][0];
-        $this->user->tmid = $this->SKILL[0][1];
-        $this->output_comment('undefined',$sklid);
-      }
-      $this->fetch_end($dtid);
-      $this->fetch_rltid_m($person);
+      return;
     }
-  }
-  protected function modify_onlooker($dtid)
-  {
-    if($dtid === '--')
+    else if($this->check_syswords($this->user->role,'sklid'))
     {
-      $this->user->sklid = Data::SKL_OWNER;
-      switch($this->village->rp)
-      {
-        case 'GB':
-          $this->user->role = '旧校舎の主';
-          break;
-        default:
-          $this->user->role = '支配人';
-          break;
-      }
+      //通常の役職挿入
+      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
     }
     else
     {
-      switch($this->village->rp)
-      {
-        case 'MELON':
-          $this->user->role = 'やじうま';
-          break;
-        case 'GB':
-          $this->user->role = '観客';
-          break;
-        case 'MOON':
-          $this->user->role = 'お客様';
-          break;
-        default:
-          $this->user->role = '見物人';
-          break;
-      }
+      $this->user->sklid= null;
+      $this->user->tmid= null;
+      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
     }
+
+    //失恋済の求婚者は村人陣営に修正
+    if($this->user->sklid === Data::SKL_QP_SELF_MELON && preg_match('/(失恋|片思い|孤独)★/',$role))
+    {
+      $this->user->tmid = Data::TM_VILLAGER;
+    }
+    //裏切り陣営を人狼陣営に変える
+    $this->modify_from_sklid();
   }
-  protected function fetch_end($dtid)
+  protected function insert_owner()
   {
-    if($dtid === '生存')
+    $this->user->sklid = Data::SKL_OWNER;
+    $this->user->tmid = Data::TM_ONLOOKER;
+    $this->user->dtid  = Data::DES_ONLOOKER;
+    $this->user->end   = 1;
+    $this->user->life  = 0.000;
+    $this->user->rltid = Data::RSL_ONLOOKER;
+  }
+  protected function fetch_dtid($person)
+  {
+    $destiny = $person->find("td",3)->plaintext;
+    if($destiny === '生存')
     {
       $this->user->dtid = Data::DES_ALIVE;
       $this->user->end = $this->village->days;
@@ -248,25 +196,23 @@ class Melon extends SOW
     }
     else
     {
-      $this->user->dtid = $this->DESTINY[mb_substr($dtid,mb_strpos($dtid,'d')+1)];
-      $this->user->end = (int)mb_substr($dtid,0,mb_strpos($dtid,'d'));
+      $dtid = mb_substr($destiny,mb_strpos($destiny,'d')+1);
+      $this->fetch_from_sysword($dtid,'dtid');
+      $this->user->end = (int)mb_substr($destiny,0,mb_strpos($destiny,'d'));
       $this->user->life = round(($this->user->end-1) / $this->village->days,3);
     }
   }
-  protected function fetch_rltid_m($person)
+  protected function fetch_rltid($person)
   {
-    if($this->village->wtmid === Data::TM_RP)
-    {
-      $this->user->rltid = Data::RSL_JOIN;
-    }
-    else if($this->user->player !== "master" && $this->user->dtid === Data::DES_EATEN && $this->user->end === 2)
+    if($this->user->player !== "master" && $this->user->dtid === Data::DES_EATEN && $this->user->end === 2)
     {
       //喋るダミー(IDがmasterではない)は参加扱いにする
       $this->user->rltid = Data::RSL_JOIN;
     }
     else
     {
-      $this->user->rltid = $this->RSL[$person->find("td",2)->plaintext];
+      parent::fetch_rltid($person);
     }
   }
 }
+

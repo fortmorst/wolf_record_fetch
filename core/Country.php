@@ -17,7 +17,7 @@ abstract class Country
             ,$doppel = []
             ;
             
-  function __construct($id,$url,$policy,$is_evil,$queue)
+  function __construct($id,$url,$policy,$is_evil,$sysword,$queue)
   {
     $this->cid = $id;
     $this->url_org = mb_ereg_replace('%n','',$url);
@@ -27,32 +27,30 @@ abstract class Country
       $this->policy = (int)$policy;
     }
     $this->is_evil = $is_evil;
+    $this->sysword = $sysword;
     $this->db = new Connect_DB();
-    $this->set_village_data();
-  }
-  function set_village_data()
-  {
-    return;
   }
 
   function insert()
   {
     $this->db->connect();
-    //指定取得用
-    //$this->queue = [110,106,103,95,88,71,63,62,18];
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
+    //テストの場合
+    //$Data_Test = new Data_Test();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
       $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
-        $this->output_comment('fetch_error');
+        $this->output_comment('fetch_error',__function__);
         $this->fetch->clear();
         continue;
       }
       $this->fetch->clear();
+      //テストの場合
+      //$Data_Test->check_from_DB($this->cid,$this->village,$this->users);
       //continue;
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
@@ -91,7 +89,7 @@ abstract class Country
     $this->village->wtmid = Data::TM_RUIN;
     $this->village->rgl_detail = '1,';
 
-    $this->output_comment('ruin_prologue');
+    $this->output_comment('ruin_prologue',__function__);
   }
   protected function check_ruin()
   {
@@ -107,6 +105,65 @@ abstract class Country
       return true;
     }
   }
+  protected function make_sysword_sql($rp)
+  {
+    return "SELECT name,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
+  }
+  protected function fetch_sysword($rp)
+  {
+    $sql = $this->make_sysword_sql($rp);
+    $stmt = $this->db->query($sql);
+    //stmtがfalseの場合、人狼物語で再度検索する
+    $stmt = $stmt->fetch();
+    if($stmt === false)
+    {
+      $this->output_comment('undefined',__FUNCTION__,$rp);
+      $rp = '人狼物語';
+      $this->village->rp = '人狼物語';
+      $sql = $this->make_sysword_sql($rp);
+      $stmt = $this->db->query($sql);
+      $stmt = $stmt->fetch();
+    }
+    $name = $stmt['name'];
+    unset($stmt['name']);
+    $GLOBALS['syswords'][$name] = new Sysword();
+    array_walk($stmt,[$this,'make_sysword_set'],$name);
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    if($table === 'mes_sklid')
+    {
+      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
+    }
+    else
+    {
+      $sql = "SELECT * from $table where id in ($values)";
+    }
+    $stmt = $this->db->query($sql);
+    $list = [];
+    switch($table)
+    {
+      case 'mes_sklid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+        }
+        break;
+      case 'mes_dt_sys':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+        }
+        break;
+      case 'mes_wtmid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = (int)$item['orgid'];
+        }
+        break;
+    }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
+  }
   protected function insert_users()
   {
     $this->users = [];
@@ -116,7 +173,7 @@ abstract class Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__,$this->user->persona);
       }
       //エラーでも歯抜けが起きないように入れる
       $this->users[] = $this->user;
@@ -140,7 +197,6 @@ abstract class Country
   protected function make_rgl_detail($rgl)
   {
     $this->village->rgl_detail = $rgl.',';
-    //echo '>'.$this->village->vno.': rgl=>'.$rgl;
 
     //既に特殊ルールが挿入されている村はスキップ
     if($this->village->rglid === null)
@@ -338,13 +394,25 @@ abstract class Country
       $this->village->rglid = Data::RGL_ETC;
     }
   }
+  protected function fetch_from_sysword($value,$column)
+  {
+    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+    {
+      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
+    }
+    else
+    {
+      $this->user->{$column} = null;
+      $this->output_comment('undefined',__FUNCTION__,$value);
+    }
+  }
   protected function fetch_policy()
   {
     $rp = '/[^A-Z+]RP|[^Ａ-Ｚ+]ＲＰ|[^ァ-ヾ+]ネタ村|[^ァ-ヾ+]ランダ村|[^ァ-ヾ+]ラ神|[^ァ-ヾ+]ランダム|[^ァ-ヾ+]テスト村|薔薇村|百合村|[^ァ-ヾ+]グリード村|[^A-Z+]GR村|[^Ａ-Ｚ+]ＧＲ村|スゴロク/u';
     if(preg_match($rp,$this->village->name))
     {
       $this->village->policy = false;
-      $this->output_comment('rp');
+      $this->output_comment('rp',__function__);
     }
     else
     {
@@ -386,6 +454,25 @@ abstract class Country
       return $player;
     }
   }
+  protected function check_syswords($value,$table)
+  {
+    return array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$table});
+  }
+  protected function insert_onlooker()
+  {
+    $this->user->sklid = Data::SKL_ONLOOKER;
+    $this->user->tmid = Data::TM_ONLOOKER;
+    $this->user->dtid  = Data::DES_ONLOOKER;
+    $this->user->end   = 1;
+    $this->user->life  = 0.000;
+    $this->user->rltid = Data::RSL_ONLOOKER;
+  }
+  protected function insert_alive()
+  {
+    $this->user->dtid = Data::DES_ALIVE;
+    $this->user->end = $this->village->days;
+    $this->user->life = 1.000;
+  }
   protected function fetch_life()
   {
     if($this->user->dtid === Data::DES_ALIVE)
@@ -401,30 +488,33 @@ abstract class Country
       $this->user->life = round(($this->user->end-1) / $this->village->days,3);
     }
   }
-  protected function output_comment($type,$detail='')
+  protected function output_comment($type,$function,$detail='')
   {
     switch($type)
     {
       case 'rp':
-        $str = 'NOTICE-> 非勝負村として取得します。';
+        $str = '⚠️NOTICE-> 非勝負村として取得します。';
         break;
       case 'undefined':
-        $str = 'NOTICE-> '.$detail.' は未定義の値です。';
+        $str = '⚠️NOTICE-> '.$detail.' は未定義の値です。';
         break;
       case 'n_user':
-        $str = 'NOTICE->' .$this->user->persona.'は正常に取得できませんでした。';
+        $str = '⚠️NOTICE->' .$detail.'は正常に取得できませんでした。';
+        break;
+      case 'fool':
+        $str = "⚠️NOTICE-> 適当系の被襲撃者です。手動で入力して下さい。";
         break;
       case 'ruin_prologue':
-        $str = 'NOTICE-> 開始前に廃村しています。または常設の雑談村です。';
+        $str = 'note-> 開始前に廃村しています。または常設の雑談村です。';
         break;
       case 'ruin_midway':
-        $str = 'NOTICE-> 進行中に廃村しています。非勝負扱いで取得します。';
+        $str = 'note-> 進行中に廃村しています。非勝負扱いで取得します。';
         break;
       case 'fetch_error':
-        $str = 'ERROR-> 村を取得できませんでした。';
+        $str = '❌ERROR-> 村を取得できませんでした。';
         break;
     }
-    echo '>'.$this->village->vno.'/ '.$str.PHP_EOL;
+    echo ">$function vno. ".$this->village->vno." / $str".PHP_EOL;
   }
 
   abstract protected function fetch_village();

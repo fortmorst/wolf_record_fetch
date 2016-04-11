@@ -3,15 +3,6 @@
 class Ning extends Country
 {
   private $url_epi;
-  private $skill =
-    [
-        "村人"  =>Data::SKL_VILLAGER
-       ,"占い師"=>Data::SKL_SEER
-       ,"霊能者"=>Data::SKL_MEDIUM
-       ,"狩人"  =>Data::SKL_GUARD
-       ,"人狼"  =>Data::SKL_WOLF
-       ,"狂人"  =>Data::SKL_LUNATIC
-    ]; 
 
   protected function fetch_village()
   {
@@ -27,6 +18,8 @@ class Ning extends Country
     $this->fetch_name();
     $this->fetch_date();
     $this->fetch_days();
+    $this->village->rp = 'G国';
+    $this->fetch_sysword($this->village->rp);
 
     $this->fetch->clear();
   }
@@ -38,7 +31,7 @@ class Ning extends Country
   protected function fetch_date()
   {
     $date = $this->fetch->find('div.ch1',0)->find('a',1)->name;
-    $this->village->date = date("y-m-d",preg_replace('/mes(.+)/','$1',$date));
+    $this->village->date = date("Y-m-d",preg_replace('/mes(.+)/','$1',$date));
   }
   protected function fetch_days()
   {
@@ -52,8 +45,7 @@ class Ning extends Country
     $filesize = $this->remote_filesize($this->url_epi);
     if(!$filesize || $filesize > 1000000)
     {
-      $this->check->remove_queue($this->village->vno);
-      throw new Exception($this->village->vno.': Broken Epilogue.');
+      throw new Exception($this->village->vno.'ERROR: **エピローグが壊れています** 手動で取得後キューを削除して下さい。');
     }
     $this->fetch->load_file($this->url_epi);
     sleep(1);
@@ -62,18 +54,19 @@ class Ning extends Country
 
     $this->fetch->clear();
   }
-  protected function remote_filesize($url) {
-      static $regex = '/^Content-Length: *+\K\d++$/im';
-      if (!$fp = @fopen($url, 'rb')) {
-          return false;
-      }
-      if (
-          isset($http_response_header) &&
-          preg_match($regex, implode("\n", $http_response_header), $matches)
-      ) {
-          return (int)$matches[0];
-      }
-      return strlen(stream_get_contents($fp));
+  protected function remote_filesize($url)
+  {
+    static $regex = '/^Content-Length: *+\K\d++$/im';
+    if (!$fp = @fopen($url, 'rb')) {
+        return false;
+    }
+    if (
+        isset($http_response_header) &&
+        preg_match($regex, implode("\n", $http_response_header), $matches)
+    ) {
+        return (int)$matches[0];
+    }
+    return strlen(stream_get_contents($fp));
   }
 
   protected function make_cast()
@@ -88,18 +81,16 @@ class Ning extends Country
   }
   protected function fetch_wtmid()
   {
-    $wtmid = mb_substr($this->fetch->find('div.announce',-2)->plaintext,0,3);
-    switch($wtmid)
+    $wtmid = $this->fetch->find('div.announce',-2)->plaintext;
+    $wtmid = preg_replace("/\A([^\r\n]+)\r\n(.+)?\z/ms", "$1", $wtmid);
+    if($this->check_syswords($wtmid,'wtmid'))
     {
-      case '全ての': //村勝利
-        $this->village->wtmid = Data::TM_VILLAGER;
-        break;
-      case 'もう人': //狼勝利
-        $this->village->wtmid = Data::TM_WOLF;
-        break;
-      default:
-        $this->output_comment('undefined',$wtmid);
-        break;
+      $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+    }
+    else
+    {
+      $this->village->wtmid = Data::TM_RP;
+      $this->output_comment('undefined',__FUNCTION__,$wtmid);
     }
   }
 
@@ -112,7 +103,6 @@ class Ning extends Country
       $this->user = new User();
       $this->fetch_users($person);
       $this->users[] = $this->user;
-      //生存者を除く名前リストを作る
       $list[] = $this->user->persona;
       if($this->user->dtid === Data::DES_ALIVE)
       {
@@ -120,13 +110,13 @@ class Ning extends Country
       }
     }
     $this->fetch_from_daily($list);
-    $this->fetch_life();
 
     foreach($this->users as $user)
     {
+      //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__,$user->persona);
       }
     }
   }
@@ -141,14 +131,43 @@ class Ning extends Country
     $this->user->role    = $person[3]; 
 
     $this->fetch_sklid();
-    $this->fetch_tmid();
     $this->fetch_rltid();
 
     if($person[2] === '生存')
     {
-      $this->user->dtid = Data::DES_ALIVE;
-      $this->user->end = $this->village->days;
-      $this->user->life = 1.000;
+      $this->insert_alive();
+    }
+  }
+  protected function fetch_sklid()
+  {
+    if($this->check_syswords($this->user->role,"sklid"))
+    {
+      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      if($this->user->sklid === Data::SKL_LUNATIC)
+      {
+        $this->user->tmid = Data::TM_WOLF;
+      }
+      else
+      {
+        $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+      }
+    }
+    else
+    {
+      $this->user->sklid= null;
+      $this->user->tmid= null;
+      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
+    }
+  }
+  protected function fetch_rltid()
+  {
+    if($this->user->tmid === $this->village->wtmid)
+    {
+      $this->user->rltid = Data::RSL_WIN;
+    }
+    else
+    {
+      $this->user->rltid = Data::RSL_LOSE;
     }
   }
 
@@ -162,33 +181,41 @@ class Ning extends Country
       $announce = $this->fetch->find('div.announce');
       foreach($announce as $item)
       {
-        $destiny = mb_substr(trim($item->plaintext),-6,6);
-        $destiny = preg_replace("/\r\n/","",$destiny);
-
-        switch($destiny)
+        $key_u = $this->fetch_key_u($list,$item);
+        if($key_u === false)
         {
-          case "突然死した。":
-            $persona = preg_replace("/^ ?(.+) は、突然死した。 ?/", "$1", $item->plaintext);
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_RETIRED;
-            break;
-          case "処刑された。":
-            $persona = preg_replace("/(.+\r\n){1,}\r\n(.+) は村人達の手により処刑された。 ?/", "$2", $item->plaintext);
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_HANGED;
-            break;
-          case "発見された。":
-            $persona = preg_replace("/.+朝、(.+) が無残.+\r\n ?/", "$1", $item->plaintext);
-            $key = array_search($persona,$list);
-            $this->users[$key]->dtid = Data::DES_EATEN;
-            break;
-          default:
-            continue;
-        }   
-        $this->users[$key]->end = $i+1;
+          continue;
+        }
+        $this->users[$key_u]->end = $i + 1;
+        $this->users[$key_u]->life = round(($i) / $this->village->days,3);
       }
       $this->fetch->clear();
     }
+  }
+  protected function fetch_key_u($list,$item)
+  {
+    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $key = mb_substr(trim($item->plaintext),-8,8);
+
+    if($this->check_syswords($key,'dt_sys'))
+    {
+      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+    }
+    else
+    {
+      return false;
+    }
+
+    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+
+    $key_u = array_search($persona,$list);
+    if($key_u === false)
+    {
+      return false;
+    }
+    $this->users[$key_u]->dtid = $dtid;
+    return $key_u;
   }
   protected function make_daily_url($day)
   {
@@ -203,41 +230,5 @@ class Ning extends Country
     $day = str_pad($day,3,"0",STR_PAD_LEFT);
 
     return $this->url.'&meslog='.$day.$suffix;
-  }
-  protected function fetch_sklid()
-  {
-    $this->user->sklid = $this->skill[$this->user->role];
-  }
-  protected function fetch_tmid()
-  {
-    if($this->user->role === "人狼" || $this->user->role === "狂人")
-    {
-      $this->user->tmid = Data::TM_WOLF;
-    }
-    else
-    {
-      $this->user->tmid = Data::TM_VILLAGER;
-    }
-  }
-  protected function fetch_life()
-  {
-    foreach($this->users as $key=>$user)
-    {
-      if(!$this->users[$key]->life)
-      {
-        $this->users[$key]->life = round(($this->users[$key]->end-1) / $this->village->days,3);
-      }
-    }
-  }
-  protected function fetch_rltid()
-  {
-    if($this->user->tmid === $this->village->wtmid)
-    {
-      $this->user->rltid = Data::RSL_WIN;
-    }
-    else
-    {
-      $this->user->rltid = Data::RSL_LOSE;
-    }
   }
 }

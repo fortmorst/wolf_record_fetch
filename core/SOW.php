@@ -1,21 +1,9 @@
 <?php
 
-class SOW extends Country
+class SOW extends SOW_MOD
 {
-  private $cursewolf = [];
+  protected $cursewolf = [];
 
-  function fetch_village()
-  {
-    $this->cursedwolf = [];
-    $this->fetch_from_info();
-    $this->fetch_from_pro();
-
-    if($this->village->wtmid === Data::TM_RUIN)
-    {
-      return false;
-    }
-    $this->fetch_from_epi();
-  }
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url."&cmd=vinfo");
@@ -28,10 +16,11 @@ class SOW extends Country
       return;
     }
 
-    if(empty($this->RP_PRO))
+    if($this->sysword !== 'pro')
     {
       $this->fetch_rp();
     }
+
     if($this->policy === null)
     {
       $this->fetch_policy();
@@ -39,42 +28,80 @@ class SOW extends Country
 
     $this->fetch->clear();
   }
-  protected function fetch_name()
-  {
-    $this->village->name = $this->fetch->find('p.multicolumn_left',0)->plaintext;
-  }
-  protected function fetch_days()
-  {
-    $days = $this->fetch->find('p.turnnavi',0)->find('a',-4);
-    //進行中(=雑談村)または開始しなかった廃村村
-    if($days === null || $days->innertext === 'プロローグ')
-    {
-      $this->insert_as_ruin();
-      return false;
-    }
-    $this->village->days = mb_substr($days->innertext,0,mb_strpos($days,'日')) +1;
-  }
   protected function fetch_rp()
   {
-    if(empty($this->RP_PRO))
+    if($this->sysword === 'pro')
     {
-      $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
-      if(array_key_exists($rp,$this->RP_LIST))
+      //プロローグから取得する
+      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+      $sql = "SELECT name FROM sysword WHERE prologue='$rp'";
+      $stmt = $this->db->query($sql);
+      if($stmt === false)
       {
-        $this->village->rp = $this->RP_LIST[$rp];
-        return;
+        $this->output_comment('undefined',__FUNCTION__,$rp);
+        $rp = "人狼物語";
       }
+      else
+      {
+        $stmt = $stmt->fetch();
+        $rp = $stmt['name'];
+      }
+    }
+    else if($this->sysword === null)
+    {
+      //情報欄から取得する
+       $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     }
     else
     {
-      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
-      if(array_key_exists($rp,$this->RP_PRO))
-      {
-        $this->village->rp = $this->RP_PRO[$rp];
-        return;
-      }
+      //固定
+      $rp = $this->sysword;
     }
-    $this->village->rp = 'SOW';
+    $this->village->rp = $rp;
+    //言い換えリストに登録がなければ追加
+    if(!isset($GLOBALS['syswords'][$rp]))
+    {
+      $this->fetch_sysword($rp);
+    }
+  }
+  protected function make_sysword_sql($rp)
+  {
+    return "SELECT name,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
+  }
+  protected function make_sysword_set($values,$table,$name)
+  {
+    if($table === 'mes_sklid')
+    {
+      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
+    }
+    else
+    {
+      $sql = "SELECT * from $table where id in ($values)";
+    }
+    $stmt = $this->db->query($sql);
+    $list = [];
+    switch($table)
+    {
+      case 'mes_sklid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+        }
+        break;
+      case 'mes_dt_sys':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+        }
+        break;
+      case 'mes_wtmid':
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = (int)$item['orgid'];
+        }
+        break;
+    }
+    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_from_pro()
   {
@@ -83,70 +110,11 @@ class SOW extends Country
     sleep(1);
 
     $this->fetch_date();
-    if(!empty($this->RP_PRO))
+    if($this->sysword === 'pro')
     {
       $this->fetch_rp();
     }
     $this->fetch->clear();
-  }
-  protected function fetch_date()
-  {
-    $date = $this->fetch->find('div.mes_date',0)->plaintext;
-    $date = mb_substr($date,mb_strpos($date,"2"),10);
-    $this->village->date = preg_replace('/(\d{4})\/(\d{2})\/(\d{2})/','\1-\2-\3',$date);
-  }
-  protected function fetch_from_epi()
-  {
-    $url = $this->url.'&turn='.$this->village->days.'&row=40&mode=all&move=page&pageno=1';
-    $this->fetch->load_file($url);
-    sleep(1);
-
-    //廃村なら非参加扱い
-    if(!$this->check_ruin())
-    {
-      $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('ruin_midway');
-    }
-    else
-    {
-      $this->fetch_wtmid();
-    }
-    $this->make_cast();
-  }
-  protected function fetch_wtmid()
-  {
-    if($this->policy || $this->village->policy)
-    {
-      $wtmid = $this->fetch_win_message();
-      if(array_key_exists($wtmid,$this->{'WTM_'.$this->village->rp}))
-      {
-        $this->village->wtmid = $this->{'WTM_'.$this->village->rp}[$wtmid];
-      }
-      else
-      {
-        $this->village->wtmid = Data::TM_RP;
-        $this->output_comment('undefined',$wtmid);
-      }
-    }
-    else
-    {
-      $this->village->wtmid = Data::TM_RP;
-    }
-  }
-  protected function fetch_win_message()
-  {
-    $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';
-    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
-    if(preg_match($not_wtm,$wtmid))
-    {
-      $do_i = -2;
-      do
-      {
-        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
-        $do_i--;
-      } while(preg_match($not_wtm,$wtmid));
-    }
-    return mb_substr(preg_replace("/\r\n/","",$wtmid),-10);
   }
   protected function make_cast()
   {
@@ -177,7 +145,7 @@ class SOW extends Country
       //var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user');
+        $this->output_comment('n_user',__function__,$user->persona);
       }
     }
   }
@@ -187,28 +155,20 @@ class SOW extends Country
     $this->fetch_player($person);
     $this->fetch_role($person);
 
-    if($this->user->role === '見物人')
+    $this->fetch_sklid();
+    $this->fetch_rltid_sow();
+
+    //見物人
+    if($this->user->tmid === Data::TM_ONLOOKER)
     {
       $this->insert_onlooker();
+      return;
     }
-    else
+
+    if($this->is_alive($person))
     {
-      $this->fetch_sklid();
-      $this->fetch_rltid();
-      if($this->is_alive($person))
-      {
-        $this->insert_alive();
-      }
+      $this->insert_alive();
     }
-  }
-  protected function fetch_persona($person)
-  {
-    $this->user->persona = trim($person->find("td",0)->plaintext);
-  }
-  protected function fetch_player($person)
-  {
-    $player =trim($person->find("td a",0)->plaintext);
-      $this->user->player =$this->modify_player($player);
   }
   protected function is_alive($person)
   {
@@ -222,60 +182,24 @@ class SOW extends Country
       return false;
     }
   }
-  protected function insert_onlooker()
+  protected function modify_from_sklid()
   {
-    $this->user->sklid  = Data::SKL_ONLOOKER;
-    $this->user->tmid = Data::TM_ONLOOKER;
-    $this->user->dtid  = Data::DES_ONLOOKER;
-    $this->user->end   = 1;
-    $this->user->life  = 0.000;
-    $this->user->rltid = Data::RSL_ONLOOKER;
-  }
-  protected function insert_alive()
-  {
-    $this->user->dtid = Data::DES_ALIVE;
-    $this->user->end = $this->village->days;
-    $this->user->life = 1.000;
-  }
-  protected function fetch_role($person)
-  {
-    $role = $person->find('td',3)->plaintext;
-    $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
-  }
-  protected function fetch_sklid()
-  {
-    if(!empty($this->{'SKL_'.$this->village->rp}))
+    //狂人を人狼陣営にする
+    if($this->user->tmid === Data::TM_EVIL)
     {
-      $this->user->sklid = $this->{'SKL_'.$this->village->rp}[$this->user->role][0];
-      $this->user->tmid = $this->{'SKL_'.$this->village->rp}[$this->user->role][1];
+      $this->user->tmid = Data::TM_WOLF;
     }
-    else
-    {
-      $this->user->sklid = $this->SKILL[$this->user->role][0];
-      $this->user->tmid = $this->SKILL[$this->user->role][1];
-    }
+
     //呪狼の名前をメモ
     if($this->user->sklid === Data::SKL_WOLF_CURSED)
     {
       $this->cursewolf[] = $this->user->persona;
     }
   }
-  protected function fetch_rltid()
+  protected function fetch_role($person)
   {
-    if($this->village->wtmid === 0)
-    {
-      $this->user->rltid = Data::RSL_JOIN;
-      return;
-    }
-
-    if($this->user->tmid === $this->village->wtmid)
-    {
-      $this->user->rltid = Data::RSL_WIN;
-    }
-    else
-    {
-      $this->user->rltid = Data::RSL_LOSE;
-    }
+    $role = $person->find('td',3)->plaintext;
+    $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
   }
   protected function fetch_daily_url($i,$find)
   {
@@ -308,22 +232,12 @@ class SOW extends Country
     $days = $this->village->days;
     $find = 'p.info';
 
-    //言い換えの有無
-    if(!empty($this->{'DT_'.$this->village->rp}))
-    {
-      $rp = $this->village->rp;
-    }
-    else
-    {
-      $rp = 'NORMAL';
-    }
-
     for($i=2; $i<=$days; $i++)
     {
       $announce = $this->fetch_daily_url($i,$find);
       foreach($announce as $item)
       {
-        $key_u = $this->fetch_key_u($list,$rp,$item);
+        $key_u = $this->fetch_key_u($list,$item);
         if($key_u === false)
         {
           continue;
@@ -334,44 +248,54 @@ class SOW extends Country
       $this->fetch->clear();
     }
   }
-  protected function fetch_key_u($list,$rp,$item)
+  protected function fetch_key_u($list,$item)
   {
-      $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
-      $key= mb_substr(trim($item->plaintext),-6,6);
-      if(!isset($this->{'DT_'.$rp}[$key]))
-      {
-        return false;
-      }
-      else
-      {
-        $persona = trim(mb_ereg_replace($this->{'DT_'.$rp}[$key][0],'\2',$destiny,'m'));
-        $dtid = $this->{'DT_'.$rp}[$key][1];
-      }
+    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $key= mb_substr(trim($item->plaintext),-8,8);
 
-      $key_u = array_search($persona,$list);
-      if($key_u === false)
-      {
-        return false;
-      }
-      $this->fetch_dtid($key_u,$dtid,$persona);
-      return $key_u;
+    if($this->check_syswords($key,'dt_sys'))
+    {
+      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+    }
+    else
+    {
+      return false;
+    }
+
+    //適当系の被襲撃者はスキップ
+    if($regex === null)
+    {
+      $this->output_comment('fool',__FUNCTION__);
+      return false;
+    }
+
+    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+
+    $key_u = array_search($persona,$list);
+    if($key_u === false)
+    {
+      return false;
+    }
+    $this->fetch_dtid_sow($key_u,$dtid,$persona);
+    return $key_u;
   }
-  protected function fetch_dtid($key_u,$dtid,$persona)
+  protected function fetch_dtid_sow($key_u,$dtid,$persona)
   {
-      //妖魔陣営の無残死は呪殺死にする
-      if($this->users[$key_u]->tmid === Data::TM_FAIRY && $dtid === Data::DES_EATEN)
-      {
-        $this->users[$key_u]->dtid = Data::DES_CURSED;
-      }
-      //呪狼が存在する編成で、占い師が襲撃された場合別途チェック
-      else if(!empty($this->cursewolf) && $this->users[$key_u]->sklid === Data::SKL_SEER && $dtid === Data::DES_EATEN && $this->modify_cursed_seer($persona,$key_u))
-      {
-        $this->users[$key_u]->dtid = Data::DES_CURSED;
-      }
-      else
-      {
-        $this->users[$key_u]->dtid = $dtid;
-      }
+    //妖魔陣営の無残死は呪殺死にする
+    if($this->users[$key_u]->tmid === Data::TM_FAIRY && $dtid === Data::DES_EATEN)
+    {
+      $this->users[$key_u]->dtid = Data::DES_CURSED;
+    }
+    //呪狼が存在する編成で、占い師が襲撃された場合別途チェック
+    else if(!empty($this->cursewolf) && $this->users[$key_u]->sklid === Data::SKL_SEER && $dtid === Data::DES_EATEN && $this->modify_cursed_seer($persona,$key_u))
+    {
+      $this->users[$key_u]->dtid = Data::DES_CURSED;
+    }
+    else
+    {
+      $this->users[$key_u]->dtid = $dtid;
+    }
   }
   protected function modify_cursed_seer($persona,$key_u)
   {

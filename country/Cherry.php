@@ -2,11 +2,6 @@
 
 class Cherry extends SOW
 {
-  use TRS_SOW;
-  protected function fetch_rp()
-  {
-    $this->village->rp = 'SOW';
-  }
   protected function make_cast()
   {
     $cast = $this->fetch->find('table tr');

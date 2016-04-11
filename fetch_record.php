@@ -14,13 +14,13 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 $db = new Connect_DB();
 $db->connect();
 
-$sql = "select id,class,url,url_log,policy,is_evil,talk_title from country where class";
+$sql = "select id,class,url,url_log,policy,is_evil,talk_title,sysword from country where class";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
 {
   //引数に渡した国だけ取得
-  $countries = '='.'"'.$argv[1].'"';
+  $countries = "='$argv[1]'";
 }
 else
 {
@@ -36,9 +36,22 @@ $stmt = $stmt->fetchAll();
 //DB切断
 $db->disconnect();
 
-//更新チェック
+//村番号が指定されていればそれだけ取得する
+if(isset($argv[2]))
+{
+  $stmt[0]['queue'] = [(int)$argv[2]];
+}
+else
+{
+  //更新チェック
   $check_village = new Check_Village($stmt);
   $stmt = $check_village->check($stmt);
+}
+
+//言い換え用
+$syswords = [];
+
+//国ごとに取得開始
 if(!empty($stmt))
 {
   foreach($stmt as $item)
@@ -48,7 +61,7 @@ if(!empty($stmt))
       //村取得
       $country = $item['class'];
       echo '---'.$country.'-------'.PHP_EOL;
-      ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['queue']);
+      ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['sysword'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }
@@ -65,7 +78,3 @@ if(!empty($stmt))
 }
 
 echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;
-
-
-//
-//更新のある国だけ読み込む
