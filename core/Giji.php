@@ -56,7 +56,7 @@ abstract class Giji extends Country
 
     $this->make_cast();
     $this->check_sprule();
-    $this->village->rp = '新議事';
+    $this->village->rp = $this->sysword;
     $this->fetch_sysword($this->village->rp);
   }
   protected function fetch_name()

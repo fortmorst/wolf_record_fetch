@@ -18,7 +18,7 @@ class Ning extends Country
     $this->fetch_name();
     $this->fetch_date();
     $this->fetch_days();
-    $this->village->rp = 'G国';
+    $this->village->rp = $this->sysword;
     $this->fetch_sysword($this->village->rp);
 
     $this->fetch->clear();
