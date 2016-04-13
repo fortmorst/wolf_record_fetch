@@ -14,7 +14,7 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 $db = new Connect_DB();
 $db->connect();
 
-$sql = "select id,class,url,url_log,policy,is_evil,talk_title,sysword from country where class";
+$sql = "select id,name,class,check_type,url,url_log,policy,is_evil,talk_title,sysword from country where class";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
@@ -60,7 +60,7 @@ if(!empty($stmt))
     {
       //村取得
       $country = $item['class'];
-      echo '---'.$country.'-------'.PHP_EOL;
+      echo '---'.$item['name'].'-------'.PHP_EOL;
       ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['sysword'],$item['queue']);
       ${$country}->insert();
       unset(${$country});

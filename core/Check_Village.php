@@ -28,9 +28,9 @@ class Check_Village
       try
       {
         //新規村の確認
-        $vno_max_db = $this->check_new_fetch($item['id'],$item['class'],$item['url_log']);
+        $vno_max_db = $this->check_new_fetch($item['id'],$item['check_type'],$item['url_log']);
         //village_pendingリストから更新確認
-        if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['class'],$item['url'],$item['talk_title'],$vno_max_db))
+        if(!empty($this->village_pending) && $this->check_village_pending($item['id'],$item['check_type'],$item['url'],$item['talk_title'],$vno_max_db))
         {
           //stmtに書き込む
           $this->stmt[$stmt_key]['queue'] = $this->village_pending;
@@ -43,7 +43,7 @@ class Check_Village
       }
       catch(Exception $e)
       {
-        echo '※ERROR: '.$item['class'].'取得中にエラーが発生しました。この国をスキップします。->'.$e->getMessage().PHP_EOL;
+        echo '※ERROR: '.$item['name'].' 取得中にエラーが発生しました。この国をスキップします。->'.$e->getMessage().PHP_EOL;
         unset($this->stmt[$stmt_key]);
         continue;
       }
@@ -69,9 +69,9 @@ class Check_Village
       $this->village_pending[] = (int)$item['vno'];
     }
   }
-  private function check_new_fetch($cid,$class,$url_log)
+  private function check_new_fetch($cid,$type,$url_log)
   {
-    $vno_max_vlist = $this->check_vlist_latest($url_log,$class);
+    $vno_max_vlist = $this->check_vlist_latest($url_log,$type);
     $vno_max_db = $this->check_db_latest_vno($cid);
 
     //dbの最大村番号よりも、村リストの最大村番号が大きければ差分を確認リストに入れる
@@ -98,55 +98,33 @@ class Check_Village
     return (int)$vno_max[0];
   }
 
-  private function check_vlist_latest($url_log,$class)
+  private function check_vlist_latest($url_log,$type)
   {
     $this->html->load_file($url_log);
     sleep(1);
-    switch($class)
+    switch($type)
     {
-      case 'Ning':
+      case 'giji_old':
+        $list_vno = (int)$this->html->find('tr.i_hover td',0)->plaintext;
+        break;
+      case 'sow':
+        $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',0)->plaintext);
+        break;
+      case 'bbs':
         $list_vno = $this->html->find('a',1)->plaintext;
         $list_vno =(int) preg_replace('/G(\d+) .+/','$1',$list_vno);
         break;
-      case 'Morphe':
-      case 'Xebec':
-      case 'Crazy':
-      case 'Guta':
-      case 'Sea_Red':
-      case 'Sea_Blue':
-      case 'Sea_Old':
-      case 'Ivory':
-      case 'Crescent':
-      case 'Crescent_P':
-      case 'Love':
-      case 'Plot':
-      case 'Perjury':
-        $list_vno = (int)$this->html->find('tr.i_hover td',0)->plaintext;
+      case 'sow_sebas':
+        $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',1)->plaintext);
         break;
-      case 'Ciel':
+      case 'giji':
         $list_vno = $this->html->find('tr',1)->find('td',0)->innertext;
         $list_vno = (int)preg_replace("/^(\d+) <a.+/","$1",$list_vno);
         break;
-      case 'Melon':
-      case 'Rose':
-      case 'Cherry':
-      case 'Real':
-      case 'Moon':
-      case 'Chitose':
-      case 'Chitose_RP':
-      case 'Phantom':
-      case 'Dark':
-      case 'BW':
-      case 'Dance':
-        $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',0)->plaintext);
-        break;
-      case 'Sebas':
-        $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',1)->plaintext);
-        break;
-      case 'Silence':
+      case 'sow_silence':
         $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('td a',0)->plaintext);
         break;
-      case 'Reason':
+      case 'bbs_reason':
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
         break;
@@ -155,27 +133,27 @@ class Check_Village
     return $list_vno;
   }
 
-  private function check_village_pending($id,$class,$url,$talk,$vno_max_db)
+  private function check_village_pending($id,$type,$url,$talk,$vno_max_db)
   {
     foreach($this->village_pending as $key=>$vno)
     {
       $url_vil = mb_ereg_replace('%n',$vno,$url);
-      $is_end = $this->check_end($class,$url_vil);
+      $is_end = $this->check_end($type,$url_vil);
 
-      echo $class.': vno= '.$vno.PHP_EOL;
+      //echo $class.': vno= '.$vno.PHP_EOL;
 
       //村番号が存在しない場合
-      if(!$this->is_not_found($class,$url_vil))
+      if(!$this->is_not_found($type,$url_vil))
       {
         unset($this->village_pending[$key]);
         $this->insert_empty_village($id,$vno);
-        echo '▲'.$vno.' is empty number.Inserted.'.PHP_EOL;
+        echo '⚠️NOTICE->'.$vno.' は存在しません。穴埋めだけ行います。'.PHP_EOL;
         continue;
       }
       //雑談村がある国の場合
-      if(!$this->is_not_talk_village($class,$url_vil,$talk))
+      if(!$this->is_not_talk_village($url_vil,$talk))
       {
-        echo '▲'.$vno.' is talk village.'.PHP_EOL;
+        echo '⚠️NOTICE->'.$vno.' は雑談村です。'.PHP_EOL;
         continue;
       }
 
@@ -186,7 +164,7 @@ class Check_Village
         {
           $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
           $this->db->query($sql);
-          echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
+          //echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
         }
       }
       else
@@ -199,13 +177,13 @@ class Check_Village
           $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
           $this->db->query($sql);
 
-          echo '●'.$vno.'was written into DB.'.PHP_EOL;
+         // echo '●'.$vno.'was written into DB.'.PHP_EOL;
         }
       }
     }
     return (!empty($this->village_pending))? true:false;
   }
-  private function is_not_talk_village($class,$url,$talk)
+  private function is_not_talk_village($url,$talk)
   {
     $this->html->load_file($url);
     $title = $this->html->find('title',0)->plaintext;
@@ -219,10 +197,10 @@ class Check_Village
       return true;
     }
   }
-  private function is_not_found($class,$url)
+  private function is_not_found($type,$url)
   {
     $this->html->load_file($url);
-    if($class === 'Silence')
+    if($type === 'sow_silence')
     {
       $tag = 'div.inframe';
     }
@@ -247,17 +225,17 @@ class Check_Village
     $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid) VALUES (".$cid.",".$vno.",'###vil not found###','0000-00-00',1,30,1,97)";
     $this->db->query($sql);
   }
-  private function check_end($class,$url)
+  private function check_end($type,$url)
   {
 
     $this->html->load_file($url);
     sleep(1);
-    switch($class)
+    switch($type)
     {
-      case 'Ning':
+      case 'bbs':
         $last_page = trim($this->html->find('span.time',0)->plaintext);
         break;
-      case 'Reason':
+      case 'bbs_reason':
         $last_page = $this->html->find('a',0)->plaintext;
         if($last_page === '')
         {
