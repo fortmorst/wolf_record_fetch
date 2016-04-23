@@ -25,7 +25,6 @@ class Melon extends SOW_MOD
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_from_pro()

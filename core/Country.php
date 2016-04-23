@@ -55,7 +55,15 @@ abstract class Country
       //村を挿入する
       if($this->db->insert_db($this->cid,$this->village,$this->users))
       {
-        echo '★'.$this->village->vno.'. '.$this->village->name.' を取得しました。'.PHP_EOL;
+        if($this->village->policy)
+        {
+          $str = '☕️';
+        }
+        else
+        {
+          $str = '☕️💃';
+        }
+        echo $str.$this->village->vno.'. '.$this->village->name.' を取得しました。'.PHP_EOL;
       }
     }
     $this->db->disconnect();
@@ -412,7 +420,6 @@ abstract class Country
     if(preg_match($rp,$this->village->name))
     {
       $this->village->policy = false;
-      $this->output_comment('rp',__function__);
     }
     else
     {
@@ -492,9 +499,6 @@ abstract class Country
   {
     switch($type)
     {
-      case 'rp':
-        $str = '⚠️NOTICE-> 非勝負村として取得します。';
-        break;
       case 'undefined':
         $str = '⚠️NOTICE-> '.$detail.' は未定義の値です。';
         break;

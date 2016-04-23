@@ -135,7 +135,6 @@ abstract class Giji_Old extends Country
         break;
       default:
         $this->village->policy = false;
-        $this->output_comment('rp',__function__);
         break;
     }
   }
