@@ -18,7 +18,6 @@ class BW extends SOW_MOD
     if(preg_match('/物語/',$policy))
     {
       $this->village->policy = false;
-      $this->output_comment('rp',__function__);
     }
   }
   protected function fetch_date()

@@ -57,7 +57,6 @@ class Rose extends SOW
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp',__FUNCTION__);
     }
   }
   protected function fetch_wtmid()

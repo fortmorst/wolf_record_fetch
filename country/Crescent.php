@@ -18,7 +18,6 @@ class Crescent extends Giji_Old
     else
     {
       $this->village->policy = false;
-      $this->output_comment('rp',__function__,$policy);
     }
   }
   protected function check_ruin()

@@ -14,7 +14,6 @@ abstract class Sea extends Giji_Old
         break;
       default:
         $this->village->policy = false;
-        $this->output_comment('rp',__function__,$policy);
         break;
     }
   }
