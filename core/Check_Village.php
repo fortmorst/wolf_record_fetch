@@ -121,9 +121,9 @@ class Check_Village
         $list_vno = $this->html->find('tr',1)->find('td',0)->innertext;
         $list_vno = (int)preg_replace("/^(\d+) <a.+/","$1",$list_vno);
         break;
-      case 'sow_silence':
-        $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('td a',0)->plaintext);
-        break;
+      //case 'sow_silence':
+        //$list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('td a',0)->plaintext);
+        //break;
       case 'bbs_reason':
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
@@ -200,14 +200,14 @@ class Check_Village
   private function is_not_found($type,$url)
   {
     $this->html->load_file($url);
-    if($type === 'sow_silence')
-    {
-      $tag = 'div.inframe';
-    }
-    else
-    {
+    //if($type === 'sow_silence')
+    //{
+      //$tag = 'div.inframe';
+    //}
+    //else
+    //{
       $tag = 'div.paragraph';
-    }
+    //}
     $paragraph = $this->html->find($tag.' p',0);
     if($paragraph && $paragraph->plaintext === '村データ が見つかりません。')
     {
