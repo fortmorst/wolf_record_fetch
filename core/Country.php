@@ -73,7 +73,12 @@ abstract class Country
   {
     $this->village = new Village($vno);
 
-    if($this->fetch_village() !== false)
+    if($this->fetch_village() === false)
+    {
+      //廃村村のユーザ初期化
+      $this->users = [];
+    }
+    else
     {
       $this->insert_users();
       $this->check_role();
