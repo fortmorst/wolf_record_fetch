@@ -6,6 +6,33 @@ class SOW_MOD extends Giji_Old
   {
     //議事用の設定を削除
   }
+  protected function fetch_sysword($rp)
+  {
+    $sql = $this->make_sysword_sql($rp);
+    $stmt = $this->db->query($sql);
+    //stmtがfalseの場合、人狼物語で再度検索する
+    $stmt = $stmt->fetch();
+    if($stmt === false)
+    {
+      $this->output_comment('undefined',__FUNCTION__,$rp);
+
+      if($this->sysword !== null && mb_substr($this->sysword,0,1) === "_")
+      {
+        $this->village->rp = '人狼物語'.$this->sysword;
+      }
+      else
+      {
+        $this->village->rp = '人狼物語';
+      }
+      $sql = $this->make_sysword_sql($this->village->rp);
+      $stmt = $this->db->query($sql);
+      $stmt = $stmt->fetch();
+    }
+    $name = $stmt['name'];
+    unset($stmt['name']);
+    $GLOBALS['syswords'][$name] = new Sysword();
+    array_walk($stmt,[$this,'make_sysword_set'],$name);
+  }
   protected function make_sysword_sql($rp)
   {
     return "select name,mes_sklid,mes_dtid,mes_wtmid from sysword where name='$rp'";

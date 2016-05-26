@@ -9,7 +9,7 @@ class Melon extends SOW_MOD
   protected function fetch_rp()
   {
     $rp = $this->fetch->find('p.multicolumn_left',9)->plaintext;
-    $this->village->rp = $rp.'_瓜科';
+    $this->village->rp = $rp.$this->sysword;
     if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);

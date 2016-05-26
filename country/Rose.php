@@ -6,7 +6,7 @@ class Rose extends SOW
     $this->check_sprule();
 
     $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
-    $this->village->rp = $rp.'_薔薇';
+    $this->village->rp = $rp.$this->sysword;
     //言い換えリストに登録がなければ追加
     if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
