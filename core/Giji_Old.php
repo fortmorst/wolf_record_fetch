@@ -77,7 +77,16 @@ abstract class Giji_Old extends Country
   protected function fetch_rp()
   {
     $this->check_sprule();
-    $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
+    if($this->sysword === null)
+    {
+      $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
+    }
+    else
+    {
+      //固定
+      $rp = $this->sysword;
+    }
+
     $this->village->rp = $rp;
     if(!isset($GLOBALS['syswords'][$rp]))
     {
