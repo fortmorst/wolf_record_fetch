@@ -14,7 +14,6 @@ class Village
           ,$rp //言い換え
           ,$policy //勝敗あり村かどうか
           ,$add_winner //SOWでの追加勝利陣営の有無
-          ,$is_card //更新がカード形式かどうか
           ;
 
   use Properties;
@@ -26,7 +25,7 @@ class Village
   function get_vars()
   {
     $list = get_object_vars($this);
-    unset($list['evil_rgl'],$list['rp'],$list['policy'],$list['add_winner'],$list['is_card']);
+    unset($list['evil_rgl'],$list['rp'],$list['policy'],$list['add_winner']);
     return $list;
   }
 
