@@ -84,7 +84,6 @@ class Moon extends SOW_MOD
 
     if($this->user->dtid === Data::DES_ONLOOKER)
     {
-      $this->user->role = '見物人';
       $this->insert_onlooker();
       return;
     }
