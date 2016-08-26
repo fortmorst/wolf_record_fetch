@@ -39,7 +39,11 @@ $db->disconnect();
 //村番号が指定されていればそれだけ取得する
 if(isset($argv[2]))
 {
-  $stmt[0]['queue'] = [(int)$argv[2]];
+  foreach($argv as $key=>$item)
+  {
+    if($key < 2) continue;
+    $stmt[0]['queue'][] = (int)$item;
+  }
 }
 else
 {
