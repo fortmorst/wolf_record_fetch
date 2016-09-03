@@ -29,6 +29,7 @@ class Data
   const SKL_EVIL            =365; //裏切り狂人
   const SKL_EVL_KNOW_WF     =366; //滅殺者
   const SKL_EVL_SEER_ROLE   =367; //愛好家
+  const SKL_EVL_MIMIC       =373; //不穏分子/裏切りの陣営
   const SKL_WOLF            =  7; //人狼 毎日一人を襲撃できる
   const SKL_WOLF_CURSED     = 43; //呪狼 逆呪殺する
   const SKL_FAIRY           = 14; //妖魔 襲撃耐性、被占で呪詛死する
