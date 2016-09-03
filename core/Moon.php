@@ -107,7 +107,15 @@ class Moon extends SOW_MOD
     if(!empty($role))
     {
       $role = $role->plaintext;
-      $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
+
+      if(mb_strpos($role,"人真似師") !== false)
+      {
+        $this->user->role = mb_ereg_replace('\A人真似師/(.+) \(.+を希望\)(.+|)','\1',$role,'m');
+      }
+      else
+      {
+        $this->user->role = mb_ereg_replace('\A(.+) \(.+を希望\)(.+|)','\1',$role,'m');
+      }
     }
     else
     {
