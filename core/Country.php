@@ -53,7 +53,8 @@ abstract class Country
       //$Data_Test->check_from_DB($this->cid,$this->village,$this->users);
       //continue;
       //村を挿入する
-      if($this->db->insert_db($this->cid,$this->village,$this->users))
+      $vid = $this->db->insert_db($this->cid,$this->village,$this->users);
+      if($vid !== false)
       {
         if($this->village->wtmid !== 0)
         {
@@ -63,7 +64,7 @@ abstract class Country
         {
           $str = '☕️💃';
         }
-        echo $str.$this->village->vno.'. '.$this->village->name.' を取得しました。'.PHP_EOL;
+        echo "$str$vid / ".$this->village->vno.". ".$this->village->name." を取得しました。".PHP_EOL;
       }
     }
     $this->db->disconnect();

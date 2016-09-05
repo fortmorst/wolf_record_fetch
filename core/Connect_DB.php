@@ -31,7 +31,7 @@ class Connect_DB
   function insert_db($cid,$village,$cast)
   {
     $vid = $this->insert_village($village->get_vars(),$cid);
-    
+
     if(isset($vid['id']))
     {
       if(!$this->insert_user((int)$vid['id'],$cast))
@@ -40,17 +40,12 @@ class Connect_DB
         return false;
       }
     }
-    else if(empty($cast) && $vid !== false)
-    {
-      //廃村は村データのみ
-      return true;
-    }
     else
     {
       echo 'ERROR: Cannot fetch vid.'.PHP_EOL;
       return false;
     }
-    return true;
+    return $vid['id'];
   }
   private function check_not_duplicate($vno,$cid)
   {
