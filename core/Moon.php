@@ -2,7 +2,7 @@
 
 class Moon extends SOW_MOD
 {
-  protected $EVIL_ROLE = [Data::SKL_EVIL,Data::SKL_EVL_KNOW_WF,Data::SKL_EVL_SEER_ROLE,Data::SKL_EVIL_MIMIC];
+  protected $EVIL_ROLE = [Data::SKL_EVIL,Data::SKL_EVL_KNOW_WF,Data::SKL_EVL_SEER_ROLE,Data::SKL_EVL_MIMIC];
 
   protected function fetch_policy()
   {
