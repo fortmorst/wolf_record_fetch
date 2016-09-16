@@ -6,7 +6,7 @@ class Moon extends SOW_MOD
 
   protected function fetch_policy()
   {
-    $policy= mb_strstr($this->fetch->find('p.multicolumn_left',-1)->plaintext,'推理');
+    $policy= mb_strstr($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',19)->plaintext,'推理');
     if($policy !== false)
     {
       $this->village->policy = true;
@@ -51,6 +51,23 @@ class Moon extends SOW_MOD
       }
     }
     $GLOBALS['syswords'][$name]->{$table} = $list;
+  }
+  protected function fetch_win_message()
+  {
+    $wtmid = trim($this->fetch->find('p.info',-1)->plaintext);
+    $not_wtm  = '/見物に/';
+    //遅刻見物人のシスメなどを除外
+    if(preg_match($not_wtm,$wtmid))
+    {
+      $do_i = -2;
+      do
+      {
+        $wtmid = trim($this->fetch->find('p.info',$do_i)->plaintext);
+        $do_i--;
+      } while(preg_match($not_wtm,$wtmid));
+    }
+    $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
+    return $wtmid;
   }
   protected function insert_users()
   {
