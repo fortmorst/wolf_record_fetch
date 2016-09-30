@@ -6,7 +6,7 @@ class Moon extends SOW_MOD
 
   protected function fetch_policy()
   {
-    $policy= mb_strstr($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',19)->plaintext,'推理');
+    $policy= mb_strstr($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',20)->plaintext,'推理');
     if($policy !== false)
     {
       $this->village->policy = true;
