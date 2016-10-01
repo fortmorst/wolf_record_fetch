@@ -18,7 +18,7 @@ class Moon extends SOW_MOD
   }
   protected function fetch_rp()
   {
-    $rp = trim($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',3)->plaintext);
+    $rp = trim($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',4)->plaintext);
     $this->village->rp = $rp.$this->sysword;
     if(!isset($GLOBALS['syswords'][$this->village->rp]))
     {
