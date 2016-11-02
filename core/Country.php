@@ -515,7 +515,7 @@ abstract class Country
         $str = "⚠️NOTICE-> 適当系の被襲撃者です。手動で入力して下さい。";
         break;
       case 'ruin_prologue':
-        $str = 'note-> 開始前に廃村しています。または常設の雑談村です。';
+        $str = 'note-> 開始前に廃村しています。';
         break;
       case 'ruin_midway':
         $str = 'note-> 進行中に廃村しています。非勝負扱いで取得します。';

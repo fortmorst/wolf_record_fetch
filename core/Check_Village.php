@@ -175,7 +175,9 @@ class Check_Village
           }
           break;
         case self::VILLAGE_TALK:  //雑談村
-          //日付を取得するために、各国取得リストに一旦入れる
+          unset($this->village_pending[$key]);
+          $this->insert_talk_village($id,$vno);
+          echo '⚠️NOTICE->'.$vno.' は雑談村です。穴埋めだけ行います。'.PHP_EOL;
           break;
         case self::VILLAGE_NULL:  //欠番の村
           unset($this->village_pending[$key]);
@@ -255,7 +257,13 @@ class Check_Village
   }
   private function insert_empty_village($cid,$vno)
   {
-    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid) VALUES (".$cid.",".$vno.",'###vil not found###','0000-00-00',1,30,1,97)";
+    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES ($cid,$vno,'###vil not found###','0000-00-00',1,30,0,97,'1,')";
+    $this->db->query($sql);
+  }
+  private function insert_talk_village($cid,$vno)
+  {
+    $title = $this->html->find('title',0)->plaintext;
+    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES ($cid,$vno,'$title','0000-00-00',1,30,0,97,'1,')";
     $this->db->query($sql);
   }
 }
