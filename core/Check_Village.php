@@ -8,6 +8,11 @@ class Check_Village
           ,$village_pending
           ;
 
+  const VILLAGE_TALK = 1;
+  const VILLAGE_NULL = 2;
+  const VILLAGE_END  = 3;
+  const VILLAGE_NOT_END = -1;
+
   function __construct($stmt)
   {
     $this->stmt = $stmt;
@@ -54,7 +59,7 @@ class Check_Village
 
   private function check_queue($cid)
   {
-    $sql = "select vno from village_queue where cid=".$cid;
+    $sql = "select vno from village_queue where cid=$cid";
     $stmt = $this->db->query($sql);
     $result = $stmt->fetchAll();
 
@@ -86,12 +91,11 @@ class Check_Village
     }
 
     return $vno_max_db;
-
   }
   private function check_db_latest_vno($cid)
   {
     //DBから一番最後に取得した村番号を取得
-    $sql = "SELECT MAX(vno) FROM village where cid=".$cid;
+    $sql = "SELECT MAX(vno) FROM village where cid=$cid";
     $stmt = $this->db->query($sql);
     $vno_max= $stmt->fetch(PDO::FETCH_NUM);
 
@@ -121,9 +125,6 @@ class Check_Village
         $list_vno = $this->html->find('tr',1)->find('td',0)->innertext;
         $list_vno = (int)preg_replace("/^(\d+) <a.+/","$1",$list_vno);
         break;
-      //case 'sow_silence':
-        //$list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('td a',0)->plaintext);
-        //break;
       case 'bbs_reason':
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
@@ -137,87 +138,119 @@ class Check_Village
   {
     foreach($this->village_pending as $key=>$vno)
     {
-      $url_vil = mb_ereg_replace('%n',$vno,$url);
-      $is_end = $this->check_end($type,$url_vil);
+      $url_vil = str_replace('%n',$vno,$url);
+      $this->html->load_file($url_vil);
+      sleep(1);
 
-      //echo $class.': vno= '.$vno.PHP_EOL;
-
-      //村番号が存在しない場合
-      if(!$this->is_not_found($type,$url_vil))
+      switch($type)
       {
-        unset($this->village_pending[$key]);
-        $this->insert_empty_village($id,$vno);
-        echo '⚠️NOTICE->'.$vno.' は存在しません。穴埋めだけ行います。'.PHP_EOL;
-        continue;
-      }
-      //雑談村がある国の場合
-      if(!$this->is_not_talk_village($url_vil,$talk))
-      {
-        echo '⚠️NOTICE->'.$vno.' は雑談村です。'.PHP_EOL;
-        continue;
+        case 'bbs':
+          $village = $this->check_bbs();
+          break;
+        case 'bbs_reason':
+          $village = $this->check_reason($url);
+          break;
+        default:
+          $village = $this->check_from_title($talk);
+          break;
       }
 
-      if($is_end)
+      switch($village)
       {
-        //queueに入っている(DBの最大村番号よりも小さい)なら削除
-        if($vno < $vno_max_db)
-        {
-          $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
-          $this->db->query($sql);
-          //echo '◎'.$vno.' in queue was deleted.'.PHP_EOL;
-        }
+        case self::VILLAGE_NOT_END: //進行中の村
+          unset($this->village_pending[$key]);
+          if($vno > $vno_max_db)
+          {
+            //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
+            $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
+            $this->db->query($sql);
+          }
+          break;
+        case self::VILLAGE_END: //終了済の村
+          if($vno < $vno_max_db)
+          {
+            //TODO: キュー削除処理は取得完了後に回したい
+            $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
+            $this->db->query($sql);
+          }
+          break;
+        case self::VILLAGE_TALK:  //雑談村
+          //日付を取得するために、各国取得リストに一旦入れる
+          break;
+        case self::VILLAGE_NULL:  //欠番の村
+          unset($this->village_pending[$key]);
+          $this->insert_empty_village($id,$vno);
+          echo '⚠️NOTICE->'.$vno.' は存在しません。穴埋めだけ行います。'.PHP_EOL;
+          break;
+      }
+    }
+    //取得予定村が残ったらtrue
+    return (!empty($this->village_pending))? true:false;
+  }
+  private function check_from_title($talk)
+  {
+    $title = $this->html->find('title',0)->plaintext;
+
+    //雑談村かどうか
+    if($talk !== null && mb_strpos($title,$talk) !== false)
+    {
+      return self::VILLAGE_TALK;
+    }
+
+    switch(mb_substr($title,0,2))
+    {
+      case '終了':  //終了済の村
+        return self::VILLAGE_END;
+        break;
+      case '村デ':  //欠番の村
+        return self::VILLAGE_NULL;
+        break;
+      default:      //進行中の村
+        return self::VILLAGE_NOT_END;
+        break;
+    }
+  }
+  private function check_bbs()
+  {
+    $last_page = $this->html->find('span.time',0);
+
+    if($last_page === NULL)
+    {
+      return self::VILLAGE_NULL;
+    }
+
+    //TODO: Goutte取得時は最後のスペースがない
+    if($last_page->plaintext === '終了 ')
+    {
+      return self::VILLAGE_END;
+    }
+    else
+    {
+      return self::VILLAGE_NOT_END;
+    }
+  }
+  private function check_reason($url)
+  {
+    $title = $this->html->find('title',0)->plaintext;
+    if($title !== '')
+    {
+      return self::VILLAGE_END;
+    }
+    else
+    {
+      //進行中URLが存在するかどうか
+      $url = str_replace('_kako','',$url);
+      $this->html->load_file($url);
+      sleep(1);
+      $title = $this->html->find('title',0)->plaintext;
+      if($title !== '')
+      {
+        return self::VILLAGE_NOT_END;
       }
       else
       {
-        //is_endがfalseならキューに書く
-        unset($this->village_pending[$key]);
-        if($vno > $vno_max_db)
-        {
-          //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
-          $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
-          $this->db->query($sql);
-
-         // echo '●'.$vno.'was written into DB.'.PHP_EOL;
-        }
+        return self::VILLAGE_NULL;
       }
-    }
-    return (!empty($this->village_pending))? true:false;
-  }
-  private function is_not_talk_village($url,$talk)
-  {
-    $this->html->load_file($url);
-    $title = $this->html->find('title',0)->plaintext;
-    $this->html->clear();
-    if($talk !== null && mb_strpos($title,$talk) !== false)
-    {
-      return false;
-    }
-    else
-    {
-      return true;
-    }
-  }
-  private function is_not_found($type,$url)
-  {
-    $this->html->load_file($url);
-    //if($type === 'sow_silence')
-    //{
-      //$tag = 'div.inframe';
-    //}
-    //else
-    //{
-      $tag = 'div.paragraph';
-    //}
-    $paragraph = $this->html->find($tag.' p',0);
-    if($paragraph && $paragraph->plaintext === '村データ が見つかりません。')
-    {
-      $this->html->clear();
-      return false;
-    }
-    else
-    {
-      $this->html->clear();
-      return true;
     }
   }
   private function insert_empty_village($cid,$vno)
@@ -225,37 +258,4 @@ class Check_Village
     $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid) VALUES (".$cid.",".$vno.",'###vil not found###','0000-00-00',1,30,1,97)";
     $this->db->query($sql);
   }
-  private function check_end($type,$url)
-  {
-
-    $this->html->load_file($url);
-    sleep(1);
-    switch($type)
-    {
-      case 'bbs':
-        $last_page = trim($this->html->find('span.time',0)->plaintext);
-        break;
-      case 'bbs_reason':
-        $last_page = $this->html->find('a',0)->plaintext;
-        if($last_page === '')
-        {
-          $last_page = '終了';
-        }
-        break;
-      default:
-        $last_page = mb_substr($this->html->find('title',0)->plaintext,0,2);
-        break;
-    }
-    $this->html->clear();
-
-    if($last_page === "終了")
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
 }
