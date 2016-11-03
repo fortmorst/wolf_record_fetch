@@ -13,8 +13,7 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 //DB接続
 $db = new Connect_DB();
 $db->connect();
-
-$sql = "select id,name,class,check_type,url,url_log,policy,is_evil,talk_title,sysword from country where class";
+$sql = "select `id`,`name`,`class`,`check_type`,`url`,`url_log`,`policy`,`is_evil`,`talk_title`,`sysword` from `country` where `class`";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
@@ -25,7 +24,7 @@ if(isset($argv[1]))
 else
 {
   //定数から国名リスト取得
-  $countries = ' is not NULL';
+  $countries = " is not NULL";
 }
 
 //国詳細取得
@@ -64,14 +63,14 @@ if(!empty($stmt))
     {
       //村取得
       $country = $item['class'];
-      echo '---'.$item['name'].'-------'.PHP_EOL;
+      echo "---{$item['name']}-------".PHP_EOL;
       ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['sysword'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }
     catch(Exception $e)
     {
-      echo '>ERROR '.$e->getMessage().PHP_EOL.'Caught Error->Skip'.PHP_EOL;
+      echo ">ERROR {$e->getMessage()} ->この国をスキップします。".PHP_EOL;
       if(isset(${$country}))
       {
         unset(${$country});
@@ -81,4 +80,4 @@ if(!empty($stmt))
   }
 }
 
-echo '----------------------'.PHP_EOL.'>>>END<<<'.PHP_EOL;
+echo "----------------------".PHP_EOL.">>>END<<<".PHP_EOL;
