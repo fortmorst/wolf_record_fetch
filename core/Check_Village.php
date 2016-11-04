@@ -108,24 +108,24 @@ class Check_Village
     sleep(1);
     switch($type)
     {
-      case 'giji_old':
+      case "giji_old":
         $list_vno = (int)$this->html->find('tr.i_hover td',0)->plaintext;
         break;
-      case 'sow':
+      case "sow":
         $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',0)->plaintext);
         break;
-      case 'bbs':
+      case "bbs":
         $list_vno = $this->html->find('a',1)->plaintext;
         $list_vno =(int) preg_replace('/G(\d+) .+/','$1',$list_vno);
         break;
-      case 'sow_sebas':
+      case "sow_sebas":
         $list_vno = (int)preg_replace('/^(\d+) .+/','\1',$this->html->find('tbody td a',1)->plaintext);
         break;
-      case 'giji':
+      case "giji":
         $list_vno = $this->html->find('tr',1)->find('td',0)->innertext;
         $list_vno = (int)preg_replace("/^(\d+) <a.+/","$1",$list_vno);
         break;
-      case 'bbs_reason':
+      case "bbs_reason":
         $list_vno = $this->html->find('a',3)->plaintext;
         $list_vno =(int) mb_ereg_replace('A(\d+) .+','\\1',$list_vno);
         break;
@@ -134,7 +134,7 @@ class Check_Village
     return $list_vno;
   }
 
-  private function check_village_pending($id,$type,$url,$talk,$vno_max_db)
+  private function check_village_pending($cid,$type,$url,$talk,$vno_max_db)
   {
     foreach($this->village_pending as $key=>$vno)
     {
@@ -159,29 +159,23 @@ class Check_Village
       {
         case self::VILLAGE_NOT_END: //進行中の村
           unset($this->village_pending[$key]);
-          if($vno > $vno_max_db)
+          if(!$this->db->check_vno_in_queue($cid,$vno))
           {
             //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
-            $sql = "INSERT INTO `village_queue` VALUES ({$id},{$vno})";
+            $sql = "INSERT INTO `village_queue` VALUES ({$cid},{$vno})";
             $this->db->query($sql);
           }
           break;
         case self::VILLAGE_END: //終了済の村
-          if($vno < $vno_max_db)
-          {
-            //TODO: キュー削除処理は取得完了後に回したい
-            $sql = "DELETE FROM `village_queue` where `cid`={$id} AND vno={$vno}";
-            $this->db->query($sql);
-          }
           break;
         case self::VILLAGE_TALK:  //雑談村
           unset($this->village_pending[$key]);
-          $this->insert_talk_village($id,$vno);
+          $this->insert_talk_village($cid,$vno);
           echo "✅ {$vno}は雑談村です。穴埋めだけ行います。".PHP_EOL;
           break;
         case self::VILLAGE_NULL:  //欠番の村
           unset($this->village_pending[$key]);
-          $this->insert_empty_village($id,$vno);
+          $this->insert_empty_village($cid,$vno);
           echo "✅ {$vno}は存在しません。穴埋めだけ行います。".PHP_EOL;
           break;
       }

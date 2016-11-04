@@ -16,11 +16,11 @@ abstract class Country
             ,$users = []
             ,$doppel = []
             ;
-            
+
   function __construct($id,$url,$policy,$is_evil,$sysword,$queue)
   {
     $this->cid = $id;
-    $this->url_org = mb_ereg_replace('%n','',$url);
+    $this->url_org = str_replace("%n","",$url);
     $this->queue = $queue;
     if($policy !== null)
     {
@@ -44,7 +44,7 @@ abstract class Country
       $this->url = $this->url_org.$vno;
       if(!$this->insert_village($vno))
       {
-        $this->output_comment('fetch_error',__function__);
+        $this->output_comment("fetch_error",__function__);
         $this->fetch->clear();
         continue;
       }
@@ -58,13 +58,19 @@ abstract class Country
       {
         if($this->village->wtmid !== 0)
         {
-          $str = '☕️';
+          $str = "☕️";
         }
         else
         {
-          $str = '☕️💃';
+          $str = "☕️💃";
         }
-        echo "$str$vid / ".$this->village->vno.". ".$this->village->name." を取得しました。".PHP_EOL;
+        echo "{$str}{$vid} / {$this->village->vno} {$this->village->name} を取得しました。".PHP_EOL;
+        //キューに村番号がある場合は削除する
+        if($this->db->check_vno_in_queue($this->cid,$vno))
+        {
+          $sql = "DELETE FROM `village_queue` where `cid`={$this->cid} AND vno={$vno}";
+          $this->db->query($sql);
+        }
       }
     }
     $this->db->disconnect();
@@ -103,7 +109,7 @@ abstract class Country
     $this->village->wtmid = Data::TM_RUIN;
     $this->village->rgl_detail = '1,';
 
-    $this->output_comment('ruin_prologue',__function__);
+    $this->output_comment("ruin_prologue",__function__);
   }
   protected function check_ruin()
   {

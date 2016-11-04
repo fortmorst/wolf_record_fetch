@@ -28,6 +28,14 @@ class Connect_DB
     return $this->pdo->query($sql);
   }
 
+  function check_vno_in_queue($cid,$vno)
+  {
+    $sql = "SELECT `vno` FROM `village_queue` WHERE `cid`={$cid} AND `vno` = {$vno}";
+    $stmt = $this->query($sql);
+    $result = $stmt->fetchAll();
+
+    return (!empty($result)) ? true : false ;
+  }
   function insert_db($cid,$village,$cast)
   {
     $vid = $this->insert_village($village->get_vars(),$cid);
