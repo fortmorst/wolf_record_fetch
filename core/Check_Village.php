@@ -251,13 +251,13 @@ class Check_Village
   }
   private function insert_empty_village($cid,$vno)
   {
-    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'###vil not found###','0000-00-00',1,30,0,97,'1,')";
+    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'###vil not found###','1970-01-01',1,30,0,97,'1,')";
     $this->db->query($sql);
   }
   private function insert_talk_village($cid,$vno)
   {
     $title = $this->html->find('title',0)->plaintext;
-    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'{$title}','0000-00-00',1,30,0,97,'1,')";
+    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'{$title}','1970-01-01',1,30,0,97,'1,')";
     $this->db->query($sql);
   }
 }
