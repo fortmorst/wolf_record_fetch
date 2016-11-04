@@ -48,7 +48,7 @@ class Check_Village
       }
       catch(Exception $e)
       {
-        echo '※ERROR: '.$item['name'].' 取得中にエラーが発生しました。この国をスキップします。->'.$e->getMessage().PHP_EOL;
+        echo "🚫 {$item['name']} チェック中にエラーが発生しました。->{$e->getMessage()}".PHP_EOL;
         unset($this->stmt[$stmt_key]);
         continue;
       }
@@ -59,7 +59,7 @@ class Check_Village
 
   private function check_queue($cid)
   {
-    $sql = "select vno from village_queue where cid=$cid";
+    $sql = "select `vno` from `village_queue` where `cid`={$cid}";
     $stmt = $this->db->query($sql);
     $result = $stmt->fetchAll();
 
@@ -95,7 +95,7 @@ class Check_Village
   private function check_db_latest_vno($cid)
   {
     //DBから一番最後に取得した村番号を取得
-    $sql = "SELECT MAX(vno) FROM village where cid=$cid";
+    $sql = "SELECT MAX(`vno`) FROM `village` where `cid`={$cid}";
     $stmt = $this->db->query($sql);
     $vno_max= $stmt->fetch(PDO::FETCH_NUM);
 
@@ -138,16 +138,16 @@ class Check_Village
   {
     foreach($this->village_pending as $key=>$vno)
     {
-      $url_vil = str_replace('%n',$vno,$url);
+      $url_vil = str_replace("%n",$vno,$url);
       $this->html->load_file($url_vil);
       sleep(1);
 
       switch($type)
       {
-        case 'bbs':
+        case "bbs":
           $village = $this->check_bbs();
           break;
-        case 'bbs_reason':
+        case "bbs_reason":
           $village = $this->check_reason($url);
           break;
         default:
@@ -162,7 +162,7 @@ class Check_Village
           if($vno > $vno_max_db)
           {
             //キューにまだ入っておらず、終了していない村は一旦村番号をメモ
-            $sql = 'INSERT INTO village_queue VALUES ('.$id.','.$vno.')';
+            $sql = "INSERT INTO `village_queue` VALUES ({$id},{$vno})";
             $this->db->query($sql);
           }
           break;
@@ -170,19 +170,19 @@ class Check_Village
           if($vno < $vno_max_db)
           {
             //TODO: キュー削除処理は取得完了後に回したい
-            $sql = 'DELETE FROM village_queue where cid='.$id.' AND vno='.$vno;
+            $sql = "DELETE FROM `village_queue` where `cid`={$id} AND vno={$vno}";
             $this->db->query($sql);
           }
           break;
         case self::VILLAGE_TALK:  //雑談村
           unset($this->village_pending[$key]);
           $this->insert_talk_village($id,$vno);
-          echo '⚠️NOTICE->'.$vno.' は雑談村です。穴埋めだけ行います。'.PHP_EOL;
+          echo "✅ {$vno}は雑談村です。穴埋めだけ行います。".PHP_EOL;
           break;
         case self::VILLAGE_NULL:  //欠番の村
           unset($this->village_pending[$key]);
           $this->insert_empty_village($id,$vno);
-          echo '⚠️NOTICE->'.$vno.' は存在しません。穴埋めだけ行います。'.PHP_EOL;
+          echo "✅ {$vno}は存在しません。穴埋めだけ行います。".PHP_EOL;
           break;
       }
     }
@@ -201,10 +201,10 @@ class Check_Village
 
     switch(mb_substr($title,0,2))
     {
-      case '終了':  //終了済の村
+      case "終了":  //終了済の村
         return self::VILLAGE_END;
         break;
-      case '村デ':  //欠番の村
+      case "村デ":  //欠番の村
         return self::VILLAGE_NULL;
         break;
       default:      //進行中の村
@@ -222,7 +222,7 @@ class Check_Village
     }
 
     //TODO: Goutte取得時は最後のスペースがない
-    if($last_page->plaintext === '終了 ')
+    if($last_page->plaintext === "終了 ")
     {
       return self::VILLAGE_END;
     }
@@ -241,7 +241,7 @@ class Check_Village
     else
     {
       //進行中URLが存在するかどうか
-      $url = str_replace('_kako','',$url);
+      $url = str_replace("_kako","",$url);
       $this->html->load_file($url);
       sleep(1);
       $title = $this->html->find('title',0)->plaintext;
@@ -257,13 +257,13 @@ class Check_Village
   }
   private function insert_empty_village($cid,$vno)
   {
-    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES ($cid,$vno,'###vil not found###','0000-00-00',1,30,0,97,'1,')";
+    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'###vil not found###','0000-00-00',1,30,0,97,'1,')";
     $this->db->query($sql);
   }
   private function insert_talk_village($cid,$vno)
   {
     $title = $this->html->find('title',0)->plaintext;
-    $sql = "INSERT INTO village(cid,vno,name,date,nop,rglid,days,wtmid,rgl_detail) VALUES ($cid,$vno,'$title','0000-00-00',1,30,0,97,'1,')";
+    $sql = "INSERT INTO `village`(`cid`,`vno`,`name`,`date`,`nop`,`rglid`,`days`,`wtmid`,`rgl_detail`) VALUES ({$cid},{$vno},'{$title}','0000-00-00',1,30,0,97,'1,')";
     $this->db->query($sql);
   }
 }

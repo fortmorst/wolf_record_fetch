@@ -70,7 +70,7 @@ if(!empty($stmt))
     }
     catch(Exception $e)
     {
-      echo ">ERROR {$e->getMessage()} ->この国をスキップします。".PHP_EOL;
+      echo ">🚫  {$e->getMessage()} ->この国をスキップします。".PHP_EOL;
       if(isset(${$country}))
       {
         unset(${$country});
