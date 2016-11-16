@@ -13,7 +13,7 @@ $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs
 //DB接続
 $db = new Connect_DB();
 $db->connect();
-$sql = "select `id`,`name`,`class`,`check_type`,`url`,`url_log`,`policy`,`is_evil`,`talk_title`,`sysword` from `country` where `class`";
+$sql = "select `id`,`name`,`class`,`check_type`,`url`,`url_log`,`policy`,`is_evil`,`talk_title` from `country` where `class`";
 
 //引数から国リスト取得orDBから国リスト取得
 if(isset($argv[1]))
@@ -51,9 +51,6 @@ else
   $stmt = $check_village->check($stmt);
 }
 
-//言い換え用
-$syswords = [];
-
 //国ごとに取得開始
 if(!empty($stmt))
 {
@@ -64,7 +61,7 @@ if(!empty($stmt))
       //村取得
       $country = $item['class'];
       echo "---{$item['name']}-------".PHP_EOL;
-      ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['sysword'],$item['queue']);
+      ${$country} = new $country((int)$item['id'],$item['url'],$item['policy'],(bool)$item['is_evil'],$item['queue']);
       ${$country}->insert();
       unset(${$country});
     }

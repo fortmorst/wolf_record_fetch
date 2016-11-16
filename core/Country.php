@@ -17,7 +17,7 @@ abstract class Country
             ,$doppel = []
             ;
 
-  function __construct($id,$url,$policy,$is_evil,$sysword,$queue)
+  function __construct($id,$url,$policy,$is_evil,$queue)
   {
     $this->cid = $id;
     $this->url_org = str_replace("%n","",$url);
@@ -27,7 +27,6 @@ abstract class Country
       $this->policy = (int)$policy;
     }
     $this->is_evil = $is_evil;
-    $this->sysword = $sysword;
     $this->db = new Connect_DB();
   }
 
