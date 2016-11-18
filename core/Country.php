@@ -15,6 +15,7 @@ abstract class Country
             ,$user
             ,$users = []
             ,$doppel = []
+            ,$syswords =[]
             ;
 
   function __construct($id,$url,$policy,$is_evil,$queue)
@@ -124,65 +125,28 @@ abstract class Country
       return true;
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function is_sysword_existed($rp)
   {
-    return "SELECT name,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
+    $sql = "SELECT `sn`.`id` FROM `sysword` `sn` JOIN `country_sysword` ON `sysid` = `sn`.`id` WHERE `cid` = {$this->cid} AND `sn`.`name` = '{$rp}'";
+    $stmt = $this->db->query($sql);
+    $stmt = $stmt->fetch();
+
+    return($stmt !== false)? $stmt['id'] : false;
   }
   protected function fetch_sysword($rp)
   {
-    $sql = $this->make_sysword_sql($rp);
-    $stmt = $this->db->query($sql);
-    //stmtがfalseの場合、人狼物語で再度検索する
-    $stmt = $stmt->fetch();
-    if($stmt === false)
+    $sysid = $this->is_sysword_existed($rp);
+    //該当言い換えがなければデフォルト言い換えを使用する
+    if($sysid === false)
     {
       $this->output_comment('undefined',__FUNCTION__,$rp);
-      $rp = '人狼物語';
-      $this->village->rp = '人狼物語';
-      $sql = $this->make_sysword_sql($rp);
-      $stmt = $this->db->query($sql);
-      $stmt = $stmt->fetch();
+      $rp = Data::RP_DEFAULT;
+      $sysid = Data::RP_DEFAULT_ID;
     }
-    $name = $stmt['name'];
-    unset($stmt['name']);
-    $GLOBALS['syswords'][$name] = new Sysword();
-    array_walk($stmt,[$this,'make_sysword_set'],$name);
+    $this->syswords[$rp] = [];
+    $this->make_sysword_set($rp,$sysid);
   }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    if($table === 'mes_sklid')
-    {
-      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
-    }
-    else
-    {
-      $sql = "SELECT * from $table where id in ($values)";
-    }
-    $stmt = $this->db->query($sql);
-    $list = [];
-    switch($table)
-    {
-      case 'mes_sklid':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
-        }
-        break;
-      case 'mes_dt_sys':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
-        }
-        break;
-      case 'mes_wtmid':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = (int)$item['orgid'];
-        }
-        break;
-    }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
-  }
+  abstract protected function make_sysword_set($rp,$sysid);
   protected function insert_users()
   {
     $this->users = [];
@@ -415,9 +379,9 @@ abstract class Country
   }
   protected function fetch_from_sysword($value,$column)
   {
-    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+    if(array_key_exists($value,$this->syswords[$this->village->rp][$column]))
     {
-      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
+      $this->user->{$column} = $this->syswords[$this->village->rp][$column][$value];
     }
     else
     {
@@ -474,7 +438,7 @@ abstract class Country
   }
   protected function check_syswords($value,$table)
   {
-    return array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$table});
+    return array_key_exists($value,$this->syswords[$this->village->rp][$table]);
   }
   protected function insert_onlooker()
   {

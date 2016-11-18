@@ -2,6 +2,7 @@
 
 abstract class Giji_Old extends Country
 {
+  const SYSWORD_TABLE = ['sklid','tmid','dtid','wtmid'];
   function fetch_village()
   {
     $this->fetch_from_info();
@@ -11,13 +12,13 @@ abstract class Giji_Old extends Country
     {
       return false;
     }
-    
+
     $this->fetch_from_epi();
   }
 
   protected function fetch_from_info()
   {
-    $this->fetch->load_file($this->url."&cmd=vinfo");
+    $this->fetch->load_file("{$this->url}&cmd=vinfo");
     sleep(1);
 
     $this->fetch_name();
@@ -26,7 +27,7 @@ abstract class Giji_Old extends Country
       $this->fetch->clear();
       return;
     }
-    
+
     $this->fetch_rp();
     if($this->policy === null)
     {
@@ -44,13 +45,13 @@ abstract class Giji_Old extends Country
   {
     //タブラの人狼以外ならDBから引く
     $rule= trim($this->fetch->find('dl.mes_text_report dt',1)->plaintext);
-    if(strpos($rule,'タブラの人狼') === false)
+    if(strpos($rule,"タブラの人狼") === false)
     {
-      $sql = "SELECT id FROM regulation where name='$rule'";
+      $sql = "SELECT id FROM regulation where name='{$rule}'";
       $stmt = $this->db->query($sql);
       if($stmt === false)
       {
-        $this->output_comment('undefined',__FUNCTION__,$rule);
+        $this->output_comment("undefined",__FUNCTION__,$rule);
       }
       else
       {
@@ -67,7 +68,7 @@ abstract class Giji_Old extends Country
   {
     $days = $this->fetch->find('p.turnnavi',0)->find('a',-4);
     //進行中(=雑談村)または開始しなかった廃村村
-    if($days === null || $days->innertext === 'プロローグ')
+    if($days === null || $days->innertext === "プロローグ")
     {
       $this->insert_as_ruin();
       return false;
@@ -77,49 +78,47 @@ abstract class Giji_Old extends Country
   protected function fetch_rp()
   {
     $this->check_sprule();
-    if($this->sysword === null)
+    if(defined("self::SYSWORD"))
     {
-      $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
+      //固定
+      $rp = self::SYSWORD;
     }
     else
     {
-      //固定
-      $rp = $this->sysword;
+      $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
     }
 
     $this->village->rp = $rp;
-    if(!isset($GLOBALS['syswords'][$rp]))
+    if(!isset($this->syswords[$rp]))
     {
       $this->fetch_sysword($rp);
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_wtmid from sysword where name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    $sql = "SELECT * from $table where id in ($values)";
-    $stmt = $this->db->query($sql);
-    $list = [];
-
-    if($table === 'mes_tmid')
+    foreach(['sklid','tmid','dtid','wtmid'] as $table)
     {
-      $sql = "SELECT m.name,orgid,evil_flg FROM mes_tmid m JOIN team t ON orgid = t.id WHERE m.id IN ($values)";
-      $stmt = $this->db->query($sql);
-      foreach($stmt as $item)
+      $list = [];
+      if($table === "tmid")
       {
-        $list[$item['name']] = ['tmid'=>(int)$item['orgid'],'evil_flg'=>(bool)$item['evil_flg']];
+        $sql = "SELECT `m`.`name`,`orgid`,`evil_flg` FROM `mes_tmid` `m` JOIN `team` `t` ON `orgid` = `t`.`id` JOIN `mes_tmid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+        $stmt = $this->db->query($sql);
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['tmid'=>(int)$item['orgid'],'evil_flg'=>(bool)$item['evil_flg']];
+        }
       }
-    }
-    else
-    {
-      foreach($stmt as $item)
+      else
       {
-        $list[$item['name']] = (int)$item['orgid'];
+        $sql = "SELECT `m`.`name`,`m`.`orgid` FROM `mes_{$table}` `m` JOIN `mes_{$table}_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+        $stmt = $this->db->query($sql);
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = (int)$item['orgid'];
+        }
       }
+      $this->syswords[$rp][$table] = $list;
     }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_policy()
   {
@@ -204,7 +203,7 @@ abstract class Giji_Old extends Country
       $wtmid = $this->fetch_win_message();
       if($this->check_syswords($wtmid,'wtmid'))
       {
-        $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+        $this->village->wtmid = $this->syswords[$this->village->rp]['wtmid'][$wtmid];
       }
       else
       {
@@ -318,11 +317,11 @@ abstract class Giji_Old extends Country
   }
   protected function fetch_tmid($result)
   {
-    $tmid = mb_substr($result,0,mb_strpos($result,'：'));
-    if($this->check_syswords($tmid,'tmid'))
+    $team = mb_substr($result,0,mb_strpos($result,'：'));
+    if($this->check_syswords($team,'tmid'))
     {
-      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['tmid'];
-      if($this->is_evil && $GLOBALS['syswords'][$this->village->rp]->mes_tmid[$tmid]['evil_flg'])
+      $this->user->tmid = $this->syswords[$this->village->rp]['tmid'][$team]['tmid'];
+      if($this->is_evil && $this->syswords[$this->village->rp]['tmid'][$team]['evil_flg'])
       {
         $this->village->evil_rgl = true;
       }
@@ -330,7 +329,7 @@ abstract class Giji_Old extends Country
     else
     {
       $this->user->tmid = null;
-      $this->output_comment('undefined',__FUNCTION__,$tmid);
+      $this->output_comment('undefined',__FUNCTION__,$team);
     }
   }
   protected function fetch_rltid($result)
