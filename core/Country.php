@@ -16,9 +16,10 @@ abstract class Country
             ,$users = []
             ,$doppel = []
             ,$syswords =[]
+            ,$cid_parent
             ;
 
-  function __construct($id,$url,$policy,$is_evil,$queue)
+  function __construct($id,$url,$policy,$is_evil,$cid_parent,$queue)
   {
     $this->cid = $id;
     $this->url_org = str_replace("%n","",$url);
@@ -28,6 +29,10 @@ abstract class Country
       $this->policy = (int)$policy;
     }
     $this->is_evil = $is_evil;
+    if($cid_parent !== null)
+    {
+      $this->cid_parent = (int)$cid_parent;
+    }
     $this->db = new Connect_DB();
   }
 
@@ -51,7 +56,7 @@ abstract class Country
       $this->fetch->clear();
       //テストの場合
       //$Data_Test->check_from_DB($this->cid,$this->village,$this->users);
-      //continue;
+      continue;
       //村を挿入する
       $vid = $this->db->insert_db($this->cid,$this->village,$this->users);
       if($vid !== false)
@@ -90,16 +95,9 @@ abstract class Country
       $this->insert_users();
       $this->check_role();
     }
+    var_dump($this->village->get_vars());
 
-    //var_dump($this->village->get_vars());
-    if($this->village->is_valid())
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return($this->village->is_valid())? true : false;
   }
   protected function insert_as_ruin()
   {
@@ -127,7 +125,17 @@ abstract class Country
   }
   protected function is_sysword_existed($rp)
   {
-    $sql = "SELECT `sn`.`id` FROM `sysword` `sn` JOIN `country_sysword` ON `sysid` = `sn`.`id` WHERE `cid` = {$this->cid} AND `sn`.`name` = '{$rp}'";
+    //親国idが指定されている場合はそちらで引く
+    if($this->cid_parent !== null)
+    {
+      $cid = $this->cid_parent;
+    }
+    else
+    {
+      $cid = $this->cid;
+    }
+
+    $sql = "SELECT `sn`.`id` FROM `sysword` `sn` JOIN `country_sysword` ON `sysid` = `sn`.`id` WHERE `cid` = {$cid} AND `sn`.`name` = '{$rp}'";
     $stmt = $this->db->query($sql);
     $stmt = $stmt->fetch();
 
@@ -175,7 +183,6 @@ abstract class Country
     }
     sort($roles);
     $this->make_rgl_detail(implode(',',$roles));
-    //echo ' nop=>'.$this->village->nop.' rglid=>'.$this->village->rglid.PHP_EOL;
   }
   protected function make_rgl_detail($rgl)
   {
