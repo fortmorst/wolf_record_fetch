@@ -159,7 +159,7 @@ abstract class Giji_Old extends Country
   {
     $date = $this->fetch->find('p.mes_date',0)->plaintext;
     $date = mb_substr($date,mb_strpos($date,"2"),10);
-    $this->village->date = preg_replace('/(\d{4})\/(\d{2})\/(\d{2})/','\1-\2-\3',$date);
+    $this->village->date = preg_replace("/(\d{4})\/(\d{2})\/(\d{2})/","$1-$2-$3",$date);
   }
   protected function fetch_from_epi()
   {
@@ -239,7 +239,7 @@ abstract class Giji_Old extends Country
     }
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
     }
   }
   protected function change_evil_team()

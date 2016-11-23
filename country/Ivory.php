@@ -12,13 +12,14 @@ class Ivory extends Giji_Old
   protected function fetch_name()
   {
     $name = $this->fetch->find('p.multicolumn_left',0)->plaintext;
-    $this->village->name = mb_ereg_replace("(.+)\r\n.+","\\1",$name);
+    // $this->village->name = mb_ereg_replace("(.+)\r\n.+","\\1",$name);
+    $this->village->name = preg_replace("/(.+)\r\n.+/","$1",$name);
   }
   protected function check_sprule()
   {
     //タブラの人狼以外ならDBから引く
     $rule= trim($this->fetch->find('dl.mes_text_report dt',1)->plaintext);
-    if(strpos($rule,'Lupus in Tabula') === false)
+    if(strpos($rule,"Lupus in Tabula") === false)
     {
       if(array_key_exists($rule,$this->RGL_IVORY))
       {
@@ -26,7 +27,7 @@ class Ivory extends Giji_Old
       }
       else
       {
-        $this->output_comment('undefined',__FUNCTION__,$rule);
+        $this->output_comment("undefined",__FUNCTION__,$rule);
       }
     }
     else if(preg_match("/秘話/",$this->village->name))
@@ -37,9 +38,10 @@ class Ivory extends Giji_Old
   protected function fetch_rp()
   {
     $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
-    $rp = mb_ereg_replace('文章セット：「(.+)」','\\1',$rp);
+    // $rp = mb_ereg_replace('文章セット：「(.+)」','\\1',$rp);
+    $rp = preg_replace("/文章セット：「(.+)」/","$1",$rp);
     $this->village->rp = $rp;
-    if(!isset($GLOBALS['syswords'][$rp]))
+    if(!isset($this->syswords[$rp]))
     {
       $this->fetch_sysword($rp);
     }

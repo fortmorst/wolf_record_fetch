@@ -147,8 +147,12 @@ abstract class Country
     //該当言い換えがなければデフォルト言い換えを使用する
     if($sysid === false)
     {
-      $this->output_comment('undefined',__FUNCTION__,$rp);
+      $this->output_comment("undefined",__FUNCTION__,$rp);
       $rp = Data::RP_DEFAULT;
+      if(isset($this->syswords[$rp]))
+      {
+        return;
+      }
       $sysid = Data::RP_DEFAULT_ID;
     }
     $this->syswords[$rp] = [];
