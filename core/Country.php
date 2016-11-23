@@ -159,6 +159,17 @@ abstract class Country
     $this->make_sysword_set($rp,$sysid);
   }
   abstract protected function make_sysword_set($rp,$sysid);
+  protected function make_sysword_name_orgid_set($table,$sysid)
+  {
+    $list = [];
+    $sql = "SELECT `m`.`name`,`m`.`orgid` FROM `mes_{$table}` `m` JOIN `mes_{$table}_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+    $stmt = $this->db->query($sql);
+    foreach($stmt as $item)
+    {
+      $list[$item['name']] = (int)$item['orgid'];
+    }
+    return $list;
+  }
   protected function insert_users()
   {
     $this->users = [];

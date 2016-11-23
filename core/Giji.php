@@ -16,9 +16,10 @@ abstract class Giji extends Country
     ,13=>'酔払い'
     ];
   protected $BAND = [
-     "love"=>"恋人"
-    ,"hate"=>"邪気"
+     'love'=>"恋人"
+    ,'hate'=>"邪気"
     ];
+  const SYSWORD = "新議事";
 
   function fetch_village()
   {
@@ -40,7 +41,7 @@ abstract class Giji extends Country
     else if(!$is_not_scrap)
     {
       //進行中廃村
-      $this->output_comment('ruin_midway',__function__);
+      $this->output_comment("ruin_midway",__function__);
     }
     //else
     //{
@@ -56,7 +57,7 @@ abstract class Giji extends Country
 
     $this->make_cast();
     $this->check_sprule();
-    $this->village->rp = $this->sysword;
+    $this->village->rp = self::SYSWORD;
     $this->fetch_sysword($this->village->rp);
   }
   protected function fetch_name()
@@ -103,11 +104,11 @@ abstract class Giji extends Country
         $this->village->rglid = Data::RGL_DEATH;
         break;
       default:
-        $sql = "SELECT id FROM regulation where name='$rule'";
+        $sql = "SELECT `id` FROM `regulation` where `name`='{$rule}'";
         $stmt = $this->db->query($sql);
         if($stmt === false)
         {
-          $this->output_comment('undefined',__FUNCTION__,$rule);
+          $this->output_comment("undefined",__FUNCTION__,$rule);
         }
         else
         {
@@ -117,40 +118,27 @@ abstract class Giji extends Country
         break;
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    return "select name,mes_sklid,mes_tmid,mes_dtid from sysword where name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    if($table === 'mes_sklid')
+    foreach(['sklid','tmid','dtid','wtmid'] as $table)
     {
-      $sql = "SELECT m.name,orgid,s.name orgname from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
-    }
-    else
-    {
-      $sql = "SELECT * from $table where id in ($values)";
-    }
-
-    $stmt = $this->db->query($sql);
-    $list = [];
-
-    if($table === 'mes_sklid')
-    {
-      //裏切り陣営考慮外
-      foreach($stmt as $item)
+      if($table === "sklid")
       {
-        $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'orgname'=>$item['orgname']];
+        $list = [];
+        //裏切り陣営考慮外
+        $sql = "SELECT `m`.`name`,`orgid`,`s`.`name` `orgname` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+        $stmt = $this->db->query($sql);
+        foreach($stmt as $item)
+        {
+          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'orgname'=>$item['orgname']];
+        }
       }
-    }
-    else
-    {
-      foreach($stmt as $item)
+      else
       {
-        $list[$item['name']] = (int)$item['orgid'];
+        $list = $this->make_sysword_name_orgid_set($table,$sysid);
       }
+      $this->syswords[$rp][$table] = $list;
     }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   //現在Cielのみ
   protected function fetch_wtmid()
@@ -200,7 +188,7 @@ abstract class Giji extends Country
         $this->output_comment('n_user',__function__);
       }
       $this->users[] = $this->user;
-      //var_dump($this->user->get_vars());
+      var_dump($this->user->get_vars());
     }
     //Cielは裏切り陣営なし
     //if($this->is_evil === true && $this->village->evil_rgl !== true)
@@ -264,7 +252,7 @@ abstract class Giji extends Country
   protected function fetch_role($person)
   {
     $skill = preg_replace('/.+giji\.potof\.roles\((\d+), -?\d+\);.+/s',"$1",$person);
-    $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['sklid'];
+    $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$skill]['sklid'];
 
     //役職名を出力
     $gift = (int)preg_replace('/.+giji\.potof\.roles\(\d+, (-?\d+)\);.+/s',"$1",$person);
@@ -281,11 +269,11 @@ abstract class Giji extends Country
       {
         $after_role[] = $this->BAND[$love];
       }
-      $this->user->role = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['orgname'].'、'.implode('、',$after_role);;
+      $this->user->role = $this->syswords[$this->village->rp]['sklid'][$skill]['orgname'].'、'.implode('、',$after_role);;
     }
     else
     {
-      $this->user->role = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$skill]['orgname'];
+      $this->user->role = $this->syswords[$this->village->rp]['sklid'][$skill]['orgname'];
     }
     //守護者と結社員に変更
     switch($this->user->role)
@@ -313,7 +301,7 @@ abstract class Giji extends Country
         break;
       default:
         $this->user->end = $end;
-        break; 
+        break;
     }
   }
   protected function fetch_rltid($person)
@@ -322,14 +310,19 @@ abstract class Giji extends Country
     {
       $this->user->rltid = Data::RSL_ONLOOKER;
     }
-    else if($this->village->wtmid === Data::TM_RP)
-    {
-      $this->user->rltid = Data::RSL_JOIN;
-    }
     else
     {
-      $rltid = preg_replace('/.+result:  "([^"]*)".+/s',"$1",$person);
-      $this->user->rltid = $this->RSL[$rltid];
+      //現在cielのみ
+      $this->user->rltid = Data::RSL_JOIN;
     }
+    // else if($this->village->wtmid === Data::TM_RP)
+    // {
+    //   $this->user->rltid = Data::RSL_JOIN;
+    // }
+    // else
+    // {
+    //   $rltid = preg_replace('/.+result:  "([^"]*)".+/s',"$1",$person);
+    //   $this->user->rltid = $this->RSL[$rltid];
+    // }
   }
 }

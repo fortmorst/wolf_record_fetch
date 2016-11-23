@@ -98,9 +98,9 @@ abstract class Giji_Old extends Country
   {
     foreach(['sklid','tmid','dtid','wtmid'] as $table)
     {
-      $list = [];
       if($table === "tmid")
       {
+        $list = [];
         $sql = "SELECT `m`.`name`,`orgid`,`evil_flg` FROM `mes_tmid` `m` JOIN `team` `t` ON `orgid` = `t`.`id` JOIN `mes_tmid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
         $stmt = $this->db->query($sql);
         foreach($stmt as $item)
@@ -110,12 +110,7 @@ abstract class Giji_Old extends Country
       }
       else
       {
-        $sql = "SELECT `m`.`name`,`m`.`orgid` FROM `mes_{$table}` `m` JOIN `mes_{$table}_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
-        $stmt = $this->db->query($sql);
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = (int)$item['orgid'];
-        }
+        $list = $this->make_sysword_name_orgid_set($table,$sysid);
       }
       $this->syswords[$rp][$table] = $list;
     }
