@@ -185,7 +185,7 @@ abstract class Giji extends Country
       $this->fetch_users($person);
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user',__function__);
+        $this->output_comment("n_user",__function__);
       }
       $this->users[] = $this->user;
       var_dump($this->user->get_vars());

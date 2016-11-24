@@ -170,6 +170,17 @@ abstract class Country
     }
     return $list;
   }
+  protected function make_sysword_dtsys_set($sysid)
+  {
+    $list = [];
+    $sql = "SELECT `m`.`name`,`regex`,`orgid` FROM `mes_dt_sys` `m` JOIN `destiny` `d` ON `orgid` = `d`.`id` JOIN `mes_dt_sys_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
+    $stmt = $this->db->query($sql);
+    foreach($stmt as $item)
+    {
+      $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+    }
+    return $list;
+  }
   protected function insert_users()
   {
     $this->users = [];

@@ -3,6 +3,7 @@
 class Ning extends Country
 {
   private $url_epi;
+  const SYSWORD = "G国";
 
   protected function fetch_village()
   {
@@ -12,13 +13,13 @@ class Ning extends Country
 
   protected function fetch_from_pro()
   {
-    $this->fetch->load_file($this->url."&meslog=000_ready");
+    $this->fetch->load_file("{$this->url}&meslog=000_ready");
     sleep(1);
 
     $this->fetch_name();
     $this->fetch_date();
     $this->fetch_days();
-    $this->village->rp = $this->sysword;
+    $this->village->rp = self::SYSWORD;
     $this->fetch_sysword($this->village->rp);
 
     $this->fetch->clear();
@@ -26,12 +27,12 @@ class Ning extends Country
   protected function fetch_name()
   {
     $name = $this->fetch->find('title',0)->plaintext;
-    $this->village->name = preg_replace('/人狼.+\d+ (.+)/','$1',$name);
+    $this->village->name = preg_replace("/人狼.+\d+ (.+)/","$1",$name);
   }
   protected function fetch_date()
   {
     $date = $this->fetch->find('div.ch1',0)->find('a',1)->name;
-    $this->village->date = date("Y-m-d",preg_replace('/mes(.+)/','$1',$date));
+    $this->village->date = date("Y-m-d",preg_replace("/mes(.+)/","$1",$date));
   }
   protected function fetch_days()
   {
@@ -39,13 +40,38 @@ class Ning extends Country
     $this->url_epi = $url.$this->fetch->find('p a',-2)->href;
     $this->village->days = preg_replace("/.+=0(\d{2})_party/", "$1", $this->url_epi) + 1;
   }
+  protected function make_sysword_set($rp,$sysid)
+  {
+    foreach(["sklid","dt_sys","wtmid"] as $table)
+    {
+      switch($table)
+      {
+        case "sklid":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+          }
+          break;
+        case "dt_sys":
+          $list = $this->make_sysword_dtsys_set($sysid);
+          break;
+        case "wtmid":
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
+      }
+      $this->syswords[$rp][$table] = $list;
+    }
+  }
 
   protected function fetch_from_epi()
   {
     $filesize = $this->remote_filesize($this->url_epi);
     if(!$filesize || $filesize > 1000000)
     {
-      throw new Exception($this->village->vno.'ERROR: **エピローグが壊れています** 手動で取得後キューを削除して下さい。');
+      throw new Exception($this->village->vno."ERROR: **エピローグが壊れています** 手動で取得後キューを削除して下さい。");
     }
     $this->fetch->load_file($this->url_epi);
     sleep(1);
@@ -73,8 +99,8 @@ class Ning extends Country
   {
     $cast = preg_replace("/\r\n/","",$this->fetch->find('div.announce',-1)->plaintext);
     //simple_html_domを抜けてきたタグを削除(IDに{}があるとbrやaが残る)
-    $cast = preg_replace([ '/<br \/>/','/<a href=[^>]+>/','/<\/a>/' ],['','',''],$cast);
-    $cast = explode('だった。',$cast);
+    $cast = preg_replace([ "/<br \/>/","/<a href=[^>]+>/","/<\/a>/" ],["","",""],$cast);
+    $cast = explode("だった。",$cast);
     //最後のスペース削除
     array_pop($cast);
     $this->cast = $cast;
@@ -83,14 +109,15 @@ class Ning extends Country
   {
     $wtmid = $this->fetch->find('div.announce',-2)->plaintext;
     $wtmid = preg_replace("/\A([^\r\n]+)\r\n(.+)?\z/ms", "$1", $wtmid);
-    if($this->check_syswords($wtmid,'wtmid'))
+    var_dump($wtmid);
+    if($this->check_syswords($wtmid,"wtmid"))
     {
-      $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+      $this->village->wtmid = $this->syswords[$this->village->rp]['wtmid'][$wtmid];
     }
     else
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('undefined',__FUNCTION__,$wtmid);
+      $this->output_comment("undefined",__FUNCTION__,$wtmid);
     }
   }
 
@@ -113,27 +140,27 @@ class Ning extends Country
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user',__function__,$user->persona);
+        $this->output_comment("n_user",__function__,$user->persona);
       }
     }
   }
   protected function fetch_users($person)
   {
     $person = preg_replace("/ ?(.+) （(.+)）、(生存|死亡)。(.+)$/", "$1#SP#$2#SP#$3#SP#$4", $person);
-    $person = explode('#SP#',$person);
+    $person = explode("#SP#",$person);
     $person[1] = $this->modify_player($person[1]);
 
     $this->user->persona = $person[0];
     $this->user->player  = $person[1];
-    $this->user->role    = $person[3]; 
+    $this->user->role    = $person[3];
 
     $this->fetch_sklid();
     $this->fetch_rltid();
 
-    if($person[2] === '生存')
+    if($person[2] === "生存")
     {
       $this->insert_alive();
     }
@@ -142,21 +169,21 @@ class Ning extends Country
   {
     if($this->check_syswords($this->user->role,"sklid"))
     {
-      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['sklid'];
       if($this->user->sklid === Data::SKL_LUNATIC)
       {
         $this->user->tmid = Data::TM_WOLF;
       }
       else
       {
-        $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+        $this->user->tmid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['tmid'];
       }
     }
     else
     {
       $this->user->sklid= null;
       $this->user->tmid= null;
-      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
+      $this->output_comment("undefined",__FUNCTION__,$this->user->role);
     }
   }
   protected function fetch_rltid()
@@ -194,20 +221,20 @@ class Ning extends Country
   }
   protected function fetch_key_u($list,$item)
   {
-    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $destiny = trim(preg_replace("/\r\n/","",$item->plaintext));
     $key = mb_substr(trim($item->plaintext),-8,8);
 
-    if($this->check_syswords($key,'dt_sys'))
+    if($this->check_syswords($key,"dt_sys"))
     {
-      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
-      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+      $regex = $this->syswords[$this->village->rp]['dt_sys'][$key]['regex'];
+      $dtid  = $this->syswords[$this->village->rp]['dt_sys'][$key]['dtid'];
     }
     else
     {
       return false;
     }
 
-    $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+    $persona = trim(preg_replace("/{$regex}/s","$2",$destiny));
 
     $key_u = array_search($persona,$list);
     if($key_u === false)
@@ -221,14 +248,14 @@ class Ning extends Country
   {
     if($day === $this->village->days-1)
     {
-      $suffix = '_party';
+      $suffix = "_party";
     }
     else
     {
-      $suffix = '_progress';
+      $suffix = "_progress";
     }
     $day = str_pad($day,3,"0",STR_PAD_LEFT);
 
-    return $this->url.'&meslog='.$day.$suffix;
+    return "{$this->url}&meslog={$day}{$suffix}";
   }
 }
