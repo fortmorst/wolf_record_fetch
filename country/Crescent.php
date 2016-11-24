@@ -6,7 +6,7 @@ class Crescent extends Giji_Old
   {
     $date = $this->fetch->find('div.mes_date',0)->plaintext;
     $date = mb_substr($date,mb_strpos($date,"2"),10);
-    $this->village->date = preg_replace('/(\d{4})\/(\d{2})\/(\d{2})/','\1-\2-\3',$date);
+    $this->village->date = preg_replace("/(\d{4})\/(\d{2})\/(\d{2})/","$1-$2-$3",$date);
   }
   protected function fetch_policy()
   {
@@ -22,8 +22,8 @@ class Crescent extends Giji_Old
   }
   protected function check_ruin()
   {
-    $info = 'div.info';
-    $infosp = 'div.infosp';
+    $info = "div.info";
+    $infosp = "div.infosp";
 
     if(count($this->fetch->find($info)) <= 1 && count($this->fetch->find($infosp)) === 0)
     {
@@ -36,7 +36,7 @@ class Crescent extends Giji_Old
   }
   protected function fetch_win_message()
   {
-    $not_wtm = '/延長されました。|村の設定が変更されました。/';
+    $not_wtm = "/延長されました。|村の設定が変更されました。/";
 
     $wtmid = trim($this->fetch->find('div.info',-1)->plaintext);
     if(preg_match($not_wtm,$wtmid))
@@ -50,7 +50,7 @@ class Crescent extends Giji_Old
     }
 
     //照・据え膳勝利メッセージがあったら削除
-    $wtmid = mb_ereg_replace('そして、.+|明日の遠足.+|ああそうだ.+|','',$wtmid,'m');
+    $wtmid = preg_replace("/そして、.+|ブヒィ.+|追加勝利.+|ｗｗｗ.+|明日の遠足.+|ああそうだ.+|/s","",$wtmid);
     //改行を削除
     $wtmid = preg_replace("/\r\n/","",$wtmid);
     return $wtmid;
@@ -61,9 +61,9 @@ class Crescent extends Giji_Old
     $this->fetch_player($person);
 
     $role = trim($person->find('td',4)->plaintext);
-    if(mb_substr($role,-2) === '居た')
+    if(mb_substr($role,-2) === "居た")
     {
-      $this->user->role = '見物人';
+      $this->user->role = "見物人";
       $this->insert_onlooker();
     }
     else
@@ -78,7 +78,7 @@ class Crescent extends Giji_Old
   }
   protected function fetch_role($role)
   {
-    $this->user->role = mb_ereg_replace('.+：([^\r\n]+)\r\n　　.+','\\1',$role,'m');
+    $this->user->role = preg_replace("/.+：([^\r\n]+)\r\n　　.+/s","$1",$role);
   }
   protected function fetch_dtid($dtid)
   {
@@ -89,9 +89,9 @@ class Crescent extends Giji_Old
     }
     else
     {
-      $this->user->end = (int)mb_ereg_replace(".+\((\d+)d\)","\\1",$dtid,'m');
-      $dtid = mb_ereg_replace("(.+)\r\n\(\d+d\)","\\1",$dtid,'m');
-      $this->fetch_from_sysword($dtid,'dtid');
+      $this->user->end = (int)preg_replace("/.+\((\d+)d\)/s","$1",$dtid);
+      $dtid = preg_replace("/(.+)\r\n\(\d+d\)/s","$1",$dtid);
+      $this->fetch_from_sysword($dtid,"dtid");
     }
   }
 }
