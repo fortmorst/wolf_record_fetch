@@ -7,9 +7,9 @@ abstract class Sea extends Giji_Old
     $policy = $this->fetch->find('p.multicolumn_left',1)->plaintext;
     switch($policy)
     {
-      case 'とくになし':
-      case 'ガチ推理':
-      case '推理&RP':
+      case "とくになし":
+      case "ガチ推理":
+      case "推理&RP":
         $this->village->policy = true;
         break;
       default:
