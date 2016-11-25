@@ -3,6 +3,7 @@
 class Reason extends Country
 {
   private $url_epi;
+  const SYSWORD = "推理と説得";
 
   protected function fetch_village()
   {
@@ -13,14 +14,13 @@ class Reason extends Country
   protected function fetch_from_pro()
   {
     $this->fetch->load_file($this->url);
-      sleep(1);
+    sleep(1);
 
     $this->fetch_name();
     $this->fetch_date();
     $this->fetch_days();
-    $this->village->rp = $this->sysword;
+    $this->village->rp = self::SYSWORD;
     $this->fetch_sysword($this->village->rp);
-
     $this->fetch->clear();
   }
   protected function fetch_name()
@@ -30,26 +30,24 @@ class Reason extends Country
   protected function fetch_date()
   {
     $date = $this->fetch->find('span.character_name',0)->id;
-    $this->village->date = date("Y-m-d",mb_ereg_replace('mes(.+)c1',"\\1",$date));
+    $this->village->date = date("Y-m-d",preg_replace("/mes(.+)c1/","$1",$date));
   }
   protected function fetch_days()
   {
     $url = $this->fetch->find('div#NaviDay a',-1)->href;
-    $this->village->days = (int)mb_ereg_replace(".+view_kako/\d+/(\d+)/.+", "\\1", $url);
+    $this->village->days = (int)preg_replace("/.+view_kako\/\d+\/(\d+)\/.+/", "$1", $url);
+    $test = (int)preg_replace("/.+view_kako\/\d+\/(\d+)\/.+/", "$1", $url);
     $this->url_epi = $this->url.'/'.$this->village->days;
   }
-
   protected function fetch_from_epi()
   {
     $this->fetch->load_file($this->url_epi);
     sleep(1);
     $this->make_cast();
-
     $this->fetch_wtmid();
 
     $this->fetch->clear();
   }
-
   protected function make_cast()
   {
     $cast = $this->fetch->find('div.systemmessage p',-1)->plaintext;
@@ -61,14 +59,14 @@ class Reason extends Country
   {
     $wtmid = trim($this->fetch->find('div.systemmessage p',-2)->plaintext);
     $wtmid = preg_replace("/\A([^\r\n]+)(\r\n.+)?\z/ms", "$1", $wtmid);
-    if($this->check_syswords($wtmid,'wtmid'))
+    if($this->check_syswords($wtmid,"wtmid"))
     {
-      $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+      $this->village->wtmid = $this->syswords[$this->village->rp]['wtmid'][$wtmid];
     }
     else
     {
       $this->village->wtmid = Data::TM_RP;
-      $this->output_comment('undefined',__FUNCTION__,$wtmid);
+      $this->output_comment("undefined",__FUNCTION__,$wtmid);
     }
   }
 
@@ -91,56 +89,55 @@ class Reason extends Country
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      // var_dump($user->get_vars());
       if(!$user->is_valid())
       {
-        $this->output_comment('n_user',__function__,$user->persona);
+        $this->output_comment("n_user",__function__,$user->persona);
       }
     }
   }
   protected function fetch_users($person)
   {
     $life = $this->fetch_person(trim($person));
-
     $this->fetch_sklid();
     $this->fetch_rltid();
 
-    if($life === '生存')
+    if($life === "生存")
     {
       $this->insert_alive();
     }
   }
   protected function fetch_person($person)
   {
-    $pattern = "([^（]+)（(.+)）、(生存|死亡)。(.+)$";
+    $pattern = "\A([^（]+)（(.+)）、(生存|死亡)。(.+)\z";
 
-    $player = mb_ereg_replace($pattern,'\\2',$person);
+    $player = mb_ereg_replace($pattern,"\\2",$person);
     $this->user->player =$this->modify_player($player);
 
-    $this->user->persona = mb_ereg_replace($pattern,'\\1',$person);
-    $this->user->role = mb_ereg_replace($pattern,'\\4',$person);
+    $this->user->persona = mb_ereg_replace($pattern,"\\1",$person);
+    $this->user->role = mb_ereg_replace($pattern,"\\4",$person);
 
-    return mb_ereg_replace($pattern,'\\3',$person);;
+    return mb_ereg_replace($pattern,"\\3",$person);
   }
   protected function fetch_sklid()
   {
     if($this->check_syswords($this->user->role,"sklid"))
     {
-      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
+      $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['sklid'];
       if($this->user->sklid === Data::SKL_LUNATIC)
       {
         $this->user->tmid = Data::TM_WOLF;
       }
       else
       {
-        $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+        $this->user->tmid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['tmid'];
       }
     }
     else
     {
       $this->user->sklid= null;
       $this->user->tmid= null;
-      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
+      $this->output_comment("undefined",__FUNCTION__,$this->user->role);
     }
   }
   protected function fetch_rltid()
@@ -178,10 +175,10 @@ class Reason extends Country
   }
   protected function fetch_key_u($list,$item)
   {
-    $destiny = trim(preg_replace("/\r\n/",'',$item->plaintext));
+    $destiny = trim(preg_replace("/\r\n/","",$item->plaintext));
 
-    //突然死メッセージが6文字
-    $is_retired = mb_strpos($destiny,'は突然死');
+    //突然死メッセージが7文字でdt_sys未登録
+    $is_retired = mb_strpos($destiny,"は突然死");
     if($is_retired !== false)
     {
       $dtid = Data::DES_RETIRED;
@@ -190,17 +187,17 @@ class Reason extends Country
     else
     {
       $key = mb_substr(trim($item->plaintext),-8,8);
-      if($this->check_syswords($key,'dt_sys'))
+      if($this->check_syswords($key,"dt_sys"))
       {
-        $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
-        $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+        $regex = $this->syswords[$this->village->rp]['dt_sys'][$key]['regex'];
+        $dtid  = $this->syswords[$this->village->rp]['dt_sys'][$key]['dtid'];
       }
       else
       {
         return false;
       }
 
-      $persona = trim(mb_ereg_replace($regex,'\2',$destiny,'m'));
+      $persona = trim(preg_replace("/{$regex}/s","$2",$destiny));
     }
 
     $key_u = array_search($persona,$list);

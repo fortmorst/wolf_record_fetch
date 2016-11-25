@@ -40,31 +40,6 @@ class Ning extends Country
     $this->url_epi = $url.$this->fetch->find('p a',-2)->href;
     $this->village->days = preg_replace("/.+=0(\d{2})_party/", "$1", $this->url_epi) + 1;
   }
-  protected function make_sysword_set($rp,$sysid)
-  {
-    foreach(["sklid","dt_sys","wtmid"] as $table)
-    {
-      switch($table)
-      {
-        case "sklid":
-          $list = [];
-          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
-          $stmt = $this->db->query($sql);
-          foreach($stmt as $item)
-          {
-            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
-          }
-          break;
-        case "dt_sys":
-          $list = $this->make_sysword_dtsys_set($sysid);
-          break;
-        case "wtmid":
-          $list = $this->make_sysword_name_orgid_set($table,$sysid);
-          break;
-      }
-      $this->syswords[$rp][$table] = $list;
-    }
-  }
 
   protected function fetch_from_epi()
   {
@@ -109,7 +84,6 @@ class Ning extends Country
   {
     $wtmid = $this->fetch->find('div.announce',-2)->plaintext;
     $wtmid = preg_replace("/\A([^\r\n]+)\r\n(.+)?\z/ms", "$1", $wtmid);
-    var_dump($wtmid);
     if($this->check_syswords($wtmid,"wtmid"))
     {
       $this->village->wtmid = $this->syswords[$this->village->rp]['wtmid'][$wtmid];
@@ -140,7 +114,7 @@ class Ning extends Country
 
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      // var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment("n_user",__function__,$user->persona);

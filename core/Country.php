@@ -158,7 +158,31 @@ abstract class Country
     $this->syswords[$rp] = [];
     $this->make_sysword_set($rp,$sysid);
   }
-  abstract protected function make_sysword_set($rp,$sysid);
+  protected function make_sysword_set($rp,$sysid)
+  {
+    foreach(["sklid","dt_sys","wtmid"] as $table)
+    {
+      switch($table)
+      {
+        case "sklid":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+          }
+          break;
+        case "dt_sys":
+          $list = $this->make_sysword_dtsys_set($sysid);
+          break;
+        case "wtmid":
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
+      }
+      $this->syswords[$rp][$table] = $list;
+    }
+  }
   protected function make_sysword_name_orgid_set($table,$sysid)
   {
     $list = [];
