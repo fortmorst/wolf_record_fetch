@@ -2,7 +2,6 @@
 
 abstract class Giji_Old extends Country
 {
-  const SYSWORD_TABLE = ['sklid','tmid','dtid','wtmid'];
   function fetch_village()
   {
     $this->fetch_from_info();

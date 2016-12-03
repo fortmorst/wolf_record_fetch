@@ -13,9 +13,9 @@ class Data
   const TM_EVIL      =  9; //裏切りの陣営
   const TM_SLAVE     = 14; //奴隷陣営
   const TM_MARTYR    = 22; //殉教者陣営
-  const TM_ONLOOKER  = 98; //見物人  
+  const TM_ONLOOKER  = 98; //見物人
   const SKL_OWNER    = 77; //支配人 進行中に全てのログが読める
-  
+
   //役職
   const SKL_SEER            =  2; //占い師 人狼かそれ以外かを判定、妖魔陣営を呪殺
   const SKL_FM              =  5; //共有者 互いに共有者であることを知る
@@ -37,14 +37,14 @@ class Data
   const SKL_QP_SELF         = 17; //求愛者 自撃ち恋愛天使
   const SKL_QP_SELF_MELON   = 16; //求婚者 秘密窓+相手が断れる求愛者
   const SKL_ONLOOKER        = 10; //見物人
-  
+
   //結末 destiny
   const DES_ALIVE   = 1;  //生存
   const DES_RETIRED = 2;  //突然死
   const DES_EATEN   = 4;  //襲撃死
   const DES_CURSED  = 5;  //呪詛死
   const DES_ONLOOKER=10;  //見物
-  
+
   //編成
   const RGL_C    =  1;      //C編成
   const RGL_F    =  2;      //F編成
@@ -72,11 +72,15 @@ class Data
   const RGL_RINNE= 33;      //輪廻
   const RGL_ETC  = 24;      //特殊
   const RGL_RUIN = 30;      //廃村
-  
+
   //結果
   const RSL_WIN      = 1;
   const RSL_LOSE     = 2;
   const RSL_JOIN     = 3;   //参加(非ガチ村)
   const RSL_INVALID  = 4;   //無効(一部の国での突然死)
   const RSL_ONLOOKER = 5;   //見物
+
+  //言い換え
+  const RP_DEFAULT    = "人狼物語";
+  const RP_DEFAULT_ID = 99;
 }

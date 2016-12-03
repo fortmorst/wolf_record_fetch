@@ -8,9 +8,8 @@ class Melon extends SOW_MOD
   protected $ONLOOKER = [];
   protected function fetch_rp()
   {
-    $rp = $this->fetch->find('p.multicolumn_left',9)->plaintext;
-    $this->village->rp = $rp.$this->sysword;
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    $this->village->rp = $this->fetch->find('p.multicolumn_left',9)->plaintext;
+    if(!isset($this->syswords[$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
     }
@@ -96,7 +95,7 @@ class Melon extends SOW_MOD
     $onlooker = mb_substr($onlooker,0,-2);
     if($this->check_syswords($onlooker,'sklid'))
     {
-      $this->ONLOOKER[$GLOBALS['syswords'][$this->village->rp]->mes_sklid[$onlooker]['sklid']] = $onlooker;
+      $this->ONLOOKER[$this->syswords[$this->village->rp]['sklid'][$onlooker]['sklid']] = $onlooker;
     }
     else
     {
@@ -143,7 +142,7 @@ class Melon extends SOW_MOD
       $engaged = preg_replace('/^.+\((.+)\)/','\1',$this->user->role);
       if($this->check_syswords($engaged,'sklid'))
       {
-        $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$engaged]['sklid'];
+        $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$engaged]['sklid'];
         $this->user->tmid = Data::TM_LOVERS;
       }
       else
@@ -157,8 +156,8 @@ class Melon extends SOW_MOD
     else if($this->check_syswords($this->user->role,'sklid'))
     {
       //通常の役職挿入
-      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
-      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+      $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['sklid'];
+      $this->user->tmid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['tmid'];
     }
     else
     {
@@ -214,4 +213,3 @@ class Melon extends SOW_MOD
     }
   }
 }
-

@@ -6,65 +6,33 @@ class SOW_MOD extends Giji_Old
   {
     //議事用の設定を削除
   }
-  protected function fetch_sysword($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    $sql = $this->make_sysword_sql($rp);
-    $stmt = $this->db->query($sql);
-    //stmtがfalseの場合、人狼物語で再度検索する
-    $stmt = $stmt->fetch();
-    if($stmt === false)
+    foreach(["sklid","dtid","wtmid"] as $table)
     {
-      $this->output_comment('undefined',__FUNCTION__,$rp);
-
-      if($this->sysword !== null && mb_substr($this->sysword,0,1) === "_")
+      switch($table)
       {
-        $this->village->rp = '人狼物語'.$this->sysword;
+        case "sklid":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+          }
+          break;
+        default:
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
       }
-      else
-      {
-        $this->village->rp = '人狼物語';
-      }
-      $sql = $this->make_sysword_sql($this->village->rp);
-      $stmt = $this->db->query($sql);
-      $stmt = $stmt->fetch();
+      $this->syswords[$rp][$table] = $list;
     }
-    $name = $stmt['name'];
-    unset($stmt['name']);
-    $GLOBALS['syswords'][$name] = new Sysword();
-    array_walk($stmt,[$this,'make_sysword_set'],$name);
-  }
-  protected function make_sysword_sql($rp)
-  {
-    return "select name,mes_sklid,mes_dtid,mes_wtmid from sysword where name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    $list = [];
-    if($table === 'mes_sklid')
-    {
-      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
-      $stmt = $this->db->query($sql);
-      foreach($stmt as $item)
-      {
-        $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
-      }
-    }
-    else
-    {
-      $sql = "SELECT * from $table where id in ($values)";
-      $stmt = $this->db->query($sql);
-      foreach($stmt as $item)
-      {
-        $list[$item['name']] = (int)$item['orgid'];
-      }
-    }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_date()
   {
     $date = $this->fetch->find('div.mes_date',0)->plaintext;
     $date = mb_substr($date,mb_strpos($date,"2"),10);
-    $this->village->date = preg_replace('/(\d{4})\/(\d{2})\/(\d{2})/','\1-\2-\3',$date);
+    $this->village->date = preg_replace("/(\d{4})\/(\d{2})\/(\d{2})/","$1-$2-$3",$date);
   }
 
   protected function make_cast()
@@ -80,10 +48,10 @@ class SOW_MOD extends Giji_Old
     {
       $this->user = new User();
       $this->fetch_users($person);
-      //var_dump($this->user->get_vars());
+      var_dump($this->user->get_vars());
       if(!$this->user->is_valid())
       {
-        $this->output_comment('n_user',__function__,$this->user->persona);
+        $this->output_comment("n_user",__function__,$this->user->persona);
       }
       $this->users[] = $this->user;
     }
@@ -117,7 +85,7 @@ class SOW_MOD extends Giji_Old
   {
     $destiny = trim($person->find('td',2)->plaintext);
     $destiny =  mb_ereg_replace('\d+日(.+)','\1',$destiny);
-    $this->fetch_from_sysword($destiny,'dtid');
+    $this->fetch_from_sysword($destiny,"dtid");
   }
   protected function fetch_role($person)
   {
@@ -134,8 +102,8 @@ class SOW_MOD extends Giji_Old
   {
     if($this->check_syswords($this->user->role,"sklid"))
     {
-      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
-      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
+      $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['sklid'];
+      $this->user->tmid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['tmid'];
 
       $this->modify_from_sklid();
     }
@@ -143,7 +111,7 @@ class SOW_MOD extends Giji_Old
     {
       $this->user->sklid= null;
       $this->user->tmid= null;
-      $this->output_comment('undefined',__FUNCTION__,$this->user->role);
+      $this->output_comment("undefined",__FUNCTION__,$this->user->role);
     }
   }
   protected function modify_from_sklid()
