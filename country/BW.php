@@ -7,7 +7,7 @@ class BW extends SOW_MOD
     $rp = trim($this->fetch->find('p.multicolumn_left',4)->plaintext);
     $this->village->rp = $rp;
     //言い換えリストに登録がなければ追加
-    if(!isset($GLOBALS['syswords'][$rp]))
+    if(!isset($this->syswords[$rp]))
     {
       $this->fetch_sysword($rp);
     }
