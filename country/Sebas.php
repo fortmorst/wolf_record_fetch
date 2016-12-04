@@ -42,9 +42,8 @@ class Sebas extends SOW_MOD
   }
   protected function fetch_rp()
   {
-    $rp = trim($this->fetch->find('p.multicolumn_left',8)->plaintext);
-    $this->village->rp = $rp.$this->sysword;
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    $this->village->rp = trim($this->fetch->find('p.multicolumn_left',8)->plaintext);
+    if(!isset($this->syswords[$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
     }
@@ -114,7 +113,7 @@ class Sebas extends SOW_MOD
     preg_match_all($pattern,$destiny,$matches);
     if($this->check_syswords($matches[3][0],'dtid'))
     {
-      $this->user->dtid = $GLOBALS['syswords'][$this->village->rp]->mes_dtid[$matches[3][0]];
+      $this->user->dtid = $this->syswords[$this->village->rp]['dtid'][$matches[3][0]];
     }
     else
     {
