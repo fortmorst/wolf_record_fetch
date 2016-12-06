@@ -18,39 +18,33 @@ class Moon extends SOW_MOD
   }
   protected function fetch_rp()
   {
-    $rp = trim($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',4)->plaintext);
-    $this->village->rp = $rp.$this->sysword;
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    $this->village->rp = trim($this->fetch->find('div.paragraph',2)->find('p.multicolumn_left',4)->plaintext);
+    if(!isset($this->syswords[$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    return "select name,mes_sklid,mes_dtid,mes_wtmid from sysword where name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    $sql = "SELECT * from $table where id in ($values)";
-    $stmt = $this->db->query($sql);
-    $list = [];
-    if($table === 'mes_sklid')
+    foreach(["sklid","dtid","wtmid"] as $table)
     {
-      $sql = "SELECT m.name,orgid,tmid,evil_flg FROM mes_sklid m JOIN skill s ON m.orgid = s.id JOIN team t ON s.tmid = t.id WHERE m.id IN ($values)";
-      $stmt = $this->db->query($sql);
-      foreach($stmt as $item)
+      switch($table)
       {
-        $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid'],'evil_flg'=>(bool)$item['evil_flg']];
+        case "sklid":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`orgid`,`tmid`,`evil_flg` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` JOIN `team` `t` ON `s`.`tmid`=`t`.`id` WHERE `ms`.`sysid`={$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid'],'evil_flg'=>(bool)$item['evil_flg']];
+          }
+          break;
+        default:
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
       }
+      $this->syswords[$rp][$table] = $list;
     }
-    else
-    {
-      foreach($stmt as $item)
-      {
-        $list[$item['name']] = (int)$item['orgid'];
-      }
-    }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_win_message()
   {
@@ -88,7 +82,7 @@ class Moon extends SOW_MOD
       {
         $this->change_evil_team_moon($key,$user);
       }
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
     }
   }
   protected function fetch_users($person)
@@ -143,9 +137,9 @@ class Moon extends SOW_MOD
   {
     if($this->check_syswords($this->user->role,"sklid"))
     {
-      $this->user->sklid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['sklid'];
-      $this->user->tmid = $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['tmid'];
-      if($this->is_evil && $GLOBALS['syswords'][$this->village->rp]->mes_sklid[$this->user->role]['evil_flg'])
+      $this->user->sklid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['sklid'];
+      $this->user->tmid = $this->syswords[$this->village->rp]['sklid'][$this->user->role]['tmid'];
+      if($this->is_evil && $this->syswords[$this->village->rp]['sklid'][$this->user->role]['evil_flg'])
       {
         $this->village->evil_rgl = true;
       }
