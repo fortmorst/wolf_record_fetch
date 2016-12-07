@@ -82,7 +82,7 @@ class Moon extends SOW_MOD
       {
         $this->change_evil_team_moon($key,$user);
       }
-      var_dump($user->get_vars());
+      // var_dump($user->get_vars());
     }
   }
   protected function fetch_users($person)

@@ -16,10 +16,7 @@ class SOW extends SOW_MOD
       return;
     }
 
-    if($this->sysword !== 'pro')
-    {
-      $this->fetch_rp();
-    }
+    $this->fetch_rp();
 
     if($this->policy === null)
     {
@@ -30,78 +27,52 @@ class SOW extends SOW_MOD
   }
   protected function fetch_rp()
   {
-    if($this->sysword === 'pro')
+    if(defined("self::SYSWORD"))
     {
-      //プロローグから取得する
-      $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
-      $sql = "SELECT name FROM sysword WHERE prologue='$rp'";
-      $stmt = $this->db->query($sql);
-      if($stmt === false)
-      {
-        $this->output_comment('undefined',__FUNCTION__,$rp);
-        $rp = "人狼物語";
-      }
-      else
-      {
-        $stmt = $stmt->fetch();
-        $rp = $stmt['name'];
-      }
-    }
-    else if($this->sysword === null)
-    {
-      //情報欄から取得する
-       $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
+      //固定
+      $rp = self::SYSWORD;
     }
     else
     {
-      //固定
-      $rp = $this->sysword;
+      $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     }
+
     $this->village->rp = $rp;
-    //言い換えリストに登録がなければ追加
-    if(!isset($GLOBALS['syswords'][$rp]))
+    if(!isset($this->syswords[$rp]))
     {
       $this->fetch_sysword($rp);
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    return "SELECT name,mes_sklid,mes_dt_sys,mes_wtmid FROM sysword WHERE name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    if($table === 'mes_sklid')
+    foreach(["sklid","dt_sys","wtmid"] as $table)
     {
-      $sql = "SELECT m.name,orgid,tmid from mes_sklid m join skill s on orgid = s.id where m.id in ($values)";
+      switch($table)
+      {
+        case "sklid":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
+          }
+          break;
+        case "dt_sys":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`m`.`orgid`,`m`.`regex` FROM `mes_dt_sys` `m` JOIN `mes_dt_sys_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+          }
+          break;
+        case "wtmid":
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
+      }
+      $this->syswords[$rp][$table] = $list;
     }
-    else
-    {
-      $sql = "SELECT * from $table where id in ($values)";
-    }
-    $stmt = $this->db->query($sql);
-    $list = [];
-    switch($table)
-    {
-      case 'mes_sklid':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
-        }
-        break;
-      case 'mes_dt_sys':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
-        }
-        break;
-      case 'mes_wtmid':
-        foreach($stmt as $item)
-        {
-          $list[$item['name']] = (int)$item['orgid'];
-        }
-        break;
-    }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
   protected function fetch_from_pro()
   {
@@ -110,10 +81,6 @@ class SOW extends SOW_MOD
     sleep(1);
 
     $this->fetch_date();
-    if($this->sysword === 'pro')
-    {
-      $this->fetch_rp();
-    }
     $this->fetch->clear();
   }
   protected function make_cast()
@@ -142,7 +109,7 @@ class SOW extends SOW_MOD
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__function__,$user->persona);
@@ -255,8 +222,8 @@ class SOW extends SOW_MOD
 
     if($this->check_syswords($key,'dt_sys'))
     {
-      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
-      $dtid  = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['dtid']; 
+      $regex = $this->syswords[$this->village->rp]['dt_sys'][$key]['regex'];
+      $dtid = $this->syswords[$this->village->rp]['dt_sys'][$key]['dtid'];
     }
     else
     {

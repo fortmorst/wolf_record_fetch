@@ -188,7 +188,7 @@ abstract class Giji extends Country
         $this->output_comment("n_user",__function__);
       }
       $this->users[] = $this->user;
-      var_dump($this->user->get_vars());
+      // var_dump($this->user->get_vars());
     }
     //Cielは裏切り陣営なし
     //if($this->is_evil === true && $this->village->evil_rgl !== true)

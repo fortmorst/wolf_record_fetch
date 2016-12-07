@@ -233,7 +233,7 @@ abstract class Giji_Old extends Country
     }
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      // var_dump($user->get_vars());
     }
   }
   protected function change_evil_team()

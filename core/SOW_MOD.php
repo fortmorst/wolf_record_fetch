@@ -48,7 +48,7 @@ class SOW_MOD extends Giji_Old
     {
       $this->user = new User();
       $this->fetch_users($person);
-      var_dump($this->user->get_vars());
+      // var_dump($this->user->get_vars());
       if(!$this->user->is_valid())
       {
         $this->output_comment("n_user",__function__,$this->user->persona);

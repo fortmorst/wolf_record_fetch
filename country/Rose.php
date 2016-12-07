@@ -5,10 +5,9 @@ class Rose extends SOW
   {
     $this->check_sprule();
 
-    $rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
-    $this->village->rp = $rp.$this->sysword;
+    $this->village->rp = trim($this->fetch->find('p.multicolumn_left',7)->plaintext);
     //言い換えリストに登録がなければ追加
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    if(!isset($this->syswords[$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
     }
@@ -20,31 +19,27 @@ class Rose extends SOW
       $this->village->rglid = Data::RGL_SECRET;
     }
   }
-  protected function make_sysword_sql($rp)
+  protected function make_sysword_set($rp,$sysid)
   {
-    return "select name,mes_sklid,mes_tmid,mes_dtid,mes_dt_sys,mes_wtmid from sysword where name='$rp'";
-  }
-  protected function make_sysword_set($values,$table,$name)
-  {
-    $sql = "SELECT * from $table where id in ($values)";
-    $stmt = $this->db->query($sql);
-    $list = [];
-
-    if($table === 'mes_dt_sys')
+    foreach(["sklid","tmid","dtid","dt_sys","wtmid"] as $table)
     {
-      foreach($stmt as $item)
+      switch($table)
       {
-        $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+        case "dt_sys":
+          $list = [];
+          $sql = "SELECT `m`.`name`,`m`.`orgid`,`m`.`regex` FROM `mes_dt_sys` `m` JOIN `mes_dt_sys_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid` = {$sysid}";
+          $stmt = $this->db->query($sql);
+          foreach($stmt as $item)
+          {
+            $list[$item['name']] = ['regex'=>$item['regex'],'dtid'=>(int)$item['orgid']];
+          }
+          break;
+        default:
+          $list = $this->make_sysword_name_orgid_set($table,$sysid);
+          break;
       }
+      $this->syswords[$rp][$table] = $list;
     }
-    else
-    {
-      foreach($stmt as $item)
-      {
-        $list[$item['name']] = (int)$item['orgid'];
-      }
-    }
-    $GLOBALS['syswords'][$name]->{$table} = $list;
   }
 
   protected function fetch_policy_detail()
@@ -66,7 +61,7 @@ class Rose extends SOW
       $wtmid = $this->fetch_win_message();
       if($this->check_syswords($wtmid,'wtmid'))
       {
-        $this->village->wtmid = $GLOBALS['syswords'][$this->village->rp]->mes_wtmid[$wtmid];
+        $this->village->wtmid = $this->syswords[$this->village->rp]['wtmid'][$wtmid];
         //奴隷勝利の場合追加勝利扱いにする
         if($this->village->wtmid === Data::TM_SLAVE)
         {
@@ -114,7 +109,7 @@ class Rose extends SOW
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      // var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__FUNCTION__,$user->persona);
@@ -127,7 +122,7 @@ class Rose extends SOW
     $this->fetch_player($person);
     $this->fetch_role($person);
 
-    $list = $this->make_list_using_sysword($person);
+    $list = ['dtid'=>$person->find('td',2)->plaintext,'tmid'=>$person->find('td',3)->plaintext,'sklid'=>$this->user->role];
     array_walk($list,[$this,'fetch_from_sysword']);
 
     //見物人
@@ -143,22 +138,18 @@ class Rose extends SOW
     }
     $this->fetch_rltid_sow();
   }
-  protected function make_list_using_sysword($person)
-  {
-    return ['dtid'=>$person->find('td',2)->plaintext,'tmid'=>$person->find('td',3)->plaintext,'sklid'=>$this->user->role];
-  }
-  protected function fetch_from_sysword($value,$column)
-  {
-    if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
-    {
-      $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
-    }
-    else
-    {
-      $this->user->{$column} = null;
-      $this->output_comment('undefined',__FUNCTION__,$value);
-    }
-  }
+  // protected function fetch_from_sysword($value,$column)
+  // {
+  //   if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
+  //   {
+  //     $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
+  //   }
+  //   else
+  //   {
+  //     $this->user->{$column} = null;
+  //     $this->output_comment('undefined',__FUNCTION__,$value);
+  //   }
+  // }
   protected function fetch_role($person)
   {
     $role = $person->find('td',4)->plaintext;
@@ -205,7 +196,7 @@ class Rose extends SOW
 
     if($this->check_syswords($key,'dt_sys'))
     {
-      $regex = $GLOBALS['syswords'][$this->village->rp]->mes_dt_sys[$key]['regex'];
+      $regex = $this->syswords[$this->village->rp]['dt_sys'][$key]['regex'];
     }
     else
     {

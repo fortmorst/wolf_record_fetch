@@ -1,6 +1,39 @@
 <?php
 class Phantom extends SOW
 {
+  protected function fetch_from_info()
+  {
+    $this->fetch->load_file($this->url."&cmd=vinfo");
+    sleep(1);
+
+    $this->fetch_name();
+    if($this->fetch_days() === false)
+    {
+      $this->fetch->clear();
+      return;
+    }
+
+    $this->fetch->clear();
+  }
+  protected function fetch_from_pro()
+  {
+    $url = $this->url.'&turn=0&row=10&mode=all&move=page&pageno=1';
+    $this->fetch->load_file($url);
+    sleep(1);
+
+    $this->fetch_date();
+    $this->fetch_rp();
+    $this->fetch->clear();
+  }
+  protected function fetch_rp()
+  {
+    $this->village->rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+    //言い換えリストに登録がなければ追加
+    if(!isset($this->syswords[$rp]))
+    {
+      $this->fetch_sysword($rp);
+    }
+  }
   protected function fetch_days()
   {
     $days = trim($this->fetch->find('p.turnnavi',0)->find('a',-4)->innertext);
