@@ -27,10 +27,11 @@ class SOW extends SOW_MOD
   }
   protected function fetch_rp()
   {
-    if(defined("self::SYSWORD"))
+    $class = get_called_class();
+    if(defined("$class::".'SYSWORD'))
     {
       //固定
-      $rp = self::SYSWORD;
+      $rp = constant("$class::".'SYSWORD');
     }
     else
     {

@@ -2,6 +2,8 @@
 
 class Cherry extends SOW
 {
+  const SYSWORD = "人狼物語";
+
   protected function make_cast()
   {
     $cast = $this->fetch->find('table tr');

@@ -77,10 +77,11 @@ abstract class Giji_Old extends Country
   protected function fetch_rp()
   {
     $this->check_sprule();
-    if(defined("self::SYSWORD"))
+    $class = get_called_class();
+    if(defined("$class::".'SYSWORD'))
     {
       //固定
-      $rp = self::SYSWORD;
+      $rp = constant("$class::".'SYSWORD');
     }
     else
     {

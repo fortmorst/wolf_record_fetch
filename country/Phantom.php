@@ -1,6 +1,14 @@
 <?php
 class Phantom extends SOW
 {
+  const SYS_PRO = [
+    '呼び寄せた'=>"人狼物語　幻夢",
+    '昼間は人間'=>"人狼BBS",
+    '　村は数十'=>"人狼審問",
+    '　それはま'=>"ゆめまぼろし",
+    'なんか人狼'=>"適当系",
+   ];
+
   protected function fetch_from_info()
   {
     $this->fetch->load_file($this->url."&cmd=vinfo");
@@ -27,11 +35,28 @@ class Phantom extends SOW
   }
   protected function fetch_rp()
   {
-    $this->village->rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+    $rp = mb_substr($this->fetch->find('p.info',0)->plaintext,1,5);
+    $this->village->rp = self::SYS_PRO[$rp];
     //言い換えリストに登録がなければ追加
-    if(!isset($this->syswords[$rp]))
+    if(!isset($this->syswords[$this->village->rp]))
     {
-      $this->fetch_sysword($rp);
+      $this->fetch_sysword($this->village->rp);
+    }
+  }
+  protected function make_sysword_set($rp,$sysid)
+  {
+    foreach(["sklid","dt_sys"] as $table)
+    {
+      switch($table)
+      {
+        case "sklid":
+          $list = $this->make_sysword_name_sklid_tmid_set($sysid);
+          break;
+        case "dt_sys":
+          $list = $this->make_sysword_dtsys_set($sysid);
+          break;
+      }
+      $this->syswords[$rp][$table] = $list;
     }
   }
   protected function fetch_days()
@@ -49,10 +74,6 @@ class Phantom extends SOW
     $this->make_cast();
   }
 
-  protected function make_sysword_sql($rp)
-  {
-    return "SELECT name,mes_sklid,mes_dt_sys FROM sysword WHERE name='$rp'";
-  }
   protected function insert_users()
   {
     $list = [];
@@ -83,7 +104,7 @@ class Phantom extends SOW
 
     foreach($this->users as $user)
     {
-      //var_dump($user->get_vars());
+      // var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__function__,$user->persona);

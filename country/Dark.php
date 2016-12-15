@@ -1,6 +1,7 @@
 <?php
 class Dark extends SOW
 {
+  const SYSWORD = "暗黒審問";
   protected function fetch_win_message()
   {
     $not_wtm = '/村の更新日が延長されました。|村の設定が変更されました。/';

@@ -82,5 +82,5 @@ class Data
 
   //言い換え
   const RP_DEFAULT    = "人狼物語";
-  const RP_DEFAULT_ID = 99;
+  const RP_DEFAULT_ID = 58;
 }
