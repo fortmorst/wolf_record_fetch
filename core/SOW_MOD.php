@@ -13,13 +13,7 @@ class SOW_MOD extends Giji_Old
       switch($table)
       {
         case "sklid":
-          $list = [];
-          $sql = "SELECT `m`.`name`,`orgid`,`tmid` FROM `mes_sklid` `m` JOIN `skill` `s` ON `orgid` = `s`.`id` JOIN `mes_sklid_sysword` `ms` ON `ms`.`msid` = `m`.`id` WHERE `ms`.`sysid`={$sysid}";
-          $stmt = $this->db->query($sql);
-          foreach($stmt as $item)
-          {
-            $list[$item['name']] = ['sklid'=>(int)$item['orgid'],'tmid'=>(int)$item['tmid']];
-          }
+          $list = $this->make_sysword_name_sklid_tmid_set($sysid);
           break;
         default:
           $list = $this->make_sysword_name_orgid_set($table,$sysid);
