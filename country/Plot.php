@@ -13,7 +13,7 @@ class Plot extends Giji_Old
     else if(strpos($rule,'タブラの人狼') === false)
     {
       //タブラの人狼以外ならDBから引く
-      $sql = "SELECT id FROM regulation where name='$rule'";
+      $sql = "SELECT `id` FROM `regulation` where `name`='$rule'";
       $stmt = $this->db->query($sql);
       if($stmt === false)
       {
@@ -39,7 +39,7 @@ class Plot extends Giji_Old
       $rp = trim($this->fetch->find('dl.mes_text_report dt',0)->plaintext);
       $this->village->rp = $rp;
     }
-    if(!isset($GLOBALS['syswords'][$this->village->rp]))
+    if(!isset($this->syswords[$this->village->rp]))
     {
       $this->fetch_sysword($this->village->rp);
     }

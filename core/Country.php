@@ -41,8 +41,6 @@ abstract class Country
     $this->db->connect();
     $this->make_doppel_array();
     $this->fetch = new simple_html_dom();
-    //テストの場合
-    //$Data_Test = new Data_Test();
     //村番号順に挿入
     foreach($this->queue as $vno)
     {
@@ -54,9 +52,7 @@ abstract class Country
         continue;
       }
       $this->fetch->clear();
-      //テストの場合
-      //$Data_Test->check_from_DB($this->cid,$this->village,$this->users);
-      continue;
+      // continue;
       //村を挿入する
       $vid = $this->db->insert_db($this->cid,$this->village,$this->users);
       if($vid !== false)
@@ -95,7 +91,7 @@ abstract class Country
       $this->insert_users();
       $this->check_role();
     }
-    var_dump($this->village->get_vars());
+    // var_dump($this->village->get_vars());
 
     return($this->village->is_valid())? true : false;
   }
@@ -135,11 +131,22 @@ abstract class Country
       $cid = $this->cid;
     }
 
-    $sql = "SELECT `sn`.`id` FROM `sysword` `sn` JOIN `country_sysword` ON `sysid` = `sn`.`id` WHERE `cid` = {$cid} AND `sn`.`name` = '{$rp}'";
+    $sql = "SELECT `sn`.`id`,`sysid_parent` FROM `sysword` `sn` JOIN `country_sysword` ON `sysid` = `sn`.`id` WHERE `cid` = {$cid} AND `sn`.`name` = '{$rp}'";
     $stmt = $this->db->query($sql);
     $stmt = $stmt->fetch();
 
-    return($stmt !== false)? $stmt['id'] : false;
+    if($stmt === false)
+    {
+      return false;
+    }
+    else if (isset($stmt['sysid_parent']))
+    {
+      return $stmt['sysid_parent'];
+    }
+    else
+    {
+      return $stmt['id'];
+    }
   }
   protected function fetch_sysword($rp)
   {

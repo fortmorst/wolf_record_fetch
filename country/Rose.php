@@ -138,18 +138,6 @@ class Rose extends SOW
     }
     $this->fetch_rltid_sow();
   }
-  // protected function fetch_from_sysword($value,$column)
-  // {
-  //   if(array_key_exists($value,$GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}))
-  //   {
-  //     $this->user->{$column} = $GLOBALS['syswords'][$this->village->rp]->{'mes_'.$column}[$value];
-  //   }
-  //   else
-  //   {
-  //     $this->user->{$column} = null;
-  //     $this->output_comment('undefined',__FUNCTION__,$value);
-  //   }
-  // }
   protected function fetch_role($person)
   {
     $role = $person->find('td',4)->plaintext;

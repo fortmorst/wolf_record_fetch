@@ -98,7 +98,7 @@ class SOW extends SOW_MOD
 
     foreach($this->users as $user)
     {
-      var_dump($user->get_vars());
+      // var_dump($user->get_vars());
       if(!$user->is_valid())
       {
         $this->output_comment('n_user',__function__,$user->persona);
