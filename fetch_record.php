@@ -9,7 +9,6 @@ mb_regex_encoding('UTF-8');
 require __DIR__.'/../lib/ClassLoader.php';
 $class_loader = new ClassLoader([__DIR__.'/core',__DIR__.'/country',__DIR__.'/rs',__DIR__.'/../lib']);
 
-
 //DB接続
 $db = new Connect_DB();
 $db->connect();
